@@ -16,6 +16,7 @@ import Button from '@material-ui/core/Button';
 function TabPanel(props) {
 
     const { children, value, index, ...other } = props;
+    console.log('TabPanel  ', index);
     return (
         <Typography
             component="div"
@@ -64,6 +65,7 @@ class MainPage extends Component {
         const value = this.state.value;
         return (
             <React.Fragment>
+            <div style={{border: '10px solid green', margin: 0}}>
                 <AppBar position="absolute">
                     <Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
                         <Tab label="정보" {...a11yProps(0)} />
@@ -92,7 +94,7 @@ class MainPage extends Component {
                     ----<br />
                     ----<br />
                 </div>
-
+            </div>
             </React.Fragment>
         );
     }

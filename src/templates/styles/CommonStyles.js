@@ -14,8 +14,8 @@ export const CommonStyle = theme => ({
         
         // backgroundColor: "#efefef",
         // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
-        backgroundImage: "linear-gradient(#517cff, #ffa500)"
-        
+        // backgroundImage: "linear-gradient(#517cff, #ffa500)",
+        backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
     },
 
     rcCenter: {
