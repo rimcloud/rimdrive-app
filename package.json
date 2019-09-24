@@ -2,7 +2,7 @@
   "name": "rimdrive-app",
   "version": "0.1.0",
   "private": true,
-  "main": "public/electron.js",
+  "main": "public/rimdriveApp.js",
   "dependencies": {
     "@material-ui/core": "^4.4.3",
     "axios": "^0.19.0",
