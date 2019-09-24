@@ -12,23 +12,46 @@ import Box from '@material-ui/core/Box';
 
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+
+
+
+import InfoPage from 'components/views/InfoPage';
+import SyncPage from 'components/views/SyncPage';
+import SetupPage from 'components/views/SetupPage';
 
 function TabPanel(props) {
 
-    const { children, value, index, ...other } = props;
-    console.log('TabPanel  ', index);
-    return (
-        <Typography
-            component="div"
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            <Box p={3}>{children}</Box>
-        </Typography>
-    );
+    const { children, selectedTab, index, ...other } = props;
+    if (index === 0) {
+        console.log('InfoPage  ', InfoPage);
+        return (
+            <SyncPage />
+        );
+    } else if (index === 1) {
+        console.log('SyncPage  ', SyncPage);
+        return (
+            <SyncPage />
+        );
+    } else if (index === 2) {
+        console.log('SetupPage  ', SetupPage);
+        return (
+            <SetupPage />
+        );
+    } else {
+        return (
+            <Typography
+                component="div"
+                role="tabpanel"
+                hidden={selectedTab !== index}
+                id={`simple-tabpanel-${index}`}
+                aria-labelledby={`simple-tab-${index}`}
+                {...other}
+            >
+                <Box p={3}>{children}</Box>
+            </Typography>
+        );
+    }
 }
 
 function a11yProps(index) {
@@ -42,7 +65,7 @@ class MainPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: 0
+            selectedTab: 0
         };
     }
 
@@ -56,46 +79,40 @@ class MainPage extends Component {
         console.log(newValue);
 
         this.setState({
-            value: newValue
+            selectedTab: newValue
         });
     };
 
     render() {
         const { classes } = this.props;
-        const value = this.state.value;
+        const selectedTab = this.state.selectedTab;
 
         return (
             <React.Fragment>
-            <div className={classes.mainPage} >
-                <AppBar position="absolute">
-                    <Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
-                        <Tab label="정보" {...a11yProps(0)} />
-                        <Tab label="동기화" {...a11yProps(1)} />
-                        <Tab label="환경설정" {...a11yProps(2)} />
-                    </Tabs>
-                </AppBar>
-                <TabPanel value={value} index={0} style={{border: '1px solid yellow'}}>
-                    Item One
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    Item Two
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                    Item Three
-                </TabPanel>
-
-
-                <div className={classes.rcMainTitle}>
-                    MAIN
+                <div className={classes.mainPage} >
+                    <AppBar position="absolute">
+                        <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
+                            <Tab label="정보" {...a11yProps(0)} />
+                            <Tab label="동기화" {...a11yProps(1)} />
+                            <Tab label="환경설정" {...a11yProps(2)} />
+                        </Tabs>
+                    </AppBar>
+                    <Paper elevation={0} style={{ maxHeight: 460, overflow: 'auto' }} >
+                    {selectedTab === 0 && <InfoPage />}
+                    {selectedTab === 1 && <SyncPage />}
+                    {selectedTab === 2 && <SetupPage />}
+                    </Paper>
+                    <div className={classes.rcMainTitle}>
+                        MAIN
                 </div>
-                <div style={{ textAlign: "center" }}>
-                    ----<br />
-                    ----<br />
-                    ----<br />
-                    ----<br />
-                    ----<br />
+                    <div style={{ textAlign: "center" }}>
+                        ----<br />
+                        ----<br />
+                        ----<br />
+                        ----<br />
+                        ----<br />
+                    </div>
                 </div>
-            </div>
             </React.Fragment>
         );
     }
