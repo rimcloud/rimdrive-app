@@ -1,5 +1,5 @@
 
-import { grLayout } from "templates/styles/CommonLayout";
+import { commonLayout } from "templates/styles/CommonLayout";
 
 export const CommonStyle = theme => ({
 
@@ -18,8 +18,8 @@ export const CommonStyle = theme => ({
     },
     fullMain: {
         marginRight: 0,
-        marginLeft: grLayout.sideBarWidth,
-        marginTop: grLayout.headerHeight,
+        marginLeft: commonLayout.sideBarWidth,
+        marginTop: commonLayout.headerHeight,
         flex: 1,
         zIndex: 1200,
         minWidth: 0,
@@ -29,7 +29,7 @@ export const CommonStyle = theme => ({
     fullWideMain: {
         marginRight: 0,
         marginLeft: 0,
-        marginTop: grLayout.headerHeight,
+        marginTop: commonLayout.headerHeight,
         flex: 1,
         zIndex: 1200,
         minWidth: 0,
@@ -44,7 +44,7 @@ export const CommonStyle = theme => ({
         flexDirection: "row",
         zIndex: 1300,
         position: "fixed",
-        height: grLayout.headerHeight,
+        height: commonLayout.headerHeight,
         padding: 0,
         margin: 0,
         boxShadow: "none",
@@ -52,13 +52,13 @@ export const CommonStyle = theme => ({
 
     headerToolbar: {
         flexDirection: "row",
-        minHeight: grLayout.headerHeight,
+        minHeight: commonLayout.headerHeight,
         width: "100%"
     },
 
     headerBrandLogo: {
         color: "white",
-        width: "calc(" + grLayout.sideBarWidth + " - 24px)",
+        width: "calc(" + commonLayout.sideBarWidth + " - 24px)",
         paddingLeft: 0,
         paddingRight: 0
     },
@@ -74,11 +74,11 @@ export const CommonStyle = theme => ({
         marginTop: 0,
         height:
             "calc(100vh - " +
-            grLayout.headerHeight +
+            commonLayout.headerHeight +
             " - " +
-            grLayout.breadcrumbHeight +
+            commonLayout.breadcrumbHeight +
             " - " +
-            grLayout.footerHeight +
+            commonLayout.footerHeight +
             " - " +
             "20px" +
             ")",
@@ -107,11 +107,11 @@ export const CommonStyle = theme => ({
     },
 
     menuContainerClass: {
-        top: grLayout.headerHeight + " !important",
+        top: commonLayout.headerHeight + " !important",
         position: "fixed",
         zIndex: 1019,
-        width: grLayout.sideBarWidth,
-        height: "calc(100vh - " + grLayout.headerHeight + ") !important",
+        width: commonLayout.sideBarWidth,
+        height: "calc(100vh - " + commonLayout.headerHeight + ") !important",
         flex: "0 0 200px",
         order: "-1",
         transition: "margin-left 0.25s, margin-right 0.25s, width 0.25s, flex 0.25s",
@@ -139,7 +139,7 @@ export const CommonStyle = theme => ({
     menuFooterRoot: {
         textAlign: "right",
         padding: "0.5rem 1rem",
-        height: grLayout.footerHeight,
+        height: commonLayout.footerHeight,
         borderTop: "1px solid #a4b7c1",
         minWidth: 700
     },
@@ -156,7 +156,7 @@ export const CommonStyle = theme => ({
         marginTop: 0,
         marginBottom: 0,
         listStyle: "none",
-        height: grLayout.breadcrumbHeight,
+        height: commonLayout.breadcrumbHeight,
         alignItems: "center"
     },
     breadcrumbParentMenu: {

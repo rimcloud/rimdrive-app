@@ -1,4 +1,4 @@
-export const grLayout = {
+export const commonLayout = {
 
   headerHeight: "55px",
   pageHeaderHeight: "19px",
