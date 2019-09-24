@@ -46,6 +46,7 @@ class LoginPage extends Component {
 
         return (
             <React.Fragment>
+                <div className={classes.homeFull}>
                 <div>
                     <TextField
                         id="user-id"
@@ -71,7 +72,8 @@ class LoginPage extends Component {
                         variant="contained" color="primary"
                         onClick={this.handleLoginBtnClick} >
                         login
-                </Button>
+                    </Button>
+                </div>
                 </div>
             </React.Fragment>
         );

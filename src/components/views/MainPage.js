@@ -63,14 +63,15 @@ class MainPage extends Component {
     render() {
         const { classes } = this.props;
         const value = this.state.value;
+
         return (
             <React.Fragment>
-            <div style={{border: '10px solid green', margin: 0}}>
+            <div className={classes.mainPage} >
                 <AppBar position="absolute">
                     <Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
                         <Tab label="정보" {...a11yProps(0)} />
                         <Tab label="동기화" {...a11yProps(1)} />
-                        <Tab label="환경 설정" {...a11yProps(2)} />
+                        <Tab label="환경설정" {...a11yProps(2)} />
                     </Tabs>
                 </AppBar>
                 <TabPanel value={value} index={0} style={{border: '1px solid yellow'}}>

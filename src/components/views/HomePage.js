@@ -16,18 +16,20 @@ class HomePage extends Component {
         const { classes } = this.props;
         return (
             <React.Fragment>
-            <div className={classes.rcMainTitle}>
-                    RIMDRIVE
-            </div>
-            <div style={{textAlign:"center"}}>
-                <Button className={classes.GRIconSmallButton} 
-                    variant="contained" color="secondary" 
-                    onClick={this.handleStartBtnClick} 
-                    component={Link}
-                    to="/Login">
-                    START
-                </Button>
-            </div>
+                <div className={classes.homeFull}>
+                    <div className={classes.rcMainTitle}>
+                            RIMDRIVE
+                    </div>
+                    <div style={{textAlign:"center"}}>
+                        <Button className={classes.GRIconSmallButton} 
+                            variant="contained" color="secondary" 
+                            onClick={this.handleStartBtnClick} 
+                            component={Link}
+                            to="/Login">
+                            START
+                        </Button>
+                    </div>
+                </div>
             </React.Fragment>
         );
     }

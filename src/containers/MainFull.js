@@ -15,7 +15,7 @@ class MainFull extends Component {
     render() {
       const { classes } = this.props;
       return (
-        <div className={classes.fullRoot}>
+        <div>
           <RCRouters />
         </div>
       )

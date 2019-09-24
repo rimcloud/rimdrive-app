@@ -4,18 +4,49 @@ import { commonLayout } from "templates/styles/CommonLayout";
 export const CommonStyle = theme => ({
 
     // Full page. - main container
-    fullRoot: {
-        minHeight: "98vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        
+    fullRoot_1: {
         border: "1px solid red",
         
         // backgroundColor: "#efefef",
         // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
-        // backgroundImage: "linear-gradient(#517cff, #ffa500)",
-        backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+    },
+
+    fullRoot: {
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        // backgroundColor: "#efefef",
+        // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
+        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+    },
+
+    homeFull: {
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        // backgroundColor: "#efefef",
+        // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
+        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+    },
+
+    fullRoot_old: {
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        // backgroundColor: "#efefef",
+        // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
+        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
     },
 
     rcCenter: {
@@ -30,6 +61,18 @@ export const CommonStyle = theme => ({
         margin: "16px"
     },
 
+    mainPage: {
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        
+        // backgroundColor: "#efefef",
+        // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
+        // backgroundImage: "linear-gradient(#517cff, #ffa500)",
+        backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+    },
 
 
     appBody: {
