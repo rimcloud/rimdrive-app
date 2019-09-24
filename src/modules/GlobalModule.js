@@ -9,11 +9,8 @@ const CHG_STORE_DATA = 'global/CHG_STORE_DATA';
 
 // ...
 const initialState = Map({
-
     popoverElement: null,
     popoverText: ''
-
-
 });
 
 export const showElementMsg = (elementObj, text) => dispatch => {

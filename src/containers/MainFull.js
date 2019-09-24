@@ -8,22 +8,15 @@ import * as GlobalActions from 'modules/GlobalModule';
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import Button from '@material-ui/core/Button';
+import RCRouters from "containers/RCRouters/";
 
 class MainFull extends Component {
 
-  handleAddClientInGroup = (e) => {
-    console.log(e);
-  }
-
     render() {
+      const { classes } = this.props;
       return (
-        <div>
-        
-        <Button onClick={this.handleAddClientInGroup} >
-                BUTTON
-                    </Button>
-        
+        <div className={classes.fullRoot}>
+          <RCRouters />
         </div>
       )
     }

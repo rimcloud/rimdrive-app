@@ -5,10 +5,33 @@ export const CommonStyle = theme => ({
 
     // Full page. - main container
     fullRoot: {
-        minHeight: "100vh",
+        minHeight: "98vh",
         display: "flex",
-        flexDirection: "column"
+        alignItems: "center",
+        justifyContent: "center",
+        
+        border: "1px solid red",
+        
+        // backgroundColor: "#efefef",
+        // backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
+        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        
     },
+
+    rcCenter: {
+        margin: "auto",
+        maxWidth: "50%",
+    },
+
+    rcMainTitle: {
+        color: "#3a3a3a",
+        textAlign: "center",
+        fontSize: "40px",
+        margin: "16px"
+    },
+
+
+
     appBody: {
         marginTop: 0,
         display: "flex",
