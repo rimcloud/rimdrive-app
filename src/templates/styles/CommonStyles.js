@@ -1,5 +1,5 @@
 
-import { grLayout } from "../default/CommonLayout";
+import { grLayout } from "templates/styles/CommonLayout";
 
 export const CommonStyle = theme => ({
 

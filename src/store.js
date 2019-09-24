@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import modules from './modules';
+import modules from 'modules';
 
 import ReduxThunk from 'redux-thunk';
-import loggerMiddleware from './lib/loggerMiddleware';
+import loggerMiddleware from 'lib/loggerMiddleware';
 
 // const customizedPromiseMiddleware = promiseMiddleware({
 //     promiseTypeSuffixes: ['LOADING', 'SUCCESS', 'FAILURE']
