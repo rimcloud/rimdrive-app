@@ -1,38 +1,18 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 
-// import logo from './logo.svg';
-import './App.css';
+import MainFull from './containers/MainFull/';
 
 class App extends Component {
   render() {
+      console.log('============================');
+      console.log(MainFull);
       return (
           <div>
-              <Route path="/" component={GRFull}/>
+              <Route path="/" component={MainFull}/>
           </div>
       );
   }
 }
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React2
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
 
 export default App;
