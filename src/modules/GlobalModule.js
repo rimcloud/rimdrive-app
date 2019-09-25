@@ -1,8 +1,9 @@
 
 import { handleActions } from 'redux-actions';
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 const INIT_SYNCDATA_SUCCESS = 'global/INIT_SYNCDATA_SUCCESS';
+const ADD_SYNCDATA_SUCCESS = 'global/ADD_SYNCDATA_SUCCESS';
 
 const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';
@@ -13,7 +14,7 @@ const CHG_STORE_DATA = 'global/CHG_STORE_DATA';
 const initialState = Map({
     popoverElement: null,
     popoverText: '',
-    syncData: ''
+    syncData: Map({})
 });
 
 export const showElementMsg = (elementObj, text) => dispatch => {
@@ -45,6 +46,12 @@ export const initSyncData = (param) => dispatch => {
     });
 };
 
+export const addSyncItemData = () => dispatch => {
+    return dispatch({
+        type: ADD_SYNCDATA_SUCCESS
+    });
+};
+
 export default handleActions({
 
     [CHG_STORE_DATA]: (state, action) => {
@@ -67,6 +74,43 @@ export default handleActions({
             syncData: action.syncData
         });
     },
+    [ADD_SYNCDATA_SUCCESS]: (state, action) => {
+        let beforeCount = 0;
+        if(state.getIn(['syncData', 'rimdrive'])) {
+            if(state.getIn(['syncData', 'rimdrive', 'sync']).size === 1) {
+                beforeCount = 1;
+            }
+        } else {
+            beforeCount = 0;
+        }
+
+        if(beforeCount === 0) {
+            return state
+            .set('syncData', fromJS({
+                rimdrive: {
+                    sync: [{
+                        "no": 1,
+                        "pclocation": "",
+                        "cloudlocation": "",
+                        "type": "a",
+                        "status": "on"
+                    }]
+                }
+            }));
+        } else if(beforeCount === 1) {
+            const newNo = Number(state.getIn(['syncData', 'rimdrive', 'sync', 0, 'no'])) + 1;
+            const newSync = state.getIn(['syncData', 'rimdrive', 'sync']).push(fromJS({
+                        "no": newNo,
+                        "pclocation": "",
+                        "cloudlocation": "",
+                        "type": "a",
+                        "status": "on"
+            }));
+            return state.setIn(['syncData', 'rimdrive', 'sync'], newSync);
+        } else {
+            return state;
+        }
+    }
 
 }, initialState);
 

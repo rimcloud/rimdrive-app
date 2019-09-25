@@ -7,6 +7,7 @@ import {CommonStyle} from 'templates/styles/CommonStyles';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
+import * as GlobalActions from 'modules/GlobalModule';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 
@@ -16,39 +17,11 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
 class SyncPage extends Component {
     
     componentDidMount() {
         const { GlobalProps } = this.props;
         console.log('SyncPage : componentDidMount');
-
-        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
-            console.log('-1-');
-            const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
-            console.log('-11-', syncs);
-            if(syncs && syncs.length > 0) {
-                console.log('-2-');
-                syncs.map(s => {
-                    console.log(s);
-                })
-            }
-        }
-        // console.log('SyncPage -> componentDidMount.GlobalProps ::: ', (GlobalProps) ? GlobalProps.toJS() : '---');
-    }
-
-    handleLoginBtnClick = (e) => {
-        const {AccountActions, AccountProps} = this.props;
-        console.log('AccountProps ::: ', (AccountProps)
-            ? AccountProps.toJS()
-            : '--');
-        AccountActions.reqLoginProcess(AccountProps.get('id'), AccountProps.get('password'));
     }
 
     handleChangeValue = name => event => {
@@ -66,21 +39,36 @@ class SyncPage extends Component {
         }
     }
 
-    handleClose = (e) => {
 
+    handleAddSyncClick = () => {
+        const { GlobalProps } = this.props;
+        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']) && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).size > 1) {
+            alert('동기화 항목은 최대 두개만 가능합니다.');
+        } else {
+            // 디폴트 동기화 항목 추가
+            const { GlobalActions } = this.props;
+            GlobalActions.addSyncItemData();
+        }
+    }
+
+    handleClose = (e) => {
+        const { GlobalProps } = this.props;
     }
 
     render() {
         const {classes} = this.props;
         const { GlobalProps } = this.props;
 
-        const open = true;
-
-        let currSyncData = [];
+        let currSyncDatas = [];
+        console.log('render.....');
         if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
+            console.log('-1-');
             const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
-            if(syncs && syncs.length > 0) {
-                currSyncData = syncs;
+            console.log('syncs ::: ', syncs);
+            if(syncs && syncs.size > 0) {
+                console.log('-2-');
+                currSyncDatas = syncs;
+                console.log('currSyncDatas ::: ', currSyncDatas);
             }
         }
 
@@ -92,46 +80,20 @@ class SyncPage extends Component {
                         파일 동기화 추가
                     </Button>
                 </Box>
-                {currSyncData && currSyncData.map(s => (
-                    <Card className={classes.card} key={s.no}>
-                        <RCContentCardHeader title={`NO.${s.no}`} subheader=""/>
+                {currSyncDatas && currSyncDatas.map(s => (
+                    <Card className={classes.card} key={s.get('no')}>
+                        <RCContentCardHeader title={`NO.${s.get('no')}`} subheader=""/>
                         <CardContent>
                             <Typography variant="body2" component="p">
-                                PC폴더 : {s.pclocation}
+                                PC폴더 : {s.get('pclocation')}
                             </Typography>
                             <Typography variant="body2" component="p">
-                                저장소폴더 : {s.cloudlocation}
+                                저장소폴더 : {s.get('cloudlocation')}
                             </Typography>
                         </CardContent>
                     </Card>
                 ))
                 }
-
-                <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    To subscribe to this website, please enter your email address here. We will send updates
-                    occasionally.
-                  </DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Email Address"
-                    type="email"
-                    fullWidth
-                  />
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={this.handleClose} color="primary">
-                    Cancel
-                  </Button>
-                  <Button onClick={this.handleClose} color="primary">
-                    Subscribe
-                  </Button>
-                </DialogActions>
-              </Dialog>
 
             </React.Fragment>
         );
@@ -144,7 +106,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    AccountActions: bindActionCreators(AccountActions, dispatch)
+    AccountActions: bindActionCreators(AccountActions, dispatch),
+    GlobalActions: bindActionCreators(GlobalActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(SyncPage));
