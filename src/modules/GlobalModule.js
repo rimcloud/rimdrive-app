@@ -40,6 +40,9 @@ export const changeStoreData = (param) => dispatch => {
 };
 
 export const initSyncData = (param) => dispatch => {
+
+    console.log('param : :: ', param);
+
     return dispatch({
         type: INIT_SYNCDATA_SUCCESS,
         syncData: param.syncData
@@ -70,6 +73,8 @@ export default handleActions({
         });
     },
     [INIT_SYNCDATA_SUCCESS]: (state, action) => {
+
+        console.log('action.syncData : :: ', action.syncData);
         return state.merge({
             syncData: action.syncData
         });

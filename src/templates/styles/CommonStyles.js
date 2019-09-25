@@ -85,6 +85,14 @@ export const CommonStyle = theme => ({
         // solid red", margin: "10px" backgroundImage: "linear-gradient(#aec1fb,
         // #fbdeaa)"
 
-    }
+    },
+
+
+
+    RCSmallButton: {
+        padding: "0px 2px 0px 2px",
+        minWidth: "26px",
+        minHeight: "24px"
+    },
 
 });

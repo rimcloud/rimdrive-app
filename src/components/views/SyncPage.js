@@ -10,6 +10,7 @@ import * as AccountActions from 'modules/AccountModule';
 import * as GlobalActions from 'modules/GlobalModule';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+import SyncItem from 'components/parts/SyncItem'
 
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
@@ -60,38 +61,22 @@ class SyncPage extends Component {
         const { GlobalProps } = this.props;
 
         let currSyncDatas = [];
-        console.log('render.....');
         if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
-            console.log('-1-');
             const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
-            console.log('syncs ::: ', syncs);
             if(syncs && syncs.size > 0) {
-                console.log('-2-');
                 currSyncDatas = syncs;
-                console.log('currSyncDatas ::: ', currSyncDatas);
             }
         }
 
         return (
             <React.Fragment>
-
                 <Box style={{padding:8, textAlign:'right'}}>
                     <Button onClick={this.handleAddSyncClick} variant="contained" color="primary">
                         파일 동기화 추가
                     </Button>
                 </Box>
                 {currSyncDatas && currSyncDatas.map(s => (
-                    <Card className={classes.card} key={s.get('no')}>
-                        <RCContentCardHeader title={`NO.${s.get('no')}`} subheader=""/>
-                        <CardContent>
-                            <Typography variant="body2" component="p">
-                                PC폴더 : {s.get('pclocation')}
-                            </Typography>
-                            <Typography variant="body2" component="p">
-                                저장소폴더 : {s.get('cloudlocation')}
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                    <SyncItem item={s} key={s.get('no')} />
                 ))
                 }
 

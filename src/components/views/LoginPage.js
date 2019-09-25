@@ -68,7 +68,7 @@ class LoginPage extends Component {
                     />
                 </div>
                 <div className={classes.rcMainTitle}>
-                    <Button className={classes.GRIconSmallButton}
+                    <Button className={classes.RCSmallButton}
                         variant="contained" color="primary"
                         onClick={this.handleLoginBtnClick} >
                         login

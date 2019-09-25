@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 import fs from 'fs';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -26,7 +26,7 @@ class HomePage extends Component {
 
         if(syncData !== undefined && syncData !== '') {
             GlobalActions.initSyncData({
-                syncData: new Map(JSON.parse(syncData))
+                syncData: fromJS(JSON.parse(syncData))
             });
         }
     }
@@ -44,7 +44,7 @@ class HomePage extends Component {
                             RIMDRIVE
                     </div>
                     <div style={{textAlign:"center"}}>
-                        <Button className={classes.GRIconSmallButton} 
+                        <Button className={classes.RCSmallButton} 
                             variant="contained" color="secondary" 
                             onClick={this.handleStartBtnClick} 
                             component={Link}
