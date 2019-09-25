@@ -90,28 +90,16 @@ class MainPage extends Component {
         return (
             <React.Fragment>
                 <div className={classes.mainPage} >
-                    <AppBar position="absolute">
+                    <AppBar position="relative" style={{backgroundColor:'#2c387b'}}>
                         <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
                             <Tab label="정보" {...a11yProps(0)} />
                             <Tab label="동기화" {...a11yProps(1)} />
                             <Tab label="환경설정" {...a11yProps(2)} />
                         </Tabs>
                     </AppBar>
-                    <Paper elevation={0} style={{ maxHeight: 460, overflow: 'auto' }} >
-                    {selectedTab === 0 && <InfoPage />}
-                    {selectedTab === 1 && <SyncPage />}
-                    {selectedTab === 2 && <SetupPage />}
-                    </Paper>
-                    <div className={classes.rcMainTitle}>
-                        MAIN
-                </div>
-                    <div style={{ textAlign: "center" }}>
-                        ----<br />
-                        ----<br />
-                        ----<br />
-                        ----<br />
-                        ----<br />
-                    </div>
+                        {selectedTab === 0 && <InfoPage />}
+                        {selectedTab === 1 && <SyncPage />}
+                        {selectedTab === 2 && <SetupPage />}
                 </div>
             </React.Fragment>
         );

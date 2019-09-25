@@ -46,7 +46,7 @@ class LoginPage extends Component {
 
         return (
             <React.Fragment>
-                <div className={classes.homeFull}>
+                <div className={classes.homePage}>
                 <div>
                     <TextField
                         id="user-id"

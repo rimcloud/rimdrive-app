@@ -40,7 +40,7 @@ class SetupPage extends Component {
 
         return (
             <React.Fragment>
-                <div className={classes.mainPage}>
+                <div className={classes.contentPage}>
                 <div>
                     환경설정
                 </div>
