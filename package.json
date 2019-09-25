@@ -5,7 +5,9 @@
   "main": "public/rimdriveApp.js",
   "dependencies": {
     "@material-ui/core": "^4.4.3",
+    "@material-ui/icons": "^4.4.3",
     "axios": "^0.19.0",
+    "classnames": "^2.2.6",
     "electron-is-dev": "^1.1.0",
     "immutable": "^4.0.0-rc.12",
     "qs": "^6.9.0",
@@ -19,12 +21,12 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "rescripts start",
+    "build": "rescripts build",
+    "test": "rescripts test",
     "eject": "react-scripts eject",
     "electron-start": "electron .",
-    "electron-dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\""
+    "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -42,6 +44,8 @@
     ]
   },
   "devDependencies": {
+    "@rescripts/cli": "^0.0.12",
+    "@rescripts/rescript-env": "^0.0.10",
     "concurrently": "^4.1.2",
     "cross-env": "^6.0.0",
     "electron": "^6.0.10",
