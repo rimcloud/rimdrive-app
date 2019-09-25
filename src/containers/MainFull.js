@@ -8,16 +8,21 @@ import * as GlobalActions from 'modules/GlobalModule';
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import RCRouters from "containers/RCRouters/";
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+import RCRouters from 'containers/RCRouters';
+import GRTheme from 'templates/theme/CommonTheme';
 
 class MainFull extends Component {
 
     render() {
       const { classes } = this.props;
       return (
+        <MuiThemeProvider theme={createMuiTheme(GRTheme)}>
         <div>
           <RCRouters />
         </div>
+        </MuiThemeProvider>
       )
     }
 
