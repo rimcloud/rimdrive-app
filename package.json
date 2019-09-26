@@ -1,8 +1,28 @@
 {
   "name": "rimdrive-app",
+  "description": "cloudrim storage client app",
   "version": "0.1.0",
   "private": true,
-  "main": "public/rimdriveTrayApp.js",
+  "author": {
+    "name": "syhan",
+    "email": "syhan@cloudrim.co.kr",
+    "url": "https://cloudrim.co.kr"
+  },
+  "build": {
+    "appId": "com.cloudrim.rimdrive.app",
+    "productName": "RimdriveApp",
+    "copyright": "Copyright © 2019 ${author}",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
   "dependencies": {
     "@material-ui/core": "^4.4.3",
     "@material-ui/icons": "^4.4.3",
@@ -20,13 +40,17 @@
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
   },
+  "homepage": "./",
+  "main": "public/electron.js",
   "scripts": {
     "start": "rescripts start",
-    "build": "rescripts build",
+    "build": "cross-env NODE_PATH=src rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
-    "electron-start": "electron .",
-    "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\""
+    "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "electron-pack": "electron-builder -w"
   },
   "eslintConfig": {
     "extends": "react-app"
