@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import { fromJS } from 'immutable';
 import fs from 'fs';
 
 import {withStyles} from '@material-ui/core/styles';
@@ -9,20 +10,25 @@ import {connect} from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
 import * as GlobalActions from 'modules/GlobalModule';
 
-import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 import SyncItem from 'components/parts/SyncItem'
 
 import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 class SyncPage extends Component {
-    
+
     componentDidMount() {
-        const { GlobalProps } = this.props;
+        const { GlobalActions } = this.props;
         console.log('SyncPage : componentDidMount');
+
+        fs.readFile('rimdrive-app.cfg', 'utf8', (err, syncData) => {
+            console.log('syncData ::', syncData);
+            if(syncData !== undefined && syncData !== '') {
+                 GlobalActions.initSyncData({
+                     syncData: fromJS(JSON.parse(syncData))
+                 });
+            }
+        });
     }
 
     handleChangeValue = name => event => {
@@ -40,7 +46,6 @@ class SyncPage extends Component {
         }
     }
 
-
     handleAddSyncClick = () => {
         const { GlobalProps } = this.props;
         if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']) && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).size > 1) {
@@ -52,12 +57,7 @@ class SyncPage extends Component {
         }
     }
 
-    handleClose = (e) => {
-        const { GlobalProps } = this.props;
-    }
-
     render() {
-        const {classes} = this.props;
         const { GlobalProps } = this.props;
 
         let currSyncDatas = [];
@@ -68,15 +68,17 @@ class SyncPage extends Component {
             }
         }
 
+        console.log('currSyncDatas::: ', currSyncDatas);
+
         return (
             <React.Fragment>
-                <Box style={{padding:8, textAlign:'right'}}>
+                <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>
                     <Button onClick={this.handleAddSyncClick} variant="contained" color="primary">
                         파일 동기화 추가
                     </Button>
                 </Box>
-                {currSyncDatas && currSyncDatas.map(s => (
-                    <SyncItem item={s} key={s.get('no')} />
+                {currSyncDatas && currSyncDatas.map((s, i) => (
+                    <SyncItem item={s} key={s.get('no')} isFirst={i === 0 ? true : false} />
                 ))
                 }
 

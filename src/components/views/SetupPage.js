@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -7,10 +6,6 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
-
-import Button from '@material-ui/core/Button';
-
-import TextField from '@material-ui/core/TextField';
 
 class SetupPage extends Component {
 
@@ -36,8 +31,6 @@ class SetupPage extends Component {
 
     render() {
         const { classes } = this.props;
-        const { AccountProps } = this.props;
-
         return (
             <React.Fragment>
                 <div className={classes.contentPage}>

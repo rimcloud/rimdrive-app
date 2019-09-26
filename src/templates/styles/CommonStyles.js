@@ -1,4 +1,3 @@
-import {commonLayout} from "templates/styles/CommonLayout";
 
 export const CommonStyle = theme => ({
 
@@ -59,6 +58,21 @@ export const CommonStyle = theme => ({
         // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0,
         // #ffa500)" backgroundImage: "linear-gradient(#517cff, #ffa500)",
         backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+    },
+
+    //
+
+    syncItemCardFirst: {
+        minWidth: 275,
+        marginTop: 0,
+        marginLeft: 18,
+        marginRight: 18
+    },
+    syncItemCard: {
+        minWidth: 275,
+        marginTop: 18,
+        marginLeft: 18,
+        marginRight: 18
     },
 
     card: {

@@ -7,52 +7,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-
-import { Link } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-
-
-
 import InfoPage from 'components/views/InfoPage';
 import SyncPage from 'components/views/SyncPage';
 import SetupPage from 'components/views/SetupPage';
 
-function TabPanel(props) {
-
-    const { children, selectedTab, index, ...other } = props;
-    if (index === 0) {
-        console.log('InfoPage  ', InfoPage);
-        return (
-            <SyncPage />
-        );
-    } else if (index === 1) {
-        console.log('SyncPage  ', SyncPage);
-        return (
-            <SyncPage />
-        );
-    } else if (index === 2) {
-        console.log('SetupPage  ', SetupPage);
-        return (
-            <SetupPage />
-        );
-    } else {
-        return (
-            <Typography
-                component="div"
-                role="tabpanel"
-                hidden={selectedTab !== index}
-                id={`simple-tabpanel-${index}`}
-                aria-labelledby={`simple-tab-${index}`}
-                {...other}
-            >
-                <Box p={3}>{children}</Box>
-            </Typography>
-        );
-    }
-}
 
 function a11yProps(index) {
     return {
@@ -69,15 +27,7 @@ class MainPage extends Component {
         };
     }
 
-
-    handleStartBtnClick = (e) => {
-        console.log(e);
-    }
-
     handleChange = (event, newValue) => {
-
-        console.log(newValue);
-
         this.setState({
             selectedTab: newValue
         });
@@ -106,6 +56,4 @@ class MainPage extends Component {
     }
 }
 
-
 export default withStyles(CommonStyle)(MainPage);
-

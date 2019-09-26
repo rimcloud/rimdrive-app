@@ -16,7 +16,6 @@ import CommonTheme from 'templates/theme/CommonTheme';
 class MainFull extends Component {
 
     render() {
-      const { classes } = this.props;
       return (
         <MuiThemeProvider theme={createMuiTheme(CommonTheme)}>
         <div>

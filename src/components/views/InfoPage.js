@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import {Redirect} from 'react-router';
 
 import {withStyles} from '@material-ui/core/styles';
 import {CommonStyle} from 'templates/styles/CommonStyles';
@@ -49,9 +48,7 @@ class InfoPage extends Component {
 
     render() {
         const {classes} = this.props;
-        const {AccountProps} = this.props;
-
-        const bull = <span className={classes.bullet}>•</span>;
+        
         return (
             <React.Fragment>
                 <Card className={classes.card}>
@@ -98,11 +95,6 @@ class InfoPage extends Component {
                                 <TableCell align="right">340 B</TableCell>
                             </TableRow>
                             <TableRow key={3}>
-                                <TableCell component="th" scope="row">2</TableCell>
-                                <TableCell align="right">10 GB</TableCell>
-                                <TableCell align="right">0 B</TableCell>
-                            </TableRow>
-                            <TableRow key={4}>
                                 <TableCell component="th" scope="row">2</TableCell>
                                 <TableCell align="right">10 GB</TableCell>
                                 <TableCell align="right">0 B</TableCell>

@@ -11,6 +11,8 @@ import * as GlobalActions from 'modules/GlobalModule';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -48,13 +50,28 @@ class SyncItem extends Component {
         }
     }
 
-    handleClose = (e) => {
-        const { GlobalProps } = this.props;
+    checkType = value => {
+        return (value !== 'm');
+    }
+
+    handleTypeChange = name => event => {
+        const { GlobalActions, item } = this.props;
+        const value = (event.target.type === 'checkbox') ? ((event.target.checked) ? 'a' : 'm') : event.target.value;
+        GlobalActions.chgSyncTypeData({
+            no: item.get('no'),
+            value: value
+        });
+
+        // const value = (event.target.type === 'checkbox') ? ((event.target.checked) ? 'allow' : 'disallow') : event.target.value;
+        // this.props.MediaRuleActions.setEditingItemValue({
+        //     name: name,
+        //     value: value
+        // });
     }
 
     render() {
         const { classes } = this.props;
-        const { item, key, GlobalProps } = this.props;
+        const { item, key } = this.props;
         console.log('-render item- ', item.toJS());
         // let currSyncDatas = [];
         // let item = null;
@@ -74,11 +91,11 @@ class SyncItem extends Component {
         return (
             <React.Fragment>
             {item && 
-            <Card className={classes.card} key={key}>
+            <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key}>
                 <RCContentCardHeader title={`#. ${item.get('no')}`} subheader=""/>
                 <CardContent>
                     <Grid container spacing={3}>
-                        <Grid item xs><Typography variant="body2" component="p">PC폴더</Typography></Grid>
+                        <Grid item xs={2}><Typography variant="body2" component="p">PC폴더</Typography></Grid>
                         <Grid item xs={8}><TextField
                                 id="pcloc"
                                 value={item.get('pclocation')}
@@ -97,7 +114,7 @@ class SyncItem extends Component {
                     </Grid>
 
                     <Grid container spacing={3}>
-                        <Grid item xs><Typography variant="body2" component="p">저장소폴더</Typography></Grid>
+                        <Grid item xs={2}><Typography variant="body2" component="p">저장소폴더</Typography></Grid>
                         <Grid item xs={8}><TextField
                                 id="cloudloc"
                                 value={item.get('cloudlocation')}
@@ -111,6 +128,29 @@ class SyncItem extends Component {
                             variant="contained" color="primary"
                             onClick={this.handleLoginBtnClick} >
                             수정
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={3}>
+                        <Grid item xs={2}><Typography variant="body2" component="p">작동구분</Typography></Grid>
+                        <Grid item xs={6}>
+                            <FormControlLabel 
+                                control={<Switch onChange={this.handleTypeChange('type')} 
+                                    checked={this.checkType(item.get('type'))}
+                                    color="primary" />}
+                                label={(item.get('type') === 'a') ? '자동실행' : '수동실행'}
+                            />
+                        </Grid>
+                        <Grid item xs={2} style={{textAlign: 'right'}}><Button className={classes.RCSmallButton}
+                        variant="contained" color="primary"
+                        onClick={this.handleLoginBtnClick} >
+                        바로실행
+                        </Button></Grid>
+                        <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
+                            variant="contained" color="secondary"
+                            onClick={this.handleLoginBtnClick} >
+                            삭제
                             </Button>
                         </Grid>
                     </Grid>

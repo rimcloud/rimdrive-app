@@ -53,9 +53,6 @@
           "root": {
             "paddingTop": 0,
             "paddingBottom": 0
-          },
-          "label": {
-            "marginTop": 14
           }
       },
       "MuiTableCell": {

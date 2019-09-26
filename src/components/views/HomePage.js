@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Map, fromJS } from 'immutable';
-import fs from 'fs';
+// import { Map, fromJS } from 'immutable';
+// import fs from 'fs';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -17,18 +17,18 @@ class HomePage extends Component {
 
     componentDidMount() {
         console.log('HomePage -> componentDidMount.=============');
-        const { GlobalActions } = this.props;
+        // const { GlobalActions } = this.props;
 
-        // File read (json)
+        // File read (json) temp delete
 
-        const syncData = fs.readFileSync('rimdrive-app.cfg', 'utf8');
-        console.log('syncData ::', syncData);
+        // const syncData = fs.readFileSync('rimdrive-app.cfg', 'utf8');
+        // console.log('syncData ::', syncData);
 
-        if(syncData !== undefined && syncData !== '') {
-            GlobalActions.initSyncData({
-                syncData: fromJS(JSON.parse(syncData))
-            });
-        }
+        // if(syncData !== undefined && syncData !== '') {
+        //     GlobalActions.initSyncData({
+        //         syncData: fromJS(JSON.parse(syncData))
+        //     });
+        // }
     }
 
     handleStartBtnClick = (e) => {

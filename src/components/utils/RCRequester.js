@@ -1,4 +1,4 @@
-import axios, { post }  from "axios";
+import axios from "axios";
 import qs from "qs";
 
 export const SERVER_URL = '/gpms/';

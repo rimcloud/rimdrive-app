@@ -4,6 +4,7 @@ import { Map, fromJS } from 'immutable';
 
 const INIT_SYNCDATA_SUCCESS = 'global/INIT_SYNCDATA_SUCCESS';
 const ADD_SYNCDATA_SUCCESS = 'global/ADD_SYNCDATA_SUCCESS';
+const CHG_SYNCTYPE_SUCCESS = 'global/CHG_SYNCTYPE_SUCCESS';
 
 const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';
@@ -40,9 +41,6 @@ export const changeStoreData = (param) => dispatch => {
 };
 
 export const initSyncData = (param) => dispatch => {
-
-    console.log('param : :: ', param);
-
     return dispatch({
         type: INIT_SYNCDATA_SUCCESS,
         syncData: param.syncData
@@ -52,6 +50,14 @@ export const initSyncData = (param) => dispatch => {
 export const addSyncItemData = () => dispatch => {
     return dispatch({
         type: ADD_SYNCDATA_SUCCESS
+    });
+};
+
+export const chgSyncTypeData = (param) => dispatch => {
+    return dispatch({
+        type: CHG_SYNCTYPE_SUCCESS,
+        syncNo: param.no,
+        value: param.value
     });
 };
 
@@ -73,12 +79,19 @@ export default handleActions({
         });
     },
     [INIT_SYNCDATA_SUCCESS]: (state, action) => {
-
-        console.log('action.syncData : :: ', action.syncData);
+        // console.log('action.syncData : :: ', action.syncData);
         return state.merge({
             syncData: action.syncData
         });
     },
+    [CHG_SYNCTYPE_SUCCESS]: (state, action) => {
+        state.getIn(['syncData', 'rimdrive', 'sync'])
+        const syncs = state.getIn(['syncData', 'rimdrive', 'sync']);
+        const index = syncs.findIndex(n => (n.get('no') === action.syncNo));
+        let item = state.getIn(['syncData', 'rimdrive', 'sync', index]);
+        item = item.set('type', action.value);
+        return state.setIn(['syncData', 'rimdrive', 'sync', index], item);
+    },    
     [ADD_SYNCDATA_SUCCESS]: (state, action) => {
         let beforeCount = 0;
         if(state.getIn(['syncData', 'rimdrive'])) {
