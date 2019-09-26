@@ -17,8 +17,11 @@ function createWindow() {
                 showRimdriveApp();
             },
         }, {
-            label: 'Item2',
-            type: 'radio'
+            label: 'Quit',
+            type: 'normal',
+            click() {
+                quitRimdriveApp();
+            },
         }
     ]);
     tray.setToolTip('Rimdrive 0.1');
@@ -69,7 +72,14 @@ app.on('activate', () => {
     }
 });
 
-
 const showRimdriveApp = () => {
     mainWindow.show();
 };
+
+const quitRimdriveApp = () => {
+    if (process.platform !== 'darwin') {
+        app.exit(0);
+        // mainWindow.close();
+    }
+};
+
