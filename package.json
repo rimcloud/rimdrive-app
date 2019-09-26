@@ -50,6 +50,7 @@
     "cross-env": "^6.0.0",
     "electron": "^6.0.10",
     "electron-builder": "^21.2.0",
+    "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
   }
 }
