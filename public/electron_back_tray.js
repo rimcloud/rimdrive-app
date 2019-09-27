@@ -8,7 +8,7 @@ let tray = null;
 
 function createWindow() {
 
-    tray = new Tray('assets/favicon.ico');
+    tray = new Tray(__dirname + '/rimdrive.ico');
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open Rimdrive',
@@ -37,7 +37,7 @@ function createWindow() {
     mainWindow.setMenu(null);
     mainWindow.loadURL(isDev
         ? 'http://localhost:3000'
-        : `file://${path.join(__dirname, '../build/index.html')}`);
+        : `file://${path.join(__dirname, '../build/index,html')}`);
 
     if (isDev) {
         // Open DevTools BrowserWindow.addDevToolsExtension(' ... ');
