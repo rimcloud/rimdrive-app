@@ -41,7 +41,7 @@ class HomePage extends Component {
             <React.Fragment>
                 <div className={classes.homePage}>
                     <div className={classes.rcMainTitle}>
-                            RIMDRIVE
+                            RIMDRIVE Ver 0.1
                     </div>
                     <div style={{textAlign:"center"}}>
                         <Button className={classes.RCSmallButton} 

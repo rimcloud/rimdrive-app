@@ -69,6 +69,34 @@ class SyncItem extends Component {
         // });
     }
 
+    handleDeleteItemClick = () => {
+        const { item, onDeleteItem } = this.props;
+        if(onDeleteItem) {
+            onDeleteItem(item.get('no'));
+        }
+    }
+
+    handleSelectLocalFolder = () => {
+        this.selectLocalFolder('./src');
+    };
+    selectLocalFolder = (folder) => {
+        console.log('folder ::: ', folder);
+        fs.readdir(folder, {withFileTypes: true}, (err, dir) => {
+            for (let i = 0, path; path = dir[i]; i++) {
+                // do stuff with path
+                if(path.isDirectory()) {
+                    this.selectLocalFolder(folder + '/' + path.name);
+                }
+            }
+        });
+    }
+
+    handleShowFolderDialog= (locType) => {
+        console.log('>>>>>>>>>>>>>>>  handleShowFolderDialog  <<<<<<<<<<<<<<<<<<<');
+        const { item } = this.props;
+        this.props.onShowFolderDialog(item.get('no'), locType);
+    }
+
     render() {
         const { classes } = this.props;
         const { item, key } = this.props;
@@ -107,7 +135,7 @@ class SyncItem extends Component {
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="primary"
-                            onClick={this.handleLoginBtnClick} >
+                            onClick={() => this.handleShowFolderDialog('local')} >
                             수정
                             </Button>
                         </Grid>
@@ -149,7 +177,7 @@ class SyncItem extends Component {
                         </Button></Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="secondary"
-                            onClick={this.handleLoginBtnClick} >
+                            onClick={this.handleDeleteItemClick} >
                             삭제
                             </Button>
                         </Grid>

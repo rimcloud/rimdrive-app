@@ -7,15 +7,25 @@ import {CommonStyle} from 'templates/styles/CommonStyles';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+
 import * as AccountActions from 'modules/AccountModule';
 import * as GlobalActions from 'modules/GlobalModule';
 
-import SyncItem from 'components/parts/SyncItem'
+import SyncItem from 'components/parts/SyncItem';
+import RCDialogConfirm from 'components/utils/RCDialogConfirm';
+import FolderTreeDialog from 'components/parts/FolderTreeDialog';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 class SyncPage extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedTab: 0
+        };
+    }
 
     componentDidMount() {
         const { GlobalActions } = this.props;
@@ -57,8 +67,51 @@ class SyncPage extends Component {
         }
     }
 
+    handleDeleteItem = (no) => {
+        const { GlobalProps, GlobalActions } = this.props;
+
+        let syncItem = [];
+        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
+            syncItem = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).find((n) => (n.get('no') === no));
+        }
+
+        GlobalActions.showConfirm({
+            confirmTitle: "동기화 삭제",
+            confirmMsg: "동기화 항목을 삭제 하시겠습니까?",
+            handleConfirmResult: (confirmValue, paramObject) => {
+                if(confirmValue) {
+                    const { GlobalActions } = this.props;
+                    GlobalActions.deleteSyncItemData({
+                        no: paramObject.get('no')
+                    });
+                }
+            },
+            confirmObject: syncItem
+        });
+    };
+
+    handleOpenFolderDialog = (syncNo, syncLoc) => {
+        this.setState({
+            openFolderDialog: true,
+            targetSyncNo: syncNo,
+            targetSyncLoc: syncLoc
+        })
+    }
+
+    handleSelectFolder = () => {
+        console.log('handleSelectFolder...');
+        this.setState({
+            openFolderDialog: false
+        });
+        const targetSyncNo = this.state.targetSyncNo;
+        const targetSyncLoc = this.state.targetSyncLoc;
+    }
+
+
     render() {
         const { GlobalProps } = this.props;
+
+        const openFolderDialog = this.state.openFolderDialog
 
         let currSyncDatas = [];
         if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
@@ -67,7 +120,6 @@ class SyncPage extends Component {
                 currSyncDatas = syncs;
             }
         }
-
         console.log('currSyncDatas::: ', currSyncDatas);
 
         return (
@@ -78,10 +130,15 @@ class SyncPage extends Component {
                     </Button>
                 </Box>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
-                    <SyncItem item={s} key={s.get('no')} isFirst={i === 0 ? true : false} />
+                    <SyncItem item={s} 
+                        key={s.get('no')} isFirst={i === 0 ? true : false} 
+                        onDeleteItem={this.handleDeleteItem}
+                        onShowFolderDialog={this.handleOpenFolderDialog}
+                    />
                 ))
                 }
-
+                <RCDialogConfirm />
+                <FolderTreeDialog open={openFolderDialog} onSelectFolder={this.handleSelectFolder} />
             </React.Fragment>
         );
     }

@@ -1,37 +1,14 @@
 {
   "name": "rimdrive-app",
+  "description": "cloudrim storage client app",
   "version": "0.1.0",
   "private": true,
   "main": "public/electron.js",
   "homepage": "./",
-  "author": {
-    "name": "syhan",
-    "email": "syhan@cloudrim.co.kr",
-    "url": "https://www.cloudrim.co.kr"
-  },
-
-
-  "build": {
-    "appId": "com.cloudrim.rimdrive.app",
-    "productName": "RimdriveApp",
-    "copyright": "Copyright © 2019 ${author}",
-    "mac": {
-      "category": "public.rimdrive-app.utilities"
-    },
-    "files": [
-      "build/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "buildResources": "assets"
-    }
-  },
-  
-  
-  
   "dependencies": {
     "@material-ui/core": "^4.4.3",
     "@material-ui/icons": "^4.4.3",
+    "@material-ui/lab": "^4.0.0-alpha.27",
     "axios": "^0.19.0",
     "classnames": "^2.2.6",
     "electron-is-dev": "^1.1.0",
@@ -46,18 +23,35 @@
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
   },
+  "author": {
+    "name": "syhan",
+    "email": "syhan@cloudrim.co.kr",
+    "url": "https://www.cloudrim.co.kr"
+  },
+  "build": {
+    "appId": "com.cloudrim.rimdrive.app",
+    "productName": "RimdriveApp",
+    "copyright": "Copyright © 2019 ${author}",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
   "scripts": {
     "start": "rescripts start",
-    "build": "rescripts build",
+    "build": "cross-env NODE_PATH=src rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
-    "electron-start": "electron .",
     "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "yarn build",
-    "electron-pack": "cross-env build NODE_PATH=src --em.main=build/electron.js",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "electron-pack": "electron-builder -w"
   },
   "eslintConfig": {
     "extends": "react-app"
