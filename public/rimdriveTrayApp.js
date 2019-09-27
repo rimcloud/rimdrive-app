@@ -8,7 +8,7 @@ let tray = null;
 
 function createWindow() {
 
-    tray = new Tray('assets/favicon.ico');
+    tray = new Tray(path.join(__dirname, '../build/assets/icons/win/rimdrive.ico'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open Rimdrive',
@@ -30,6 +30,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 600,
         height: 480,
+        icon: path.join(__dirname, 'assets/icons/win/rimdrive.ico'),
         webPreferences: {
             nodeIntegration: true
         }

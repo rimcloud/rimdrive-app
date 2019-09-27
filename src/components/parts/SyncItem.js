@@ -91,6 +91,12 @@ class SyncItem extends Component {
         });
     }
 
+    handleShowFolderDialog= (locType) => {
+        console.log('>>>>>>>>>>>>>>>  handleShowFolderDialog  <<<<<<<<<<<<<<<<<<<');
+        const { item } = this.props;
+        this.props.onShowFolderDialog(item.get('no'), locType);
+    }
+
     render() {
         const { classes } = this.props;
         const { item, key } = this.props;
@@ -129,7 +135,7 @@ class SyncItem extends Component {
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="primary"
-                            onClick={this.handleSelectLocalFolder} >
+                            onClick={() => this.handleShowFolderDialog('local')} >
                             수정
                             </Button>
                         </Grid>
