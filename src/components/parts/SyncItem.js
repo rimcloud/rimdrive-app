@@ -76,6 +76,21 @@ class SyncItem extends Component {
         }
     }
 
+    handleSelectLocalFolder = () => {
+        this.selectLocalFolder('./src');
+    };
+    selectLocalFolder = (folder) => {
+        console.log('folder ::: ', folder);
+        fs.readdir(folder, {withFileTypes: true}, (err, dir) => {
+            for (let i = 0, path; path = dir[i]; i++) {
+                // do stuff with path
+                if(path.isDirectory()) {
+                    this.selectLocalFolder(folder + '/' + path.name);
+                }
+            }
+        });
+    }
+
     render() {
         const { classes } = this.props;
         const { item, key } = this.props;
@@ -114,7 +129,7 @@ class SyncItem extends Component {
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="primary"
-                            onClick={this.handleLoginBtnClick} >
+                            onClick={this.handleSelectLocalFolder} >
                             수정
                             </Button>
                         </Grid>
