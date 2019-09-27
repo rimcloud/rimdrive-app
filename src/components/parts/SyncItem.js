@@ -69,6 +69,13 @@ class SyncItem extends Component {
         // });
     }
 
+    handleDeleteItemClick = () => {
+        const { item, onDeleteItem } = this.props;
+        if(onDeleteItem) {
+            onDeleteItem(item.get('no'));
+        }
+    }
+
     render() {
         const { classes } = this.props;
         const { item, key } = this.props;
@@ -149,7 +156,7 @@ class SyncItem extends Component {
                         </Button></Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="secondary"
-                            onClick={this.handleLoginBtnClick} >
+                            onClick={this.handleDeleteItemClick} >
                             삭제
                             </Button>
                         </Grid>

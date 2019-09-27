@@ -7,10 +7,12 @@ import {CommonStyle} from 'templates/styles/CommonStyles';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+
 import * as AccountActions from 'modules/AccountModule';
 import * as GlobalActions from 'modules/GlobalModule';
 
 import SyncItem from 'components/parts/SyncItem'
+import RCDialogConfirm from 'components/utils/RCDialogConfirm'
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -57,6 +59,40 @@ class SyncPage extends Component {
         }
     }
 
+    handleDeleteItem = (no) => {
+        console.log('handleDeleteItem >>>>>> no :: ', no);
+        const { GlobalProps, GlobalActions } = this.props;
+
+        let syncItem = [];
+        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
+            syncItem = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).find((n) => (n.get('no') === no));
+        }
+        console.log('syncItem >>>  ', syncItem);
+
+        GlobalActions.showConfirm({
+            confirmTitle: "동기화 삭제",
+            confirmMsg: "동기화 항목을 삭제 하시겠습니까?",
+            handleConfirmResult: (confirmValue, paramObject) => {
+                console.log('confirmValue ::: ', confirmValue);
+                if(confirmValue) {
+                    console.log('handleDeleteItem ACTION >>>>>>>> ', paramObject.toJS());
+                    const { GlobalActions } = this.props;
+                    GlobalActions.deleteSyncItemData({
+                        no: paramObject.get('no')
+                    });
+            //   MediaRuleActions.deleteMediaRuleData({
+            //     objId: paramObject.get('objId'),
+            //     compId: this.props.match.params.grMenuId
+            //   }).then((res) => {
+            //     refreshDataListInComps(MediaRuleProps, MediaRuleActions.readMediaRuleListPaged);
+            //   });
+                }
+            },
+            confirmObject: syncItem
+        });
+
+    }
+
     render() {
         const { GlobalProps } = this.props;
 
@@ -78,10 +114,13 @@ class SyncPage extends Component {
                     </Button>
                 </Box>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
-                    <SyncItem item={s} key={s.get('no')} isFirst={i === 0 ? true : false} />
+                    <SyncItem item={s} 
+                        key={s.get('no')} isFirst={i === 0 ? true : false} 
+                        onDeleteItem={this.handleDeleteItem}
+                    />
                 ))
                 }
-
+                <RCDialogConfirm />
             </React.Fragment>
         );
     }
