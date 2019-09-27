@@ -60,37 +60,26 @@ class SyncPage extends Component {
     }
 
     handleDeleteItem = (no) => {
-        console.log('handleDeleteItem >>>>>> no :: ', no);
         const { GlobalProps, GlobalActions } = this.props;
 
         let syncItem = [];
         if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
             syncItem = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).find((n) => (n.get('no') === no));
         }
-        console.log('syncItem >>>  ', syncItem);
 
         GlobalActions.showConfirm({
             confirmTitle: "동기화 삭제",
             confirmMsg: "동기화 항목을 삭제 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
-                console.log('confirmValue ::: ', confirmValue);
                 if(confirmValue) {
-                    console.log('handleDeleteItem ACTION >>>>>>>> ', paramObject.toJS());
                     const { GlobalActions } = this.props;
                     GlobalActions.deleteSyncItemData({
                         no: paramObject.get('no')
                     });
-            //   MediaRuleActions.deleteMediaRuleData({
-            //     objId: paramObject.get('objId'),
-            //     compId: this.props.match.params.grMenuId
-            //   }).then((res) => {
-            //     refreshDataListInComps(MediaRuleProps, MediaRuleActions.readMediaRuleListPaged);
-            //   });
                 }
             },
             confirmObject: syncItem
         });
-
     }
 
     render() {
@@ -103,7 +92,6 @@ class SyncPage extends Component {
                 currSyncDatas = syncs;
             }
         }
-
         console.log('currSyncDatas::: ', currSyncDatas);
 
         return (

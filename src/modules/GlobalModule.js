@@ -32,7 +32,6 @@ const initialState = Map({
 });
 
 export const showConfirm = (param) => dispatch => {
-    console.log('param ::::::::::::::::::::::::::::::::: ', param);
     return dispatch({
         type: SHOW_CONFIRM,
         confirmTitle: param.confirmTitle,
@@ -47,8 +46,6 @@ export const closeConfirm = (param) => dispatch => {
         type: CLOSE_CONFIRM
     });
 };
-
-
 
 export const showElementMsg = (elementObj, text) => dispatch => {
     return dispatch({
