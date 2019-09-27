@@ -188,26 +188,10 @@ export default handleActions({
         }
     },
     [DELETE_SYNCDATA_SUCCESS]: (state, action) => {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         const no = action.no;
         const index = state.getIn(['syncData', 'rimdrive', 'sync']).findIndex((n) => (n.get('no') === no));
         
         return state.deleteIn(['syncData', 'rimdrive', 'sync', index]);
-
     }
 
 }, initialState);
