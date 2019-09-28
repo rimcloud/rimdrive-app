@@ -8,7 +8,7 @@ let tray = null;
 
 function createWindow() {
 
-    tray = new Tray(__dirname + '/rimdrive.ico');
+    tray = new Tray(path.join(__dirname, '../build/assets/icons/win/rimdrive.ico'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open Rimdrive',
@@ -30,6 +30,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 600,
         height: 480,
+        icon: path.join(__dirname, 'assets/icons/win/rimdrive.ico'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -37,7 +38,7 @@ function createWindow() {
     mainWindow.setMenu(null);
     mainWindow.loadURL(isDev
         ? 'http://localhost:3000'
-        : `file://${path.join(__dirname, '../build/index,html')}`);
+        : `file://${path.join(__dirname, '../build/index.html')}`);
 
     if (isDev) {
         // Open DevTools BrowserWindow.addDevToolsExtension(' ... ');
