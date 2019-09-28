@@ -43,7 +43,6 @@ class InfoPage extends Component {
         const {AccountProps: NextAccountProps} = nextProps;
         const {AccountProps} = this.props;
         return NextAccountProps.get('userToken') !== AccountProps.get('userToken');
-
     }
 
     render() {

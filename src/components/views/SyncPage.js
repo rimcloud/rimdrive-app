@@ -95,16 +95,37 @@ class SyncPage extends Component {
             openFolderDialog: true,
             targetSyncNo: syncNo,
             targetSyncLoc: syncLoc
-        })
+        });
+    }
+    
+    handleCloseFolderDialog = () => {
+        this.setState({
+            openFolderDialog: false
+        });
     }
 
-    handleSelectFolder = () => {
+    handleSelectFolder = (selectedFolderPath) => {
         console.log('handleSelectFolder...');
+
         this.setState({
             openFolderDialog: false
         });
         const targetSyncNo = this.state.targetSyncNo;
         const targetSyncLoc = this.state.targetSyncLoc;
+        // change store
+        if(targetSyncLoc === 'local') {
+            this.props.GlobalActions.chgSyncLocalFolderData({
+                no: targetSyncNo, 
+                value: selectedFolderPath
+            });
+        } else {
+            // cloud folder
+
+        }
+
+        console.log('targetSyncNo ::::: ', targetSyncNo);
+        console.log('targetSyncLoc ::::: ', targetSyncLoc);
+        console.log('selectedFolderPath ::::: ', selectedFolderPath);
     }
 
 
@@ -138,7 +159,9 @@ class SyncPage extends Component {
                 ))
                 }
                 <RCDialogConfirm />
-                <FolderTreeDialog open={openFolderDialog} onSelectFolder={this.handleSelectFolder} />
+                <FolderTreeDialog open={openFolderDialog} 
+                    onSelectFolder={this.handleSelectFolder}
+                />
             </React.Fragment>
         );
     }

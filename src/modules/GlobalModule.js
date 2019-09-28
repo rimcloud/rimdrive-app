@@ -6,6 +6,7 @@ const INIT_SYNCDATA_SUCCESS = 'global/INIT_SYNCDATA_SUCCESS';
 const ADD_SYNCDATA_SUCCESS = 'global/ADD_SYNCDATA_SUCCESS';
 const DELETE_SYNCDATA_SUCCESS = 'global/DELETE_SYNCDATA_SUCCESS';
 const CHG_SYNCTYPE_SUCCESS = 'global/CHG_SYNCTYPE_SUCCESS';
+const CHG_SYNCLOCALFOLDER_SUCCESS = 'global/CHG_SYNCLOCALFOLDER_SUCCESS';
 
 const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';
@@ -97,6 +98,14 @@ export const chgSyncTypeData = (param) => dispatch => {
     });
 };
 
+export const chgSyncLocalFolderData = (param) => dispatch => {
+    return dispatch({
+        type: CHG_SYNCLOCALFOLDER_SUCCESS,
+        syncNo: param.no,
+        value: param.value
+    });
+};
+
 export default handleActions({
 
     [SHOW_CONFIRM]: (state, action) => {
@@ -138,14 +147,19 @@ export default handleActions({
         });
     },
     [CHG_SYNCTYPE_SUCCESS]: (state, action) => {
-        state.getIn(['syncData', 'rimdrive', 'sync'])
         const syncs = state.getIn(['syncData', 'rimdrive', 'sync']);
         const index = syncs.findIndex(n => (n.get('no') === action.syncNo));
         let item = state.getIn(['syncData', 'rimdrive', 'sync', index]);
         item = item.set('type', action.value);
         return state.setIn(['syncData', 'rimdrive', 'sync', index], item);
     },
-
+    [CHG_SYNCLOCALFOLDER_SUCCESS]: (state, action) => {
+        const syncs = state.getIn(['syncData', 'rimdrive', 'sync']);
+        const index = syncs.findIndex(n => (n.get('no') === action.syncNo));
+        let item = state.getIn(['syncData', 'rimdrive', 'sync', index]);
+        item = item.set('pclocation', action.value);
+        return state.setIn(['syncData', 'rimdrive', 'sync', index], item);
+    },
 
     [ADD_SYNCDATA_SUCCESS]: (state, action) => {
         let beforeCount = 0;

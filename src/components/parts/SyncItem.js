@@ -91,12 +91,19 @@ class SyncItem extends Component {
         });
     }
 
-    handleShowFolderDialog= (locType) => {
+    handleShowFolderDialog = (locType) => {
         console.log('>>>>>>>>>>>>>>>  handleShowFolderDialog  <<<<<<<<<<<<<<<<<<<');
         const { item } = this.props;
         this.props.onShowFolderDialog(item.get('no'), locType);
     }
 
+    handleDblClick = () => {
+        console.log('handleDblClick >>>>>>>>>>>>>>>>>>>>>> ');
+    }
+    handleSingleClick = () => {
+        console.log('handleSingleClick >>>>>>>>>>>>>>>>>>>>>> ');
+    }
+    
     render() {
         const { classes } = this.props;
         const { item, key } = this.props;
@@ -154,7 +161,8 @@ class SyncItem extends Component {
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="primary"
-                            onClick={this.handleLoginBtnClick} >
+                            onDoubleClick={this.handleDblClick}
+                            onClick={this.handleSingleClick} >
                             수정
                             </Button>
                         </Grid>
