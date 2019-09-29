@@ -17,19 +17,20 @@ import FolderTreeDialog from 'components/parts/FolderTreeDialog';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import TreeItem from '@material-ui/lab/TreeItem';
 
 class SyncPage extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 0
+            selectedTab: 0,
+            pathItems: ''
         };
     }
 
     componentDidMount() {
         const { GlobalActions } = this.props;
-        console.log('SyncPage : componentDidMount');
 
         fs.readFile('rimdrive-app.cfg', 'utf8', (err, syncData) => {
             console.log('syncData ::', syncData);
@@ -90,14 +91,51 @@ class SyncPage extends Component {
         });
     };
 
+    selectLocalFolder = (pathString, depth) => {
+        let dirLists = fs.readdirSync(pathString, { withFileTypes: true });
+        let innerItems = [];
+        for (let i = 0, path; path = dirLists[i]; i++) {
+            if (path.isDirectory()) {
+                const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
+                if(childItem !== undefined && childItem.length > 0) {
+                    innerItems.push(<TreeItem label={path.name} 
+                            nodeId={(depth * 100000 + i).toString()} 
+                            key={depth * 100000 + i}
+                            id={depth * 100000 + i}
+                            path={`${pathString}/${path.name}`}
+                        >
+                        {childItem.map((c) => (c))}
+                        </TreeItem>);
+                } else {
+                    innerItems.push(<TreeItem label={path.name} 
+                        nodeId={(depth * 100000 + i).toString()} 
+                        key={depth * 100000 + i} 
+                        id={depth * 100000 + i}
+                        path={`${pathString}/${path.name}`}
+                    />);
+                }
+          }
+        }
+        return innerItems;
+    }
+
     handleOpenFolderDialog = (syncNo, syncLoc) => {
+        const pathItems = this.selectLocalFolder('./src', 1);
+
         this.setState({
             openFolderDialog: true,
             targetSyncNo: syncNo,
-            targetSyncLoc: syncLoc
+            targetSyncLoc: syncLoc,
+            pathItems: pathItems
         });
     }
-    
+
+    handleCloseFolderDialog = () => {
+        this.setState({
+            openFolderDialog: false
+        });
+    }
+
     handleCloseFolderDialog = () => {
         this.setState({
             openFolderDialog: false
@@ -105,8 +143,6 @@ class SyncPage extends Component {
     }
 
     handleSelectFolder = (selectedFolderPath) => {
-        console.log('handleSelectFolder...');
-
         this.setState({
             openFolderDialog: false
         });
@@ -120,19 +156,14 @@ class SyncPage extends Component {
             });
         } else {
             // cloud folder
-
         }
-
-        console.log('targetSyncNo ::::: ', targetSyncNo);
-        console.log('targetSyncLoc ::::: ', targetSyncLoc);
-        console.log('selectedFolderPath ::::: ', selectedFolderPath);
     }
-
 
     render() {
         const { GlobalProps } = this.props;
+        const openFolderDialog = this.state.openFolderDialog;
 
-        const openFolderDialog = this.state.openFolderDialog
+        const items = this.state.pathItems;
 
         let currSyncDatas = [];
         if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
@@ -141,7 +172,6 @@ class SyncPage extends Component {
                 currSyncDatas = syncs;
             }
         }
-        console.log('currSyncDatas::: ', currSyncDatas);
 
         return (
             <React.Fragment>
@@ -161,6 +191,8 @@ class SyncPage extends Component {
                 <RCDialogConfirm />
                 <FolderTreeDialog open={openFolderDialog} 
                     onSelectFolder={this.handleSelectFolder}
+                    onClose={this.handleCloseFolderDialog}
+                    pathItems={items}
                 />
             </React.Fragment>
         );

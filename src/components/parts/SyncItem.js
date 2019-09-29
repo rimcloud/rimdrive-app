@@ -76,21 +76,6 @@ class SyncItem extends Component {
         }
     }
 
-    handleSelectLocalFolder = () => {
-        this.selectLocalFolder('./src');
-    };
-    selectLocalFolder = (folder) => {
-        console.log('folder ::: ', folder);
-        fs.readdir(folder, {withFileTypes: true}, (err, dir) => {
-            for (let i = 0, path; path = dir[i]; i++) {
-                // do stuff with path
-                if(path.isDirectory()) {
-                    this.selectLocalFolder(folder + '/' + path.name);
-                }
-            }
-        });
-    }
-
     handleShowFolderDialog = (locType) => {
         console.log('>>>>>>>>>>>>>>>  handleShowFolderDialog  <<<<<<<<<<<<<<<<<<<');
         const { item } = this.props;
