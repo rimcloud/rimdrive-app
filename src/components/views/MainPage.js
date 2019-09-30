@@ -8,6 +8,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import InfoPage from 'components/views/InfoPage';
+import SharePage from 'components/views/SharePage';
 import SyncPage from 'components/views/SyncPage';
 import SetupPage from 'components/views/SetupPage';
 
@@ -43,13 +44,15 @@ class MainPage extends Component {
                     <AppBar position="relative" style={{backgroundColor:'#2c387b'}}>
                         <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
                             <Tab label="정보" {...a11yProps(0)} />
-                            <Tab label="동기화" {...a11yProps(1)} />
-                            <Tab label="환경설정" {...a11yProps(2)} />
+                            <Tab label="공유" {...a11yProps(1)} />
+                            <Tab label="동기화" {...a11yProps(2)} />
+                            <Tab label="환경설정" {...a11yProps(3)} />
                         </Tabs>
                     </AppBar>
                         {selectedTab === 0 && <InfoPage />}
-                        {selectedTab === 1 && <SyncPage />}
-                        {selectedTab === 2 && <SetupPage />}
+                        {selectedTab === 1 && <SharePage />}
+                        {selectedTab === 2 && <SyncPage />}
+                        {selectedTab === 3 && <SetupPage />}
                 </div>
             </React.Fragment>
         );

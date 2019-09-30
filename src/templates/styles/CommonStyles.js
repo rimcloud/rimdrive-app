@@ -54,7 +54,7 @@ export const CommonStyle = theme => ({
         flexDirection: "column",
         alignItems: "center",
         // justifyContent: "center",
-        paddingBottom: "18px",
+        // paddingBottom: "0px",
         // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0,
         // #ffa500)" backgroundImage: "linear-gradient(#517cff, #ffa500)",
         backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
@@ -108,5 +108,11 @@ export const CommonStyle = theme => ({
         minWidth: "26px",
         minHeight: "24px"
     },
+
+
+    shareFilesCard: {
+        height: '-webkit-fill-available',
+        marginBottom: '-90px'
+    }
 
 });

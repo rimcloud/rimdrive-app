@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { List } from 'immutable';
-import fs from 'fs';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -16,13 +14,11 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import TreeItem from '@material-ui/lab/TreeItem';
 
 class FolderTreeDialog extends Component {
 
@@ -59,7 +55,7 @@ class FolderTreeDialog extends Component {
 
   render() {
     const { classes } = this.props;
-    const { open = false, GlobalProps, pathItems } = this.props;
+    const { open = false, pathItems } = this.props;
 
     return (
       <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>

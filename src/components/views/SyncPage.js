@@ -92,9 +92,10 @@ class SyncPage extends Component {
     };
 
     selectLocalFolder = (pathString, depth) => {
-        let dirLists = fs.readdirSync(pathString, { withFileTypes: true });
+        let dirents = fs.readdirSync(pathString, { withFileTypes: true });
         let innerItems = [];
-        for (let i = 0, path; path = dirLists[i]; i++) {
+
+        dirents.map((path, i) => {
             if (path.isDirectory()) {
                 const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
                 if(childItem !== undefined && childItem.length > 0) {
@@ -114,8 +115,9 @@ class SyncPage extends Component {
                         path={`${pathString}/${path.name}`}
                     />);
                 }
-          }
-        }
+            }
+        });
+        
         return innerItems;
     }
 
