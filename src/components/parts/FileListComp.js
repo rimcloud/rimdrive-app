@@ -24,7 +24,9 @@ class FileListComp extends Component {
 
   handleSelectFile = (file) => {
     const { FileActions } = this.props;
-    FileActions.showFileDetail(file);
+    FileActions.showFileDetail({
+      selectedfile: file
+    });
   }
 
   render() {

@@ -38,6 +38,9 @@ export default handleActions({
         return state.set('listData', action.listData);
     },
     [SET_SELECTEDFILE_SUCCESS]: (state, action) => {
+
+        console.log('SET_SELECTEDFILE_SUCCESS :: ', action.selectedfile);
+
         return state.set('selectedfile', action.selectedfile);
     },
 

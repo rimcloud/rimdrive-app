@@ -46,10 +46,8 @@ class DetailViewComp extends Component {
             </Grid>
             <Grid item xs={6}>
               <Typography variant="subtitle2" >파일크기: {selectedfile.get('fileSize')}</Typography>
-              <Button onClick={this.handleSaveData} color="primary">선택</Button>
-              <Button onClick={this.handleClose} color="primary">닫기</Button>
             </Grid>
-            <Grid item xs={12} style={{align: 'right'}}>
+            <Grid item xs={12} style={{textAlign: 'right'}}>
               <Button onClick={this.handleShareObj} color="primary">공유</Button>
             </Grid>
           </Grid>
