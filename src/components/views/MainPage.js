@@ -49,8 +49,8 @@ class MainPage extends Component {
                             <Tab label="환경설정" {...a11yProps(3)} />
                         </Tabs>
                     </AppBar>
-                        {selectedTab === 0 && <InfoPage />}
-                        {selectedTab === 1 && <SharePage />}
+                        {selectedTab === 0 && <SharePage />}
+                        {selectedTab === 1 && <InfoPage />}
                         {selectedTab === 2 && <SyncPage />}
                         {selectedTab === 3 && <SetupPage />}
                 </div>

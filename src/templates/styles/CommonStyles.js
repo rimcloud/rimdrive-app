@@ -77,9 +77,9 @@ export const CommonStyle = theme => ({
 
     card: {
         minWidth: 275,
-        marginTop: 18,
-        marginLeft: 18,
-        marginRight: 18
+        marginTop: 10,
+        marginLeft: 10,
+        marginRight: 10
     },
     bullet: {
         display: 'inline-block',
@@ -101,18 +101,30 @@ export const CommonStyle = theme => ({
 
     },
 
-
-
     RCSmallButton: {
         padding: "0px 2px 0px 2px",
         minWidth: "26px",
         minHeight: "24px"
     },
 
-
     shareFilesCard: {
-        height: '-webkit-fill-available',
-        marginBottom: '-90px'
-    }
+        paddingTop: "0px"
+    },
+
+    fileTable: {
+
+    },
+    fileTableHeadRow: {
+        height: 24
+    },
+    fileTableHeadCell: {
+        backgroundColor: 'gray',
+        color: 'white',
+        border: '1px solid lightgray',
+        padding: 0
+    },
+    fileTableRow: {
+        cursor: 'pointer'
+    },
 
 });
