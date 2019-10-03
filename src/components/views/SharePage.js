@@ -11,7 +11,7 @@ import * as AccountActions from 'modules/AccountModule';
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 import FileListComp from 'components/parts/FileListComp';
 import FolderTreeComp from 'components/parts/FolderTreeComp';
-import FileListComp from 'components/parts/FileListComp';
+import DetailViewComp from 'components/parts/DetailViewComp';
 
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
@@ -44,7 +44,7 @@ class SharePage extends Component {
                             </Grid>
                         </Grid>
                         <Paper elevation={2} style={{margin:4, padding:4}}>
-                            <FileListComp />
+                            <DetailViewComp />
                         </Paper>
                     </CardContent>
                 </Card>

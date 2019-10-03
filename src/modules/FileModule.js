@@ -3,13 +3,13 @@ import { handleActions } from 'redux-actions';
 import { Map, List, fromJS } from 'immutable';
 
 const GET_FILELIST_SUCCESS = 'file/GET_FILELIST_SUCCESS';
+const SET_SELECTEDFILE_SUCCESS = 'file/SET_SELECTEDFILE_SUCCESS';
 
 // ...
 const initialState = Map({
     listData: null
 });
 
-// get File List by folder
 export const showFolderInfo = (param) => dispatch => {
     return dispatch({
         type: GET_FILELIST_SUCCESS,
@@ -25,10 +25,20 @@ export const showFolderInfo = (param) => dispatch => {
     });
 };
 
+export const showFileDetail = (param) => dispatch => {
+    return dispatch({
+        type: SET_SELECTEDFILE_SUCCESS,
+        selectedfile: param.selectedfile
+    });
+};
+
 export default handleActions({
 
     [GET_FILELIST_SUCCESS]: (state, action) => {
         return state.set('listData', action.listData);
+    },
+    [SET_SELECTEDFILE_SUCCESS]: (state, action) => {
+        return state.set('selectedfile', action.selectedfile);
     },
 
 }, initialState);
