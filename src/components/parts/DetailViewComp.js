@@ -35,17 +35,17 @@ class DetailViewComp extends Component {
     const { classes } = this.props;
     const { FileProps } = this.props;
 
-    const selectedfile = FileProps.get('selectedfile');
+    const selectedFile = FileProps.get('selectedFile');
 
     return (
       <div>
-        {(selectedfile) &&
+        {(selectedFile) &&
           <Grid container spacing={3}>
             <Grid item xs={6}>
-              <Typography variant="subtitle2" >파일이름: {selectedfile.get('fileName')}</Typography>
+              <Typography variant="subtitle2" >파일이름: {selectedFile.get('fileName')}</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="subtitle2" >파일크기: {selectedfile.get('fileSize')}</Typography>
+              <Typography variant="subtitle2" >파일크기: {selectedFile.get('fileSize')}</Typography>
             </Grid>
             <Grid item xs={12} style={{textAlign: 'right'}}>
               <Button onClick={this.handleShareObj} color="primary">공유</Button>

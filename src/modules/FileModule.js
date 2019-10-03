@@ -28,7 +28,8 @@ export const showFolderInfo = (param) => dispatch => {
 export const showFileDetail = (param) => dispatch => {
     return dispatch({
         type: SET_SELECTEDFILE_SUCCESS,
-        selectedfile: param.selectedfile
+        selectedFile: param.selectedFile
+        selectedFile: param.selectedFile
     });
 };
 
@@ -39,9 +40,9 @@ export default handleActions({
     },
     [SET_SELECTEDFILE_SUCCESS]: (state, action) => {
 
-        console.log('SET_SELECTEDFILE_SUCCESS :: ', action.selectedfile);
+        console.log('SET_SELECTEDFILE_SUCCESS :: ', action.selectedFile);
 
-        return state.set('selectedfile', action.selectedfile);
+        return state.set('selectedFile', action.selectedFile);
     },
 
 }, initialState);
