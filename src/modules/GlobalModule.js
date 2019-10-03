@@ -1,6 +1,6 @@
 
 import { handleActions } from 'redux-actions';
-import { Map, fromJS } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 
 const INIT_SYNCDATA_SUCCESS = 'global/INIT_SYNCDATA_SUCCESS';
 const ADD_SYNCDATA_SUCCESS = 'global/ADD_SYNCDATA_SUCCESS';
@@ -12,7 +12,6 @@ const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';
 
 const CHG_STORE_DATA = 'global/CHG_STORE_DATA';
-
 
 const SHOW_CONFIRM = 'global/SHOW_CONFIRM';
 const CLOSE_CONFIRM = 'global/CLOSE_CONFIRM';
@@ -105,6 +104,7 @@ export const chgSyncLocalFolderData = (param) => dispatch => {
         value: param.value
     });
 };
+
 
 export default handleActions({
 
@@ -204,7 +204,6 @@ export default handleActions({
         
         return state.deleteIn(['syncData', 'rimdrive', 'sync', index]);
     }
-
 }, initialState);
 
 
