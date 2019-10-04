@@ -1,4 +1,3 @@
-
 import { handleActions } from 'redux-actions';
 import { Map, List, fromJS } from 'immutable';
 
@@ -14,14 +13,15 @@ export const showFolderInfo = (param) => dispatch => {
     return dispatch({
         type: GET_FILELIST_SUCCESS,
         listData: fromJS([
-            {fileId: "f1", fileName: "file1", fileSize: "100"},
-            {fileId: "f2", fileName: "file2", fileSize: "200"},
-            {fileId: "f3", fileName: "file3", fileSize: "300"},
-            {fileId: "f4", fileName: "file4", fileSize: "400"},
-            {fileId: "f5", fileName: "file5", fileSize: "500"},
-            {fileId: "f6", fileName: "file6", fileSize: "600"},
-            {fileId: "f7", fileName: "file7", fileSize: "700"},
-        ])
+            { fileId: "f1", fileName: "file1", fileSize: "100" },
+            { fileId: "f2", fileName: "file2", fileSize: "200" },
+            { fileId: "f3", fileName: "file3", fileSize: "300" },
+            { fileId: "f4", fileName: "file4", fileSize: "400" },
+            { fileId: "f5", fileName: "file5", fileSize: "500" },
+            { fileId: "f6", fileName: "file6", fileSize: "600" },
+            { fileId: "f7", fileName: "file7", fileSize: "700" },
+        ]),
+        selectedFolder: param.selectedFolder
     });
 };
 
@@ -29,20 +29,19 @@ export const showFileDetail = (param) => dispatch => {
     return dispatch({
         type: SET_SELECTEDFILE_SUCCESS,
         selectedFile: param.selectedFile
-        selectedFile: param.selectedFile
     });
 };
 
 export default handleActions({
 
     [GET_FILELIST_SUCCESS]: (state, action) => {
-        return state.set('listData', action.listData);
+        return state.set('listData', action.listData)
+                .set('selectedFile', null)
+                .set('selectedFolder', action.selectedFolder);
     },
     [SET_SELECTEDFILE_SUCCESS]: (state, action) => {
-
-        console.log('SET_SELECTEDFILE_SUCCESS :: ', action.selectedFile);
-
-        return state.set('selectedFile', action.selectedFile);
+        return state.set('selectedFolder', null)
+                .set('selectedFile', action.selectedFile);
     },
 
 }, initialState);

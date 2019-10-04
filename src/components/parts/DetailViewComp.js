@@ -20,13 +20,6 @@ class DetailViewComp extends Component {
     };
   }
 
-  handleSelectFile = (file) => {
-    //const treeNode = e.target.parentElement.parentElement;
-    // show file info
-    console.log('handleSelectFile.... ', file.get('fileName'));
-    //this.props.FileActions.showFolderInfo();
-  }
-
   handleShareObj = () => {
     console.log('handleShareObj');
   }
@@ -35,6 +28,7 @@ class DetailViewComp extends Component {
     const { classes } = this.props;
     const { FileProps } = this.props;
 
+    const selectedFolder = FileProps.get('selectedFolder');
     const selectedFile = FileProps.get('selectedFile');
 
     return (
@@ -49,6 +43,20 @@ class DetailViewComp extends Component {
             </Grid>
             <Grid item xs={12} style={{textAlign: 'right'}}>
               <Button onClick={this.handleShareObj} color="primary">공유</Button>
+            </Grid>
+          </Grid>
+        }
+        {(selectedFolder) &&
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" >폴더이름: {selectedFolder.get('folderName')}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+            </Grid>
+            <Grid item xs={12} style={{textAlign: 'right'}}>
+              <Button className={classes.RCSmallButton}
+                variant="contained" color="primary"
+                onClick={this.handleShareObj}>공유</Button>
             </Grid>
           </Grid>
         }

@@ -50,7 +50,6 @@ class FileListComp extends Component {
         {listData.map(file => {
           return (
           <TableRow hover className={classes.fileTableRow} key={file.get('fileId')}
-            file={file}
             onClick={() => this.handleSelectFile(file)}
           >
             <TableCell component="th" align="center" scope="file">
