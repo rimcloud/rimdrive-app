@@ -43,7 +43,7 @@ class SharePage extends Component {
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Paper elevation={2} style={{margin:4, padding:4}}>
+                        <Paper elevation={2} style={{margin:4, padding:4, backgroundColor: '#efefef'}}>
                             <DetailViewComp />
                         </Paper>
                     </CardContent>
