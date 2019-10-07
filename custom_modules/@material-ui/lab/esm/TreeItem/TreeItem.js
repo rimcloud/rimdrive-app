@@ -131,6 +131,10 @@ var TreeItem = React.forwardRef(function TreeItem(props, ref) {
     if (onClick) {
       onClick(event);
     }
+
+    if (expandable && !expanded) {
+      toggle(nodeId);
+    }
   };
 
   var handleIconClick = function handleIconClick(event) {

@@ -127,4 +127,13 @@ export const CommonStyle = theme => ({
         cursor: 'pointer'
     },
 
+
+    shareAppBar: {
+        position: 'relative',
+        minHeight: '20px'
+    },
+    shareTitle: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
+    },
 });

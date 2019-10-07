@@ -21,7 +21,7 @@ class DetailViewComp extends Component {
   }
 
   handleShareObj = () => {
-    console.log('handleShareObj');
+    this.props.onOpenShare();
   }
 
   render() {
