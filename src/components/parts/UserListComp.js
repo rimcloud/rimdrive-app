@@ -49,12 +49,12 @@ class UserListComp extends Component {
       <TableBody>
         {listData.map(user => {
           return (
-          <TableRow hover className={classes.fileTableRow} key={user.get('userId')}
+          <TableRow hover className={classes.fileTableRow} key={user.get('empId')}
             onClick={() => this.handleSelectUser(user)}
           >
-            <TableCell component="th" align="center" scope="user">{user.get('userId')}</TableCell>
-            <TableCell>{user.get('userName')}</TableCell>
-            <TableCell align="right">{user.get('userGrade')}</TableCell>
+            <TableCell component="th" align="center" scope="user">{user.get('empId')}</TableCell>
+            <TableCell>{user.get('empNm')}</TableCell>
+            <TableCell align="right">{user.get('grade')}</TableCell>
           </TableRow>
         );
       })}

@@ -41,7 +41,12 @@ class DeptTreeComp extends Component {
 
   handleSelectDept = (dept) => {
     const { DeptUserActions } = this.props;
-    // // show folder info and file list
+    // show dept info and user list
+
+    DeptUserActions.getUserList({
+      selectedDept: dept
+    });
+
     DeptUserActions.showDeptInfo({
       selectedDept: dept
     });

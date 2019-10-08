@@ -12,7 +12,7 @@ import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 import FileListComp from 'components/parts/FileListComp';
 import FolderTreeComp from 'components/parts/FolderTreeComp';
 
-import DetailViewComp from 'components/parts/DetailViewComp';
+import FileAndFolderView from 'components/parts/FileAndFolderView';
 
 import DeptTreeComp from 'components/parts/DeptTreeComp';
 import UserListComp from 'components/parts/UserListComp';
@@ -85,7 +85,7 @@ class SharePage extends Component {
                         </Grid>
                         <Divider />
                         <Paper elevation={2} style={{ margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                            <DetailViewComp
+                            <FileAndFolderView
                                 onOpenShare={this.handleClickOpen}
                             />
                         </Paper>
@@ -95,7 +95,7 @@ class SharePage extends Component {
                     <AppBar className={classes.shareAppBar}>
                         <Toolbar>
                             <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 설정</Typography>
-                            <Button color="inherit" onClick={this.handleClose}>save</Button>
+                            <Button color="primary" variant="contained" className={classes.RCSmallButton} onClick={this.handleClose}>저장</Button>
                             <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
                                 <CloseIcon />
                             </IconButton>
