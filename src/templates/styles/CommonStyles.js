@@ -129,8 +129,10 @@ export const CommonStyle = theme => ({
 
 
     shareAppBar: {
-        position: 'relative',
-        minHeight: '20px'
+        position: 'relative'
+    },
+    shareToolbar: {
+        minHeight: '48px'
     },
     shareTitle: {
         marginLeft: theme.spacing(2),

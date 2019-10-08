@@ -162,7 +162,7 @@ class SyncPage extends Component {
     }
 
     render() {
-        const { GlobalProps } = this.props;
+        const { classes, GlobalProps } = this.props;
         const openFolderDialog = this.state.openFolderDialog;
 
         const items = this.state.pathItems;
@@ -178,7 +178,7 @@ class SyncPage extends Component {
         return (
             <React.Fragment>
                 <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>
-                    <Button onClick={this.handleAddSyncClick} variant="contained" color="primary">
+                    <Button onClick={this.handleAddSyncClick} className={classes.RCSmallButton} variant="contained" color="primary">
                         파일 동기화 추가
                     </Button>
                 </Box>

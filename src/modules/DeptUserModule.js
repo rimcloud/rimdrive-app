@@ -1,6 +1,8 @@
 import { handleActions } from 'redux-actions';
 import { Map, List, fromJS } from 'immutable';
 
+import { requestPostAPI, requestGetAPI } from 'components/utils/RCRequester';
+
 const GET_USERLIST_SUCCESS = 'user/GET_USERLIST_SUCCESS';
 const SET_DEPTINFO_SUCCESS = 'user/SET_DEPTINFO_SUCCESS';
 const SET_SELECTEDUSER_SUCCESS = 'user/SET_SELECTEDUSER_SUCCESS';
@@ -34,28 +36,25 @@ export const showUserDetail = (param) => dispatch => {
 };
 
 export const getUserList = (param) => dispatch => {
-
-    let tempResult = '{"data":[{"empId":"tuser02","empNm":"테스트","hlofcYn":"Y","cloudAllowYn":"Y","createTp":"C","ldapDeptCd":"nec1","ldapChgObjYn":"N","gpkiAuthValue":null,"loginId":"tuser02","createDate":null,"createUid":null,"modifyDate":null,"modifyUid":null,"pwdChgObjYn":"N","grade":"과장","sortSord":"2","deptCd":"nec1","deptNm":"1","quota":20,"siteCd":null},{"empId":"tuser01","empNm":"테스트","hlofcYn":"Y","cloudAllowYn":"Y","createTp":"C","ldapDeptCd":"nec1","ldapChgObjYn":"N","gpkiAuthValue":null,"loginId":"tuser01","createDate":null,"createUid":null,"modifyDate":null,"modifyUid":null,"pwdChgObjYn":"N","grade":"사원","sortSord":"13","deptCd":"nec1","deptNm":"1","quota":20,"siteCd":null}],"status":{"result":"SUCCESS","resultCode":"","message":"정상 처리되었습니다."}}';
-    tempResult = JSON.parse(tempResult);
-    tempResult = fromJS(tempResult);
-
-    let listData = [];
-    if(tempResult.getIn(['status', 'result']) === 'SUCCESS') {
-        listData = tempResult.get('data');
-    }
-
-    return dispatch({
-        type: GET_USERLIST_SUCCESS,
-        listData:listData
+    return requestGetAPI('temp/user-list.json', {
+        selectedDept: param.selectedDept
+    }).then(
+        (response) => {
+            dispatch({
+                type: GET_USERLIST_SUCCESS,
+                response: response
+            });
+        }
+    ).catch(error => {
+        console.log('error : ', error);
     });
-
 }
 
 export default handleActions({
 
     [GET_USERLIST_SUCCESS]: (state, action) => {
-        console.log('action.listData ::: ', action.listData);
-        return state.set('listData', action.listData);
+        const data = action.response.data;
+        return state.set('listData', fromJS(data.data));
     },
     [SET_DEPTINFO_SUCCESS]: (state, action) => {
         return state.set('selectedUser', null)

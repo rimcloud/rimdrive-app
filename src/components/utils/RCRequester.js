@@ -1,7 +1,8 @@
 import axios from "axios";
 import qs from "qs";
 
-export const SERVER_URL = '/gpms/';
+//export const SERVER_URL = '/gpms/';
+export const SERVER_URL = '/';
 
 export function grRequestPromise(url, param) {
 
@@ -37,9 +38,23 @@ export function grRequestPromise(url, param) {
 
 
 export function requestPostAPI(url, param, headers) {
-
   return axios({
     method: "post",
+    url: SERVER_URL + url,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    transformRequest: [
+      function(data, headers) {
+        return qs.stringify(data, {arrayFormat:'brackets'});
+      }
+    ],
+    data: param,
+    withCredentials: false
+  });
+};
+
+export function requestGetAPI(url, param, headers) {
+  return axios({
+    method: "get",
     url: SERVER_URL + url,
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     transformRequest: [

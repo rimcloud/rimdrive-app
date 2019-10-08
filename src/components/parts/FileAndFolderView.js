@@ -3,6 +3,9 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
+import { requestPostAPI, requestGetAPI } from 'components/utils/RCRequester';
+
+
 import https from 'https';
 import axios, { post, get } from 'axios';
 
@@ -22,6 +25,8 @@ const axiosInstance = axios.create({
   }),
   baseURL: BASE_URL
 });
+
+
 
 const createSession = async () => {
 
@@ -50,6 +55,29 @@ const createSession = async () => {
 
 };
 
+// ----------------------------------------
+
+const getBreeds = async () => {
+  try {
+    return await axios.get('http://localhost:3000/temp/test-api.html');
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const countBreeds = async () => {
+  const breeds = await getBreeds();
+
+  if (breeds.data) {
+    console.log(`data :: ${breeds.data}`);
+  } else {
+    console.log(`data is null`);
+  }
+};
+
+
+// ----------------------------------------
+
 
 
 class FileAndFolderView extends Component {
@@ -70,24 +98,27 @@ class FileAndFolderView extends Component {
     console.log("handleTest...");
 
     // send Post request to https://stackoverflow.com/protected after create session 
-    createSession().then(() => {
-      axiosInstance.post('/protected') // with new cookie
+    // createSession().then(() => {
+    //   axiosInstance.post('/protected') // with new cookie
+    // });
+
+
+    // countBreeds();
+
+
+    requestGetAPI('temp/test-api.html', {
+      grpId: 'grpId'
+    }).then(
+      (response) => {
+
+        console.log('response :::: ', response);
+
+      }
+    ).catch(error => {
+
+      console.log('error : ', error);
+
     });
-
-    // axios({
-    //   url: 'http://localhost:8080/gpms/login',
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   responseType: 'json',
-    //   httpsAgent: new https.Agent({ rejectUnauthorized: false })
-    // })
-    //   .then(response => {
-    //   })
-    //   .catch(error => {
-    //   })
-
 
   }
 
@@ -109,7 +140,7 @@ class FileAndFolderView extends Component {
               <Typography variant="subtitle2" >파일크기: {selectedFile.get('fileSize')}</Typography>
             </Grid>
             <Grid item xs={12} style={{ textAlign: 'right' }}>
-              <Button onClick={this.handleShareObj} color="primary">공유</Button>
+              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleShareObj}>파일공유</Button>
             </Grid>
           </Grid>
         }
@@ -121,14 +152,10 @@ class FileAndFolderView extends Component {
             <Grid item xs={6}>
             </Grid>
             <Grid item xs={6}>
-              <Button className={classes.RCSmallButton}
-                variant="contained" color="primary"
-                onClick={this.handleTest}>테스트</Button>
+              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleTest}>테스트</Button>
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
-              <Button className={classes.RCSmallButton}
-                variant="contained" color="primary"
-                onClick={this.handleShareObj}>공유</Button>
+              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleShareObj}>폴더공유</Button>
             </Grid>
           </Grid>
         }

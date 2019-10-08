@@ -93,7 +93,7 @@ class SharePage extends Component {
                 </Card>
                 <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
                     <AppBar className={classes.shareAppBar}>
-                        <Toolbar>
+                        <Toolbar className={classes.shareToolbar}>
                             <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 설정</Typography>
                             <Button color="primary" variant="contained" className={classes.RCSmallButton} onClick={this.handleClose}>저장</Button>
                             <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
