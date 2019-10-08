@@ -15,9 +15,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 const BASE_URL = "https://gpms.gooroom.kr/gpms/login";
-    // Init instance of axios which works with BASE_URL
-const axiosInstance = axios.create({ 
-  httpsAgent: new https.Agent({  
+// Init instance of axios which works with BASE_URL
+const axiosInstance = axios.create({
+  httpsAgent: new https.Agent({
     rejectUnauthorized: false
   }),
   baseURL: BASE_URL
@@ -26,14 +26,22 @@ const axiosInstance = axios.create({
 const createSession = async () => {
 
   console.log("create session");
-  
+
+  const agent = new https.Agent({
+    rejectUnauthorized: false
+  });
+
   const authParams = {
     userId: "admins",
-    userPw: "224de469ac2cdb434d225ffa2aece72c6e793a100be5b3da98570b4b17f29110"
+    userPw: "224de469ac2cdb434d225ffa2aece72c6e793a100be5b3da98570b4b17f29110",
+    httpsAgent: agent
   };
-  
-  const resp = await axios.post(BASE_URL, authParams);
-  
+
+
+  const resp = await axios.get(BASE_URL, { httpsAgent: agent });
+
+  // const resp = await axios.post(BASE_URL, authParams);
+
   const cookie = resp.headers["set-cookie"][0]; // get cookie from request
 
   console.log("cookie :: ", cookie);
@@ -57,14 +65,30 @@ class FileAndFolderView extends Component {
     this.props.onOpenShare();
   }
 
-  
+
   handleTest = () => {
     console.log("handleTest...");
-       
+
     // send Post request to https://stackoverflow.com/protected after create session 
     createSession().then(() => {
       axiosInstance.post('/protected') // with new cookie
-    })
+    });
+
+    // axios({
+    //   url: 'http://localhost:8080/gpms/login',
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   responseType: 'json',
+    //   httpsAgent: new https.Agent({ rejectUnauthorized: false })
+    // })
+    //   .then(response => {
+    //   })
+    //   .catch(error => {
+    //   })
+
+
   }
 
   render() {
