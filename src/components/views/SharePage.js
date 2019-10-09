@@ -78,7 +78,7 @@ class SharePage extends Component {
                                 </Box>
                             </Grid>
                             <Grid item xs={6}>
-                                <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+                                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                                     <FileListComp />
                                 </Box>
                             </Grid>

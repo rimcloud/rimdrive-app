@@ -36,7 +36,7 @@ class FileListComp extends Component {
     const listData = FileProps.get('listData');
 
     return (
-      <div>
+      <div style={{margin: 4}}>
       {(listData && listData.size > 0) && 
       <Table className={classes.table} size="small" stickyHeader>
       <TableHead>
