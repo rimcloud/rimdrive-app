@@ -3,11 +3,10 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import { requestPostAPI, requestGetAPI } from 'components/utils/RCRequester';
+import { sqlite3 } from "sqlite3";
 
-
-import https from 'https';
-import axios, { post, get } from 'axios';
+// import https from 'https';
+// import axios, { post, get } from 'axios';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -17,66 +16,48 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-const BASE_URL = "https://gpms.gooroom.kr/gpms/login";
-// Init instance of axios which works with BASE_URL
-const axiosInstance = axios.create({
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false
-  }),
-  baseURL: BASE_URL
-});
 
 
 
-const createSession = async () => {
+// const BASE_URL = "https://gpms.gooroom.kr/gpms/login";
+// const axiosInstance = axios.create({
+//   httpsAgent: new https.Agent({
+//     rejectUnauthorized: false
+//   }),
+//   baseURL: BASE_URL
+// });
 
-  console.log("create session");
-
-  const agent = new https.Agent({
-    rejectUnauthorized: false
-  });
-
-  const authParams = {
-    userId: "admins",
-    userPw: "224de469ac2cdb434d225ffa2aece72c6e793a100be5b3da98570b4b17f29110",
-    httpsAgent: agent
-  };
-
-
-  const resp = await axios.get(BASE_URL, { httpsAgent: agent });
-
-  // const resp = await axios.post(BASE_URL, authParams);
-
-  const cookie = resp.headers["set-cookie"][0]; // get cookie from request
-
-  console.log("cookie :: ", cookie);
-
-  axiosInstance.defaults.headers.Cookie = cookie;   // attach cookie to axiosInstance for future requests
-
-};
-
-// ----------------------------------------
-
-const getBreeds = async () => {
-  try {
-    return await axios.get('http://localhost:3000/temp/test-api.html');
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const countBreeds = async () => {
-  const breeds = await getBreeds();
-
-  if (breeds.data) {
-    console.log(`data :: ${breeds.data}`);
-  } else {
-    console.log(`data is null`);
-  }
-};
-
-
-// ----------------------------------------
+// const createSession = async () => {
+//   console.log("create session");
+//   const agent = new https.Agent({
+//     rejectUnauthorized: false
+//   });
+//   const authParams = {
+//     userId: "admins",
+//     userPw: "224de469ac2cdb434d225ffa2aece72c6e793a100be5b3da98570b4b17f29110",
+//     httpsAgent: agent
+//   };
+//   const resp = await axios.get(BASE_URL, { httpsAgent: agent });
+//   // const resp = await axios.post(BASE_URL, authParams);
+//   const cookie = resp.headers["set-cookie"][0]; // get cookie from request
+//   console.log("cookie :: ", cookie);
+//   axiosInstance.defaults.headers.Cookie = cookie;   // attach cookie to axiosInstance for future requests
+// };
+// const getBreeds = async () => {
+//   try {
+//     return await axios.get('http://localhost:3000/temp/test-api.html');
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+// const countBreeds = async () => {
+//   const breeds = await getBreeds();
+//   if (breeds.data) {
+//     console.log(`data :: ${breeds.data}`);
+//   } else {
+//     console.log(`data is null`);
+//   }
+// };
 
 
 
@@ -97,28 +78,7 @@ class FileAndFolderView extends Component {
   handleTest = () => {
     console.log("handleTest...");
 
-    // send Post request to https://stackoverflow.com/protected after create session 
-    // createSession().then(() => {
-    //   axiosInstance.post('/protected') // with new cookie
-    // });
-
-
-    // countBreeds();
-
-
-    requestGetAPI('temp/test-api.html', {
-      grpId: 'grpId'
-    }).then(
-      (response) => {
-
-        console.log('response :::: ', response);
-
-      }
-    ).catch(error => {
-
-      console.log('error : ', error);
-
-    });
+    // const db = new sqlite3.Database(':memory');
 
   }
 

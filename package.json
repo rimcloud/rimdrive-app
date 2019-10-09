@@ -21,7 +21,8 @@
     "react-scripts": "3.1.2",
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "sqlite3": "^4.1.0"
   },
   "author": {
     "name": "syhan",
@@ -48,6 +49,7 @@
     "build": "cross-env NODE_PATH=src rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
+    "rebuild": "electron-rebuild -f -w sqlite3",
     "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "yarn build",
@@ -69,12 +71,14 @@
     ]
   },
   "devDependencies": {
-    "@rescripts/cli": "^0.0.12",
-    "@rescripts/rescript-env": "^0.0.10",
+    "@rescripts/cli": "0.0.12",
+    "@rescripts/rescript-env": "0.0.10",
     "concurrently": "^4.1.2",
-    "cross-env": "^6.0.0",
+    "cross-env": "^6.0.3",
     "electron": "^6.0.10",
     "electron-builder": "^21.2.0",
+    "electron-rebuild": "^1.8.6",
+    "node-gyp": "^6.0.0",
     "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
   }
