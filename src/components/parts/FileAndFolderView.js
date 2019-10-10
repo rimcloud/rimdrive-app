@@ -3,8 +3,6 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import { sqlite3 } from "sqlite3";
-
 // import https from 'https';
 // import axios, { post, get } from 'axios';
 
@@ -60,9 +58,9 @@ import Button from '@material-ui/core/Button';
 // };
 
 
-
 class FileAndFolderView extends Component {
 
+  
   constructor(props) {
     super(props);
     this.state = {
