@@ -175,6 +175,9 @@ class SyncPage extends Component {
             }
         }
 
+        const dataStorage = GlobalProps.get('dataStorage');
+        console.log('dataStorage :: ', dataStorage);
+
         return (
             <React.Fragment>
                 <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>

@@ -5,6 +5,9 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+
 import { Link } from 'react-router-dom';
 
 import {bindActionCreators} from 'redux';
@@ -17,7 +20,14 @@ class HomePage extends Component {
 
     componentDidMount() {
         console.log('HomePage -> componentDidMount.=============');
-        // const { GlobalActions } = this.props;
+        const { GlobalActions } = this.props;
+
+        const adapter = new FileSync(__dirname + '/db.json');
+        // const db = low(adapter);
+
+        GlobalActions.setDataStorage({
+            dataStorage: low(adapter)
+        });
 
         // File read (json) temp delete
 

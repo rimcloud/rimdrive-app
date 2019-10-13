@@ -11,6 +11,8 @@ const CHG_SYNCLOCALFOLDER_SUCCESS = 'global/CHG_SYNCLOCALFOLDER_SUCCESS';
 const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';
 
+const SET_DATASTORAGE_SUCCESS = 'global/SET_DATASTORAGE_SUCCESS';
+
 const CHG_STORE_DATA = 'global/CHG_STORE_DATA';
 
 const SHOW_CONFIRM = 'global/SHOW_CONFIRM';
@@ -30,6 +32,13 @@ const initialState = Map({
     confirmResult: false,
     confirmObject: null
 });
+
+export const setDataStorage = (param) => dispatch => {
+    return dispatch({
+        type: SET_DATASTORAGE_SUCCESS,
+        dataStorage: param.dataStorage
+    })
+}
 
 export const showConfirm = (param) => dispatch => {
     return dispatch({
@@ -107,6 +116,12 @@ export const chgSyncLocalFolderData = (param) => dispatch => {
 
 
 export default handleActions({
+
+    [SET_DATASTORAGE_SUCCESS]: (state, action) => {
+        return state.merge({
+            'dataStorage': action.dataStorage
+        });
+    },
 
     [SHOW_CONFIRM]: (state, action) => {
         return state.merge({
