@@ -28,17 +28,6 @@ class HomePage extends Component {
         GlobalActions.setDataStorage({
             dataStorage: low(adapter)
         });
-
-        // File read (json) temp delete
-
-        // const syncData = fs.readFileSync('rimdrive-app.cfg', 'utf8');
-        // console.log('syncData ::', syncData);
-
-        // if(syncData !== undefined && syncData !== '') {
-        //     GlobalActions.initSyncData({
-        //         syncData: fromJS(JSON.parse(syncData))
-        //     });
-        // }
     }
 
     handleStartBtnClick = (e) => {
