@@ -1,0 +1,18 @@
+{
+  "syncItems": [
+    {
+      "no": 1,
+      "local": "D:/electron/rimdrive-app/src/modules",
+      "cloud": "./src/modules",
+      "type": "a",
+      "status": "on"
+    },
+    {
+      "no": 4,
+      "local": "./src/modules",
+      "cloud": "./src/templates/theme",
+      "type": "a",
+      "status": "on"
+    }
+  ]
+}

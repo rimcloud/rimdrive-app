@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import electron from 'electron';
 import { fromJS } from 'immutable';
 import fs from 'fs';
 
@@ -10,6 +11,8 @@ import {connect} from 'react-redux';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
+
+import { setLocalFilesInDatabase } from 'components/utils/RCSyncUtil';
 
 import * as AccountActions from 'modules/AccountModule';
 import * as FileActions from 'modules/FileModule';
@@ -28,45 +31,43 @@ class SyncPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            itemCount: 0,
             selectedTab: 0,
             pathItems: ''
         };
     }
 
     componentDidMount() {
-        const { GlobalProps, GlobalActions, FileActions } = this.props;
-        console.log('SyncPage >>>>>>>>>>>>>> componentDidMount....');
-        // fs.readFile('rimdrive-app.cfg', 'utf8', (err, syncData) => {
-        //     console.log('readFile :: err', err);
-        //     console.log('syncData ::', syncData);
-        //     if(syncData !== undefined && syncData !== '') {
-        //         FileActions.initSyncData({
-        //              syncData: fromJS(JSON.parse(syncData))
-        //          });
-        //     }
-        // });
-
-        const syncData = fs.readFileSync('rimdrive-app.cfg', 'utf8');
-        if(syncData !== null && syncData !== undefined) {
-            console.log('syncData ::', syncData);
-                FileActions.initSyncData({
-                     syncData: fromJS(JSON.parse(syncData))
-                 });
-        }
-
+        const { GlobalProps, GlobalActions } = this.props;
 
         // dataStorage
         if(GlobalProps.get('dataStorage') === undefined) {
             // load dataStorage
-
-            console.log('dataStorage :load...: ');
-
-            const adapter = new FileSync(__dirname + '/db.json');
+            const adapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive.json`);
             GlobalActions.setDataStorage({
                 dataStorage: low(adapter)
+            }).then((result) => {
+                // console.log('result ::::::::: ', result);
+            });
+
+            const db = low(adapter);
+            let itemCount = 0;
+            if(db.get('syncItems') && db.get('syncItems').value().length > 0) {
+                itemCount = db.get('syncItems').value().length;
+            }
+            this.setState({
+                itemCount: itemCount
+            });
+        } else {
+            const dataStorage = GlobalProps.get('dataStorage');
+            let itemCount = 0;
+            if(dataStorage.get('syncItems') && dataStorage.get('syncItems').value().length > 0) {
+                itemCount = dataStorage.get('syncItems').value().length;
+            }
+            this.setState({
+                itemCount: itemCount
             });
         }
-
     }
 
     handleChangeValue = name => event => {
@@ -86,37 +87,66 @@ class SyncPage extends Component {
 
     handleAddSyncClick = () => {
         const { GlobalProps } = this.props;
-        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']) && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).size > 1) {
-            alert('동기화 항목은 최대 두개만 가능합니다.');
+        const dataStorage = GlobalProps.get('dataStorage');
+
+        let newNo = 1;
+        if(dataStorage.get('syncItems') === undefined) {
+            dataStorage.set('syncItems', [])
+            .write();
         } else {
-            // 디폴트 동기화 항목 추가
-            const { FileActions } = this.props;
-            FileActions.addSyncItemData();
+            const syncItems = dataStorage.get('syncItems').value();
+            const getMax = (accumulator, currentValue) => accumulator.no < currentValue.no ? currentValue : accumulator;
+            const latest = syncItems
+                .reduce(getMax);
+            newNo = Number(latest.no) + 1;
         }
+
+        dataStorage.get('syncItems')
+        .push({ "no": newNo,
+        "local": "",
+        "cloud": "",
+        "type": "a",
+        "status": "on"
+        }).write();
+
+        this.setState({
+            itemCount: this.state.itemCount + 1
+        });
     }
 
     handleDeleteItem = (no) => {
-        const { GlobalProps, GlobalActions } = this.props;
-
-        let syncItem = [];
-        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
-            syncItem = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).find((n) => (n.get('no') === no));
-        }
-
-        GlobalActions.showConfirm({
+        this.props.GlobalActions.showConfirm({
             confirmTitle: "동기화 삭제",
             confirmMsg: "동기화 항목을 삭제 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
                 if(confirmValue) {
-                    const { FileActions } = this.props;
-                    FileActions.deleteSyncItemData({
-                        no: paramObject.get('no')
-                    });
+                    const { GlobalProps } = this.props;
+                    const dataStorage = GlobalProps.get('dataStorage');
+                    dataStorage.get('syncItems')
+                    .remove({ no: paramObject })
+                    .write();
                 }
             },
-            confirmObject: syncItem
+            confirmObject: no
         });
     };
+
+    handleStartSyncFile = (no) => {
+        this.props.GlobalActions.showConfirm({
+            confirmTitle: "동기화 실행",
+            confirmMsg: "동기화를 실행 하시겠습니까?",
+            handleConfirmResult: (confirmValue, paramObject) => {
+                if(confirmValue) {
+                    const { GlobalProps } = this.props;
+                    const dataStorage = GlobalProps.get('dataStorage');
+                    const syncItem = dataStorage.get('syncItems')
+                    .find({ no: paramObject }).value();
+                    setLocalFilesInDatabase(syncItem);
+                }
+            },
+            confirmObject: no
+        });
+    }
 
     selectLocalFolder = (pathString, depth) => {
         let dirents = fs.readdirSync(pathString, { withFileTypes: true });
@@ -149,8 +179,8 @@ class SyncPage extends Component {
     }
 
     handleOpenFolderDialog = (syncNo, syncLoc) => {
-        const pathItems = this.selectLocalFolder('./src', 1);
-
+        const pathItems = this.selectLocalFolder('D:/electron/rimdrive-app/src', 1);
+        
         this.setState({
             openFolderDialog: true,
             targetSyncNo: syncNo,
@@ -177,34 +207,49 @@ class SyncPage extends Component {
         });
         const targetSyncNo = this.state.targetSyncNo;
         const targetSyncLoc = this.state.targetSyncLoc;
-        // change store
-        if(targetSyncLoc === 'local') {
-            this.props.FileActions.chgSyncLocalFolderData({
-                no: targetSyncNo, 
-                value: selectedFolderPath
-            });
-        } else {
-            // cloud folder
-        }
+
+        const { GlobalProps } = this.props;
+        const dataStorage = GlobalProps.get('dataStorage');
+        dataStorage.get('syncItems')
+        .find({ no: targetSyncNo })
+        .assign({ [targetSyncLoc]: selectedFolderPath})
+        .write();
+    }
+
+    handleChangeSyncType = (syncNo, syncType) => {
+        const { GlobalProps } = this.props;
+        const dataStorage = GlobalProps.get('dataStorage');
+        dataStorage.get('syncItems')
+        .find({ no: syncNo })
+        .assign({ type: syncType})
+        .write();
+        this.setState({
+            openFolderDialog: false
+        });
     }
 
     render() {
         const { classes, GlobalProps } = this.props;
+        const dataStorage = GlobalProps.get('dataStorage');
         const openFolderDialog = this.state.openFolderDialog;
 
         const items = this.state.pathItems;
-
-        let currSyncDatas = [];
-        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
-            const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
-            if(syncs && syncs.size > 0) {
-                currSyncDatas = syncs;
-            }
+        
+        let currSyncDatas = null;
+        if(dataStorage && dataStorage.get('syncItems') !== undefined) {
+            currSyncDatas = fromJS(dataStorage.get('syncItems').value());
         }
+        
+        // if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
+        //     const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
+        //     if(syncs && syncs.size > 0) {
+        //         currSyncDatas = syncs;
+        //     }
+        // }
 
-        const dataStorage = GlobalProps.get('dataStorage');
-        console.log('dataStorage :: ', dataStorage);
-        console.log('getState ::: ', (dataStorage) ? dataStorage.getState(): 'no');
+        
+        // console.log('dataStorage :: ', dataStorage);
+        // console.log('getState ::: ', (dataStorage) ? dataStorage.getState(): 'no');
 
         return (
             <React.Fragment>
@@ -214,10 +259,12 @@ class SyncPage extends Component {
                     </Button>
                 </Box>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
-                    <SyncItem item={s} 
+                    <SyncItem item={s} index={i+1}
                         key={s.get('no')} isFirst={i === 0 ? true : false} 
                         onDeleteItem={this.handleDeleteItem}
                         onShowFolderDialog={this.handleOpenFolderDialog}
+                        onChangeSyncType={this.handleChangeSyncType}
+                        onStartSyncFile={this.handleStartSyncFile}
                     />
                 ))
                 }
@@ -244,3 +291,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(SyncPage));
+

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import electron from 'electron';
 // import { Map, fromJS } from 'immutable';
 // import fs from 'fs';
 
@@ -21,10 +22,7 @@ class HomePage extends Component {
     componentDidMount() {
         console.log('HomePage -> componentDidMount.=============');
         const { GlobalActions } = this.props;
-
-        const adapter = new FileSync(__dirname + '/db.json');
-        // const db = low(adapter);
-
+        const adapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive.json`);
         GlobalActions.setDataStorage({
             dataStorage: low(adapter)
         });

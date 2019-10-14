@@ -28,11 +28,16 @@ const initialState = Map({
 });
 
 export const setDataStorage = (param) => dispatch => {
-    return dispatch({
+    dispatch({
         type: SET_DATASTORAGE_SUCCESS,
         dataStorage: param.dataStorage
-    })
-}
+    });
+    
+    return new Promise(function (resolve, reject) {
+        resolve('result test');
+      });
+
+};
 
 export const showConfirm = (param) => dispatch => {
     return dispatch({

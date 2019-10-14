@@ -24,7 +24,6 @@ class FolderTreeDialog extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor ----------------- props ::: ', props);
     this.state = {
       selectedId: '',
       folderPath: ''

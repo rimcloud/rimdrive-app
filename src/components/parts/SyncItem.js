@@ -44,18 +44,10 @@ class SyncItem extends Component {
     }
 
     handleTypeChange = name => event => {
-        const { FileActions, item } = this.props;
+        const { item } = this.props;
         const value = (event.target.type === 'checkbox') ? ((event.target.checked) ? 'a' : 'm') : event.target.value;
-        FileActions.chgSyncTypeData({
-            no: item.get('no'),
-            value: value
-        });
 
-        // const value = (event.target.type === 'checkbox') ? ((event.target.checked) ? 'allow' : 'disallow') : event.target.value;
-        // this.props.MediaRuleActions.setEditingItemValue({
-        //     name: name,
-        //     value: value
-        // });
+        this.props.onChangeSyncType(item.get('no'), value);
     }
 
     handleDeleteItemClick = () => {
@@ -66,7 +58,6 @@ class SyncItem extends Component {
     }
 
     handleShowFolderDialog = (locType) => {
-        console.log('>>>>>>>>>>>>>>>  handleShowFolderDialog  <<<<<<<<<<<<<<<<<<<');
         const { item } = this.props;
         this.props.onShowFolderDialog(item.get('no'), locType);
     }
@@ -80,34 +71,19 @@ class SyncItem extends Component {
     
     render() {
         const { classes } = this.props;
-        const { item, key } = this.props;
-        console.log('-render item- ', item.toJS());
-        // let currSyncDatas = [];
-        // let item = null;
-        // if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
-        //     const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
-        //     item = syncs.find(n => (n.get('no') === no));
-
-        //     console.log('-item- ', item);
-        //     // console.log('syncs ::: ', syncs);
-        //     // if(syncs && syncs.size > 0) {
-        //     //     console.log('-2-');
-        //     //     currSyncDatas = syncs;
-        //     //     console.log('currSyncDatas ::: ', currSyncDatas);
-        //     // }
-        // }
+        const { item, key, index } = this.props;
 
         return (
             <React.Fragment>
             {item && 
             <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key}>
-                <RCContentCardHeader title={`#. ${item.get('no')}`} subheader=""/>
+                <RCContentCardHeader title={`#. ${index}`} subheader=""/>
                 <CardContent>
                     <Grid container spacing={3}>
                         <Grid item xs={2}><Typography variant="body2" component="p">PC폴더</Typography></Grid>
                         <Grid item xs={8}><TextField
                                 id="pcloc"
-                                value={item.get('pclocation')}
+                                value={item.get('local')}
                                 fullWidth={true}
                                 margin="none"
                                 variant="outlined"
@@ -126,7 +102,7 @@ class SyncItem extends Component {
                         <Grid item xs={2}><Typography variant="body2" component="p">저장소폴더</Typography></Grid>
                         <Grid item xs={8}><TextField
                                 id="cloudloc"
-                                value={item.get('cloudlocation')}
+                                value={item.get('cloud')}
                                 fullWidth={true}
                                 margin="none"
                                 variant="outlined"
@@ -135,8 +111,7 @@ class SyncItem extends Component {
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="primary"
-                            onDoubleClick={this.handleDblClick}
-                            onClick={this.handleSingleClick} >
+                            onClick={() => this.handleShowFolderDialog('cloud')} >
                             수정
                             </Button>
                         </Grid>
@@ -154,7 +129,7 @@ class SyncItem extends Component {
                         </Grid>
                         <Grid item xs={2} style={{textAlign: 'right'}}><Button className={classes.RCSmallButton}
                         variant="contained" color="primary"
-                        onClick={this.handleLoginBtnClick} >
+                        onClick={() => this.props.onStartSyncFile(item.get('no'))} >
                         바로실행
                         </Button></Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}

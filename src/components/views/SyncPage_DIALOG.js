@@ -76,10 +76,10 @@ class SyncPage extends Component {
                         <RCContentCardHeader title={`NO.${s.no}`} subheader=""/>
                         <CardContent>
                             <Typography variant="body2" component="p">
-                                PC폴더 : {s.pclocation}
+                                PC폴더 : {s.local}
                             </Typography>
                             <Typography variant="body2" component="p">
-                                저장소폴더 : {s.cloudlocation}
+                                저장소폴더 : {s.cloud}
                             </Typography>
                         </CardContent>
                     </Card>
