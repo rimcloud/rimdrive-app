@@ -38,38 +38,21 @@ class SyncPage extends Component {
         };
     }
 
-    componentDidMount() {
-        const { GlobalProps, GlobalActions } = this.props;
+    // componentDidMount() {
+    //     const { GlobalProps } = this.props;
 
-        // dataStorage
-        if(GlobalProps.get('dataStorage') === undefined) {
-            // load dataStorage
-            const adapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive.json`);
-            GlobalActions.setDataStorage({
-                dataStorage: low(adapter)
-            }).then((result) => {
-                // console.log('result ::::::::: ', result);
-            });
-
-            const db = low(adapter);
-            let itemCount = 0;
-            if(db.get('syncItems') && db.get('syncItems').value().length > 0) {
-                itemCount = db.get('syncItems').value().length;
-            }
-            this.setState({
-                itemCount: itemCount
-            });
-        } else {
-            const dataStorage = GlobalProps.get('dataStorage');
-            let itemCount = 0;
-            if(dataStorage.get('syncItems') && dataStorage.get('syncItems').value().length > 0) {
-                itemCount = dataStorage.get('syncItems').value().length;
-            }
-            this.setState({
-                itemCount: itemCount
-            });
-        }
-    }
+    //     // driveConfig
+    //     if(GlobalProps.get('driveConfig') !== undefined) {
+    //         const driveConfig = GlobalProps.get('driveConfig');
+    //         let itemCount = 0;
+    //         if(driveConfig.get('syncItems') && driveConfig.get('syncItems').value().length > 0) {
+    //             itemCount = driveConfig.get('syncItems').value().length;
+    //         }
+    //         this.setState({
+    //             itemCount: itemCount
+    //         });
+    //     }
+    // }
 
     handleChangeValue = name => event => {
         this
@@ -88,21 +71,21 @@ class SyncPage extends Component {
 
     handleAddSyncClick = () => {
         const { GlobalProps } = this.props;
-        const dataStorage = GlobalProps.get('dataStorage');
+        const driveConfig = GlobalProps.get('driveConfig');
 
         let newNo = 1;
-        if(dataStorage.get('syncItems') === undefined) {
-            dataStorage.set('syncItems', [])
+        if(driveConfig.get('syncItems') === undefined) {
+            driveConfig.set('syncItems', [])
             .write();
         } else {
-            const syncItems = dataStorage.get('syncItems').value();
+            const syncItems = driveConfig.get('syncItems').value();
             const getMax = (accumulator, currentValue) => accumulator.no < currentValue.no ? currentValue : accumulator;
             const latest = syncItems
                 .reduce(getMax);
             newNo = Number(latest.no) + 1;
         }
 
-        dataStorage.get('syncItems')
+        driveConfig.get('syncItems')
         .push({ "no": newNo,
         "local": "",
         "cloud": "",
@@ -122,8 +105,8 @@ class SyncPage extends Component {
             handleConfirmResult: (confirmValue, paramObject) => {
                 if(confirmValue) {
                     const { GlobalProps } = this.props;
-                    const dataStorage = GlobalProps.get('dataStorage');
-                    dataStorage.get('syncItems')
+                    const driveConfig = GlobalProps.get('driveConfig');
+                    driveConfig.get('syncItems')
                     .remove({ no: paramObject })
                     .write();
                 }
@@ -139,27 +122,23 @@ class SyncPage extends Component {
             handleConfirmResult: (confirmValue, paramObject) => {
                 if(confirmValue) {
                     const { GlobalProps } = this.props;
-                    const dataStorage = GlobalProps.get('dataStorage');
-                    const syncItems = dataStorage.get('syncItems')
+                    const driveConfig = GlobalProps.get('driveConfig');
+                    const syncItems = driveConfig.get('syncItems')
                     .find({ no: paramObject }).value();
 
                     const files = getLocalFiles(syncItems);
                     console.log('getLocalFiles ==>> files >>>::: ', files);
-
-                    // dataStorage.get('syncItems')
-                    // .find({ no: paramObject }).assign({'files': []})
-                    // .write();
   
                     console.log('MID >>>> ', new Date());
+                    const adapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-local.json`);
+                    const dbLocal = low(adapter);
+                    dbLocal.defaults({ files: [] }).write();
                     // insert db
-                    // syncItems - 0 - files []
-//                    files.map(f => {
-                        dataStorage.get('syncItems')
-                        .find({ no: paramObject })
-                        .assign({'files': files});
-                        
-                        dataStorage.write().then(() => console.log('END >>>> ', new Date()));
-//                    });
+
+                    // dbLocal.setState({'files': files});
+                    dbLocal.assign({files: files}).write();
+                    //     .then(() => console.log('END >>>> ', new Date()));
+                    
                     // console.log('END >>>> ', new Date());
                 }
             },
@@ -206,8 +185,8 @@ class SyncPage extends Component {
         }
 
         const { GlobalProps } = this.props;
-        const dataStorage = GlobalProps.get('dataStorage');
-        dataStorage.get('syncItems')
+        const driveConfig = GlobalProps.get('driveConfig');
+        driveConfig.get('syncItems')
         .find({ no: syncNo })
         .assign({ [syncLoc]: pathStr})
         .write();
@@ -237,8 +216,8 @@ class SyncPage extends Component {
     //     const targetSyncLoc = this.state.targetSyncLoc;
 
     //     const { GlobalProps } = this.props;
-    //     const dataStorage = GlobalProps.get('dataStorage');
-    //     dataStorage.get('syncItems')
+    //     const driveConfig = GlobalProps.get('driveConfig');
+    //     driveConfig.get('syncItems')
     //     .find({ no: targetSyncNo })
     //     .assign({ [targetSyncLoc]: selectedFolderPath})
     //     .write();
@@ -246,8 +225,8 @@ class SyncPage extends Component {
 
     handleChangeSyncType = (syncNo, syncType) => {
         const { GlobalProps } = this.props;
-        const dataStorage = GlobalProps.get('dataStorage');
-        dataStorage.get('syncItems')
+        const driveConfig = GlobalProps.get('driveConfig');
+        driveConfig.get('syncItems')
         .find({ no: syncNo })
         .assign({ type: syncType})
         .write();
@@ -258,15 +237,15 @@ class SyncPage extends Component {
 
     render() {
         const { classes, GlobalProps } = this.props;
-        const dataStorage = GlobalProps.get('dataStorage');
+        const driveConfig = GlobalProps.get('driveConfig');
         const openFolderDialog = this.state.openFolderDialog;
 
         const items = this.state.pathItems;
         
         let currSyncDatas = null;
-        console.log('dataStorage >>>>>>>>>>>>>>>>>>>>>>> ', dataStorage);
-        if(dataStorage !== undefined && dataStorage.get('syncItems') !== undefined) {
-            currSyncDatas = fromJS(dataStorage.get('syncItems').value());
+        console.log('driveConfig >>>>>>>>>>>>>>>>>>>>>>> ', driveConfig);
+        if(driveConfig !== undefined && driveConfig.get('syncItems') !== undefined) {
+            currSyncDatas = fromJS(driveConfig.get('syncItems').value());
         }
         
         // if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
@@ -277,8 +256,8 @@ class SyncPage extends Component {
         // }
 
         
-        // console.log('dataStorage :: ', dataStorage);
-        // console.log('getState ::: ', (dataStorage) ? dataStorage.getState(): 'no');
+        // console.log('driveConfig :: ', driveConfig);
+        // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
 
         return (
             <React.Fragment>

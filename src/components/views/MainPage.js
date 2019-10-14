@@ -1,7 +1,15 @@
 import React, { Component } from "react";
+import electron from 'electron';
+
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import * as GlobalActions from 'modules/GlobalModule';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
+
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -26,6 +34,15 @@ class MainPage extends Component {
         this.state = {
             selectedTab: 0
         };
+    }
+
+    componentDidMount() {
+        console.log('MainPage -> componentDidMount.=============');
+        const { GlobalActions } = this.props;
+        const adapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive.json`);
+        GlobalActions.setDataStorage({
+            driveConfig: low(adapter)
+        });
     }
 
     handleChange = (event, newValue) => {
@@ -59,4 +76,12 @@ class MainPage extends Component {
     }
 }
 
-export default withStyles(CommonStyle)(MainPage);
+const mapStateToProps = (state) => ({
+    GlobalProps: state.GlobalModule
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    GlobalActions: bindActionCreators(GlobalActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(MainPage));

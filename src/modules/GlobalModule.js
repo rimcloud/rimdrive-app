@@ -30,7 +30,7 @@ const initialState = Map({
 export const setDataStorage = (param) => dispatch => {
     dispatch({
         type: SET_DATASTORAGE_SUCCESS,
-        dataStorage: param.dataStorage
+        driveConfig: param.driveConfig
     });
     
     return new Promise(function (resolve, reject) {
@@ -81,7 +81,7 @@ export default handleActions({
 
     [SET_DATASTORAGE_SUCCESS]: (state, action) => {
         return state.merge({
-            'dataStorage': action.dataStorage
+            'driveConfig': action.driveConfig
         });
     },
 

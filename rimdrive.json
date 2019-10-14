@@ -2,18 +2,11 @@
   "syncItems": [
     {
       "no": 1,
-      "local": "D:\\__NSRProject\\gooroom",
+      "local": "D:\\electron\\rimdrive-client",
       "cloud": "D:\\_Java\\jdk8\\src\\java\\util",
       "type": "a",
       "status": "on",
       "files": []
-    },
-    {
-      "no": 2,
-      "local": "D:\\temp",
-      "cloud": "D:\\apache-maven-3.3.9\\lib",
-      "type": "a",
-      "status": "on"
     }
   ]
 }

@@ -28,18 +28,35 @@ const selectLocalFiles = (targetPath, relativePath, depth, innerItems) => {
         selectLocalFiles(targetPath, `${relativePath}\\${path.name}`, depth + 1, innerItems);
 
       } else {
-
-        const fileInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`);
         // console.log('FILE :: ', `${targetPath}\\${path.name}`);
         // console.log('FILE Info :: ', fileInfo);
-        innerItems.push({
-          name: path.name,
-          targetPath: targetPath,
-          relPath: `${relativePath}\\${path.name}`,
-          atime: formatDateTime(fileInfo.atime),
-          ctime: formatDateTime(fileInfo.ctime),
-          birthtime: formatDateTime(fileInfo.birthtime),
-          mtime: formatDateTime(fileInfo.mtime)
+
+        // const fileInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`);
+        // innerItems.push({
+        //   name: path.name,
+        //   targetPath: targetPath,
+        //   relPath: `${relativePath}\\${path.name}`,
+        //   atime: formatDateTime(fileInfo.atime),
+        //   ctime: formatDateTime(fileInfo.ctime),
+        //   birthtime: formatDateTime(fileInfo.birthtime),
+        //   mtime: formatDateTime(fileInfo.mtime)
+        // });
+
+        fs.stat(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`, (err, stats) => {
+
+          if(err !== null)
+            console.log('err :::::::::: ', err);
+          if(stats !== undefined) {
+            innerItems.push({
+              name: stats.name,
+              targetPath: targetPath,
+              relPath: `${relativePath}\\${path.name}`,
+              atime: formatDateTime(stats.atime),
+              ctime: formatDateTime(stats.ctime),
+              birthtime: formatDateTime(stats.birthtime),
+              mtime: formatDateTime(stats.mtime)
+            });
+          }
         });
       }
   });
