@@ -1,5 +1,6 @@
 import React, {Component} from "react";
-import electron from 'electron';
+import electron, { ipcRenderer } from 'electron';
+
 import { fromJS } from 'immutable';
 import fs from 'fs';
 
@@ -179,42 +180,51 @@ class SyncPage extends Component {
     }
 
     handleOpenFolderDialog = (syncNo, syncLoc) => {
-        const pathItems = this.selectLocalFolder('D:/electron/rimdrive-app/src', 1);
-        
-        this.setState({
-            openFolderDialog: true,
-            targetSyncNo: syncNo,
-            targetSyncLoc: syncLoc,
-            pathItems: pathItems
-        });
-    }
+        const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
 
-    handleCloseFolderDialog = () => {
-        this.setState({
-            openFolderDialog: false
-        });
-    }
-
-    handleCloseFolderDialog = () => {
-        this.setState({
-            openFolderDialog: false
-        });
-    }
-
-    handleSelectFolder = (selectedFolderPath) => {
-        this.setState({
-            openFolderDialog: false
-        });
-        const targetSyncNo = this.state.targetSyncNo;
-        const targetSyncLoc = this.state.targetSyncLoc;
+        let pathStr = '';
+        if(pathItems && pathItems.length > 0) {
+            pathStr = pathItems[0];
+        }
 
         const { GlobalProps } = this.props;
         const dataStorage = GlobalProps.get('dataStorage');
         dataStorage.get('syncItems')
-        .find({ no: targetSyncNo })
-        .assign({ [targetSyncLoc]: selectedFolderPath})
+        .find({ no: syncNo })
+        .assign({ [syncLoc]: pathStr})
         .write();
+
+        this.setState({
+            reload: true
+        });
     }
+
+    handleCloseFolderDialog = () => {
+        this.setState({
+            openFolderDialog: false
+        });
+    }
+
+    handleCloseFolderDialog = () => {
+        this.setState({
+            openFolderDialog: false
+        });
+    }
+
+    // handleSelectFolder = (selectedFolderPath) => {
+    //     this.setState({
+    //         openFolderDialog: false
+    //     });
+    //     const targetSyncNo = this.state.targetSyncNo;
+    //     const targetSyncLoc = this.state.targetSyncLoc;
+
+    //     const { GlobalProps } = this.props;
+    //     const dataStorage = GlobalProps.get('dataStorage');
+    //     dataStorage.get('syncItems')
+    //     .find({ no: targetSyncNo })
+    //     .assign({ [targetSyncLoc]: selectedFolderPath})
+    //     .write();
+    // }
 
     handleChangeSyncType = (syncNo, syncType) => {
         const { GlobalProps } = this.props;

@@ -1,4 +1,8 @@
 import fs from 'fs';
+// import { drivelist } from 'drivelist';
+import os from 'os';
+import { ipcRenderer } from 'electron';
+
 
 const selectLocalFiles = (pathString, depth) => {
   let dirents = fs.readdirSync(pathString, { withFileTypes: true });
@@ -18,13 +22,30 @@ const selectLocalFiles = (pathString, depth) => {
   return innerItems;
 }
 
+function test() {
+
+  // const drivelist = require('drivelist');
+  //const drives = drivelist.list();
+
+  //electron.dialog.showOpenDialog({ properties: ['openFile', 'openDirectory', 'multiSelections'] });
+
+  console.log(ipcRenderer.sendSync('sync-msg-select-folder', 'ping')) // "pong" 출력
+
+//  console.log('drives :::: ', drives);
+};
+
 export function setLocalFilesInDatabase(syncItem) {
 
   console.log('setLocalFilesInDatabase ==>> syncItem ::: ', syncItem);
   console.log('setLocalFilesInDatabase ==>> syncItem.local ::: ', syncItem.local);
 
+  test();
+  
+
+
+
   // select local folders and files by local path info
-  const pathItems = selectLocalFiles('/test', 1);
+  // const pathItems = selectLocalFiles('/test', 1);
 };
 
 

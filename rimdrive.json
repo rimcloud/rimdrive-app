@@ -2,15 +2,15 @@
   "syncItems": [
     {
       "no": 1,
-      "local": "D:/electron/rimdrive-app/src/modules",
-      "cloud": "./src/modules",
+      "local": "D:\\_Java\\jdk8\\src",
+      "cloud": "D:\\_Java\\jdk8\\src\\java\\util",
       "type": "a",
       "status": "on"
     },
     {
-      "no": 4,
-      "local": "./src/modules",
-      "cloud": "./src/templates/theme",
+      "no": 2,
+      "local": "D:\\__Info\\mysql",
+      "cloud": "D:\\apache-maven-3.3.9\\lib",
       "type": "a",
       "status": "on"
     }
