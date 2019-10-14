@@ -2,10 +2,11 @@
   "syncItems": [
     {
       "no": 1,
-      "local": "D:\\apache-maven-3.3.9",
+      "local": "D:\\__NSRProject\\gooroom",
       "cloud": "D:\\_Java\\jdk8\\src\\java\\util",
       "type": "a",
-      "status": "on"
+      "status": "on",
+      "files": []
     },
     {
       "no": 2,

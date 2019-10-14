@@ -59,24 +59,13 @@ function test() {
 //  console.log('drives :::: ', drives);
 };
 
-export function setLocalFilesInDatabase(syncItem) {
-
-  console.log('setLocalFilesInDatabase ==>> syncItem ::: ', syncItem);
-  //console.log('setLocalFilesInDatabase ==>> syncItem.local ::: ', syncItem.local);
+export function getLocalFiles(syncItem) {
+  // console.log('getLocalFiles ==>> syncItem ::: ', syncItem);
 
   let innerItems = [];
   console.log('START >>>> ', new Date());
   const files = selectLocalFiles(syncItem.local, '', 1, innerItems);
-  console.log('setLocalFilesInDatabase ==>> files ::: ', files);
-  console.log('MID >>>> ', new Date());
-
-  let newFiles = [];
-  files.map(f => {
-    newFiles.push(f);
-  });
-
-  console.log('END >>>> ', new Date());
-
+  return files;
 };
 
 

@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 
-import { setLocalFilesInDatabase } from 'components/utils/RCSyncUtil';
+import { getLocalFiles } from 'components/utils/RCSyncUtil';
 
 import * as AccountActions from 'modules/AccountModule';
 import * as FileActions from 'modules/FileModule';
@@ -140,9 +140,27 @@ class SyncPage extends Component {
                 if(confirmValue) {
                     const { GlobalProps } = this.props;
                     const dataStorage = GlobalProps.get('dataStorage');
-                    const syncItem = dataStorage.get('syncItems')
+                    const syncItems = dataStorage.get('syncItems')
                     .find({ no: paramObject }).value();
-                    setLocalFilesInDatabase(syncItem);
+
+                    const files = getLocalFiles(syncItems);
+                    console.log('getLocalFiles ==>> files >>>::: ', files);
+
+                    // dataStorage.get('syncItems')
+                    // .find({ no: paramObject }).assign({'files': []})
+                    // .write();
+  
+                    console.log('MID >>>> ', new Date());
+                    // insert db
+                    // syncItems - 0 - files []
+//                    files.map(f => {
+                        dataStorage.get('syncItems')
+                        .find({ no: paramObject })
+                        .assign({'files': files});
+                        
+                        dataStorage.write().then(() => console.log('END >>>> ', new Date()));
+//                    });
+                    // console.log('END >>>> ', new Date());
                 }
             },
             confirmObject: no
@@ -246,7 +264,8 @@ class SyncPage extends Component {
         const items = this.state.pathItems;
         
         let currSyncDatas = null;
-        if(dataStorage && dataStorage.get('syncItems') !== undefined) {
+        console.log('dataStorage >>>>>>>>>>>>>>>>>>>>>>> ', dataStorage);
+        if(dataStorage !== undefined && dataStorage.get('syncItems') !== undefined) {
             currSyncDatas = fromJS(dataStorage.get('syncItems').value());
         }
         
