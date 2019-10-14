@@ -8,6 +8,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
 import * as GlobalActions from 'modules/GlobalModule';
+import * as FileActions from 'modules/FileModule';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 
@@ -38,26 +39,14 @@ class SyncItem extends Component {
         }
     }
 
-
-    handleAddSyncClick = () => {
-        const { GlobalProps } = this.props;
-        if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']) && GlobalProps.getIn(['syncData', 'rimdrive', 'sync']).size > 1) {
-            alert('동기화 항목은 최대 두개만 가능합니다.');
-        } else {
-            // 디폴트 동기화 항목 추가
-            const { GlobalActions } = this.props;
-            GlobalActions.addSyncItemData();
-        }
-    }
-
     checkType = value => {
         return (value !== 'm');
     }
 
     handleTypeChange = name => event => {
-        const { GlobalActions, item } = this.props;
+        const { FileActions, item } = this.props;
         const value = (event.target.type === 'checkbox') ? ((event.target.checked) ? 'a' : 'm') : event.target.value;
-        GlobalActions.chgSyncTypeData({
+        FileActions.chgSyncTypeData({
             no: item.get('no'),
             value: value
         });
@@ -191,7 +180,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     AccountActions: bindActionCreators(AccountActions, dispatch),
-    GlobalActions: bindActionCreators(GlobalActions, dispatch)
+    GlobalActions: bindActionCreators(GlobalActions, dispatch),
+    FileActions: bindActionCreators(FileActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(SyncItem));

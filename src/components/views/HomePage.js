@@ -5,6 +5,9 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+
 import { Link } from 'react-router-dom';
 
 import {bindActionCreators} from 'redux';
@@ -17,18 +20,14 @@ class HomePage extends Component {
 
     componentDidMount() {
         console.log('HomePage -> componentDidMount.=============');
-        // const { GlobalActions } = this.props;
+        const { GlobalActions } = this.props;
 
-        // File read (json) temp delete
+        const adapter = new FileSync(__dirname + '/db.json');
+        // const db = low(adapter);
 
-        // const syncData = fs.readFileSync('rimdrive-app.cfg', 'utf8');
-        // console.log('syncData ::', syncData);
-
-        // if(syncData !== undefined && syncData !== '') {
-        //     GlobalActions.initSyncData({
-        //         syncData: fromJS(JSON.parse(syncData))
-        //     });
-        // }
+        GlobalActions.setDataStorage({
+            dataStorage: low(adapter)
+        });
     }
 
     handleStartBtnClick = (e) => {

@@ -2,6 +2,10 @@ import React, { Component } from "react";
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
+import fs from 'fs';
+
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
 
 // import https from 'https';
 // import axios, { post, get } from 'axios';
@@ -73,11 +77,57 @@ class FileAndFolderView extends Component {
   }
 
 
+  selectLocalFolder = (pathString, depth) => {
+    let dirents = fs.readdirSync(pathString, { withFileTypes: true });
+    let innerItems = [];
+
+    dirents.map((path, i) => {
+        if (path.isDirectory()) {
+          console.log('FOLDER :: ', path.name);
+          innerItems.push(path.name);
+          const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
+        } else {
+          console.log('FILE :: ', path.name);
+          innerItems.push(path.name);
+        }
+    });
+    
+    return innerItems;
+  }
+
   handleTest = () => {
-    console.log("handleTest...");
+    console.log("handleTest... ", __dirname);
 
-    // const db = new sqlite3.Database(':memory');
+    const adapter = new FileSync(__dirname + '/db.json');
+    const db = low(adapter);
 
+    // init
+    // db.defaults({ posts: [], user: {}, count: 0 }).write();
+
+    // read file list on arbitary path
+    const pathItems = this.selectLocalFolder('/test', 1);
+
+
+    // Add a post
+    db.get('posts')
+      .push({ id: 1, title: 'lowdb is awesome' })
+      .write();
+
+    // Set a user using Lodash shorthand syntax
+    db.set('user.name', 'typicode')
+      .write();
+
+    // Increment count
+    db.update('count', n => n + 1)
+      .write();
+
+//    db.unset('post').write();
+
+    db.get('posts')
+      .remove({ id: 1 })
+      .write();
+
+    console.log('getState ::: ', db.getState());
   }
 
   render() {

@@ -8,7 +8,11 @@ import {CommonStyle} from 'templates/styles/CommonStyles';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+
 import * as AccountActions from 'modules/AccountModule';
+import * as FileActions from 'modules/FileModule';
 import * as GlobalActions from 'modules/GlobalModule';
 
 import SyncItem from 'components/parts/SyncItem';
@@ -30,16 +34,39 @@ class SyncPage extends Component {
     }
 
     componentDidMount() {
-        const { GlobalActions } = this.props;
+        const { GlobalProps, GlobalActions, FileActions } = this.props;
+        console.log('SyncPage >>>>>>>>>>>>>> componentDidMount....');
+        // fs.readFile('rimdrive-app.cfg', 'utf8', (err, syncData) => {
+        //     console.log('readFile :: err', err);
+        //     console.log('syncData ::', syncData);
+        //     if(syncData !== undefined && syncData !== '') {
+        //         FileActions.initSyncData({
+        //              syncData: fromJS(JSON.parse(syncData))
+        //          });
+        //     }
+        // });
 
-        fs.readFile('rimdrive-app.cfg', 'utf8', (err, syncData) => {
+        const syncData = fs.readFileSync('rimdrive-app.cfg', 'utf8');
+        if(syncData !== null && syncData !== undefined) {
             console.log('syncData ::', syncData);
-            if(syncData !== undefined && syncData !== '') {
-                 GlobalActions.initSyncData({
+                FileActions.initSyncData({
                      syncData: fromJS(JSON.parse(syncData))
                  });
-            }
-        });
+        }
+
+
+        // dataStorage
+        if(GlobalProps.get('dataStorage') === undefined) {
+            // load dataStorage
+
+            console.log('dataStorage :load...: ');
+
+            const adapter = new FileSync(__dirname + '/db.json');
+            GlobalActions.setDataStorage({
+                dataStorage: low(adapter)
+            });
+        }
+
     }
 
     handleChangeValue = name => event => {
@@ -63,8 +90,8 @@ class SyncPage extends Component {
             alert('동기화 항목은 최대 두개만 가능합니다.');
         } else {
             // 디폴트 동기화 항목 추가
-            const { GlobalActions } = this.props;
-            GlobalActions.addSyncItemData();
+            const { FileActions } = this.props;
+            FileActions.addSyncItemData();
         }
     }
 
@@ -81,8 +108,8 @@ class SyncPage extends Component {
             confirmMsg: "동기화 항목을 삭제 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
                 if(confirmValue) {
-                    const { GlobalActions } = this.props;
-                    GlobalActions.deleteSyncItemData({
+                    const { FileActions } = this.props;
+                    FileActions.deleteSyncItemData({
                         no: paramObject.get('no')
                     });
                 }
@@ -152,7 +179,7 @@ class SyncPage extends Component {
         const targetSyncLoc = this.state.targetSyncLoc;
         // change store
         if(targetSyncLoc === 'local') {
-            this.props.GlobalActions.chgSyncLocalFolderData({
+            this.props.FileActions.chgSyncLocalFolderData({
                 no: targetSyncNo, 
                 value: selectedFolderPath
             });
@@ -174,6 +201,10 @@ class SyncPage extends Component {
                 currSyncDatas = syncs;
             }
         }
+
+        const dataStorage = GlobalProps.get('dataStorage');
+        console.log('dataStorage :: ', dataStorage);
+        console.log('getState ::: ', (dataStorage) ? dataStorage.getState(): 'no');
 
         return (
             <React.Fragment>
@@ -208,7 +239,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     AccountActions: bindActionCreators(AccountActions, dispatch),
-    GlobalActions: bindActionCreators(GlobalActions, dispatch)
+    GlobalActions: bindActionCreators(GlobalActions, dispatch),
+    FileActions: bindActionCreators(FileActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(SyncPage));
