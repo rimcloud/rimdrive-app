@@ -1,21 +1,46 @@
 import fs from 'fs';
-// import { drivelist } from 'drivelist';
-import os from 'os';
 import { ipcRenderer } from 'electron';
+import { formatDateTime } from 'components/utils/RCCommonUtil';
 
+const selectLocalFiles = (targetPath, relativePath, depth, innerItems) => {
 
-const selectLocalFiles = (pathString, depth) => {
-  let dirents = fs.readdirSync(pathString, { withFileTypes: true });
-  let innerItems = [];
+  let dirents = fs.readdirSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}`, { withFileTypes: true });
+
+  // `${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}`
+  // `${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`
 
   dirents.map((path, i) => {
       if (path.isDirectory()) {
-        console.log('FOLDER :: ', path.name);
-        innerItems.push(path.name);
-        const childItem = selectLocalFiles(`${pathString}/${path.name}`, depth + 1);
+        const folderInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`);
+        // console.log('FOLDER :: ', `${targetPath}\\${path.name}`);
+        // console.log('FOLDER Info :: ', folderInfo);
+        
+        innerItems.push({
+          name: path.name,
+          targetPath: targetPath,
+          relPath: `${relativePath}\\${path.name}`,
+          atime: formatDateTime(folderInfo.atime),
+          ctime: formatDateTime(folderInfo.ctime),
+          birthtime: formatDateTime(folderInfo.birthtime),
+          mtime: formatDateTime(folderInfo.mtime)
+        });
+
+        selectLocalFiles(targetPath, `${relativePath}\\${path.name}`, depth + 1, innerItems);
+
       } else {
-        console.log('FILE :: ', path.name);
-        innerItems.push(path.name);
+
+        const fileInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`);
+        // console.log('FILE :: ', `${targetPath}\\${path.name}`);
+        // console.log('FILE Info :: ', fileInfo);
+        innerItems.push({
+          name: path.name,
+          targetPath: targetPath,
+          relPath: `${relativePath}\\${path.name}`,
+          atime: formatDateTime(fileInfo.atime),
+          ctime: formatDateTime(fileInfo.ctime),
+          birthtime: formatDateTime(fileInfo.birthtime),
+          mtime: formatDateTime(fileInfo.mtime)
+        });
       }
   });
   
@@ -37,15 +62,21 @@ function test() {
 export function setLocalFilesInDatabase(syncItem) {
 
   console.log('setLocalFilesInDatabase ==>> syncItem ::: ', syncItem);
-  console.log('setLocalFilesInDatabase ==>> syncItem.local ::: ', syncItem.local);
+  //console.log('setLocalFilesInDatabase ==>> syncItem.local ::: ', syncItem.local);
 
-  test();
-  
+  let innerItems = [];
+  console.log('START >>>> ', new Date());
+  const files = selectLocalFiles(syncItem.local, '', 1, innerItems);
+  console.log('setLocalFilesInDatabase ==>> files ::: ', files);
+  console.log('MID >>>> ', new Date());
 
+  let newFiles = [];
+  files.map(f => {
+    newFiles.push(f);
+  });
 
+  console.log('END >>>> ', new Date());
 
-  // select local folders and files by local path info
-  // const pathItems = selectLocalFiles('/test', 1);
 };
 
 
