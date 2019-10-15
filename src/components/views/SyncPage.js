@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 
-import { getLocalFiles } from 'components/utils/RCSyncUtil';
+import { getLocalFiles, getCloudFiles, startCompareData } from 'components/utils/RCSyncUtil';
 
 import * as AccountActions from 'modules/AccountModule';
 import * as FileActions from 'modules/FileModule';
@@ -126,74 +126,47 @@ class SyncPage extends Component {
                     const syncItems = driveConfig.get('syncItems')
                     .find({ no: paramObject }).value();
 
-                    const files = getLocalFiles(syncItems);
-                    console.log('getLocalFiles ==>> files >>>::: ', files);
-  
-                    console.log('MID >>>> ', new Date());
-                    const adapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-local.json`);
-                    const dbLocal = low(adapter);
-                    dbLocal.defaults({ files: [] }).write();
-                    // insert db
+                    // ## LOCAL FILEs SAVE
+                    const localFiles = getLocalFiles(syncItems);
+                    // console.log('getLocalFiles ==>> localFiles >>>::: ', localFiles);
+                    const localAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-local.json`);
+                    const localDB = low(localAdapter);
+                    //dbLocal.defaults({ localFiles: [] }).write();
+                    localDB.assign({files: localFiles}).write();
 
-                    // dbLocal.setState({'files': files});
-                    dbLocal.assign({files: files}).write();
-                    //     .then(() => console.log('END >>>> ', new Date()));
-                    
-                    // console.log('END >>>> ', new Date());
+                    // ## CLOUD FILEs SAVE
+                    const cloudFiles = getCloudFiles(syncItems); /// ???????
+                    // console.log('getLocalFiles ==>> cloudFiles >>>::: ', cloudFiles);
+                    const cloudAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-cloud.json`);
+                    const cloudDB = low(cloudAdapter);
+                    //dbLocal.defaults({ cloudFiles: [] }).write();
+                    cloudDB.assign({files: cloudFiles}).write();
+
+                    // ## Compare Data
+                    startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
+                        .then((resolvedData) => {
+                            console.log('resolvedData :::::::: ', resolvedData);
+                        });
                 }
             },
             confirmObject: no
         });
     }
 
-    selectLocalFolder = (pathString, depth) => {
-        let dirents = fs.readdirSync(pathString, { withFileTypes: true });
-        let innerItems = [];
-
-        dirents.map((path, i) => {
-            if (path.isDirectory()) {
-                const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
-                if(childItem !== undefined && childItem.length > 0) {
-                    innerItems.push(<TreeItem label={path.name} 
-                            nodeId={(depth * 100000 + i).toString()} 
-                            key={depth * 100000 + i}
-                            id={depth * 100000 + i}
-                            path={`${pathString}/${path.name}`}
-                        >
-                        {childItem.map((c) => (c))}
-                        </TreeItem>);
-                } else {
-                    innerItems.push(<TreeItem label={path.name} 
-                        nodeId={(depth * 100000 + i).toString()} 
-                        key={depth * 100000 + i} 
-                        id={depth * 100000 + i}
-                        path={`${pathString}/${path.name}`}
-                    />);
-                }
-            }
-        });
-        
-        return innerItems;
-    }
-
     handleOpenFolderDialog = (syncNo, syncLoc) => {
         const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
 
-        let pathStr = '';
         if(pathItems && pathItems.length > 0) {
-            pathStr = pathItems[0];
+            const { GlobalProps } = this.props;
+            const driveConfig = GlobalProps.get('driveConfig');
+            driveConfig.get('syncItems')
+            .find({ no: syncNo })
+            .assign({ [syncLoc]: pathItems[0]})
+            .write();
+            this.setState({
+                reload: true
+            });
         }
-
-        const { GlobalProps } = this.props;
-        const driveConfig = GlobalProps.get('driveConfig');
-        driveConfig.get('syncItems')
-        .find({ no: syncNo })
-        .assign({ [syncLoc]: pathStr})
-        .write();
-
-        this.setState({
-            reload: true
-        });
     }
 
     handleCloseFolderDialog = () => {
@@ -243,7 +216,7 @@ class SyncPage extends Component {
         const items = this.state.pathItems;
         
         let currSyncDatas = null;
-        console.log('driveConfig >>>>>>>>>>>>>>>>>>>>>>> ', driveConfig);
+        
         if(driveConfig !== undefined && driveConfig.get('syncItems') !== undefined) {
             currSyncDatas = fromJS(driveConfig.get('syncItems').value());
         }

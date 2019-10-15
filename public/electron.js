@@ -38,11 +38,10 @@ function createWindow() {
             properties: ['openDirectory'],
             message: '폴더를 선택하세요'
         }).then(result => {
-            console.log('dialog result -------------------- :::: ', result);
-            if(!result.canceled) {
-                event.returnValue = result.filePaths;
+            if(result.canceled) {
+                event.returnValue = null;
             } else {
-                event.returnValue = [];
+                event.returnValue = result.filePaths;
             }
         });
     });
