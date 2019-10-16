@@ -2,7 +2,10 @@ import React, { Component } from "react";
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
+
+import FormData from 'form-data';
 import fs from 'fs';
+import axios from 'axios';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -64,7 +67,7 @@ import Button from '@material-ui/core/Button';
 
 class FileAndFolderView extends Component {
 
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -82,52 +85,50 @@ class FileAndFolderView extends Component {
     let innerItems = [];
 
     dirents.map((path, i) => {
-        if (path.isDirectory()) {
-          console.log('FOLDER :: ', path.name);
-          innerItems.push(path.name);
-          const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
-        } else {
-          console.log('FILE :: ', path.name);
-          innerItems.push(path.name);
-        }
+      if (path.isDirectory()) {
+        console.log('FOLDER :: ', path.name);
+        innerItems.push(path.name);
+        const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
+      } else {
+        console.log('FILE :: ', path.name);
+        innerItems.push(path.name);
+      }
     });
-    
+
     return innerItems;
   }
 
   handleTest = () => {
+
     console.log("handleTest... ", __dirname);
 
-    const adapter = new FileSync(__dirname + '/db.json');
-    const db = low(adapter);
-
-    // init
-    // db.defaults({ posts: [], user: {}, count: 0 }).write();
-
-    // read file list on arbitary path
-    const pathItems = this.selectLocalFolder('/test', 1);
+    // const ff = fs.readFileSync(__dirname + 'flower.jpg');
+    // console.log('FF :::::: ', ff);
 
 
-    // Add a post
-    db.get('posts')
-      .push({ id: 1, title: 'lowdb is awesome' })
-      .write();
+    // fs.readdir(__dirname, function(error, filelist){
+    //   console.log(filelist);
+    // })
 
-    // Set a user using Lodash shorthand syntax
-    db.set('user.name', 'typicode')
-      .write();
+    let form = new FormData();
+//    form.append('my_file', fs.createReadStream('/foo/bar.jpg'), 'bar.jpg' );
 
-    // Increment count
-    db.update('count', n => n + 1)
-      .write();
+    form.append( 'my_file', fs.createReadStream('/flower.jpg'), {filename: 'flower.jpg', contentType: 'image/jpeg', knownLength: 9568} );
 
-//    db.unset('post').write();
+    //form.append('file', ff, 'flower.jpg');
 
-    db.get('posts')
-      .remove({ id: 1 })
-      .write();
 
-    console.log('getState ::: ', db.getState());
+    axios.create({
+      headers: form.getHeaders()
+    }).post('http://localhost:8001/sample/upload', form).then(response => {
+      console.log(response);
+    }).catch(error => {
+      if (error.response) {
+        console.log(error.response);
+      }
+      console.log(error.message);
+    });
+
   }
 
   render() {
