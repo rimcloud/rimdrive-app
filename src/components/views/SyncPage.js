@@ -234,6 +234,7 @@ class SyncPage extends Component {
         return (
             <React.Fragment>
                 <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>
+                    <div>driveConfig : {(driveConfig !== undefined) ? low(driveConfig) : 'no'}</div>
                     <Button onClick={this.handleAddSyncClick} className={classes.RCSmallButton} variant="contained" color="primary">
                         파일 동기화 추가
                     </Button>

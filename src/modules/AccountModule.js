@@ -27,33 +27,36 @@ export const changeAccountParamData = (param) => dispatch => {
 
 export const reqLoginProcess = (userId, password) => dispatch => {
     dispatch({type: COMMON_PENDING});
-    return requestPostAPI('vdrive/api/login.rim', {
-        userid: userId,
-        passwd: password
-    }).then(
-        (response) => {
 
-            console.log('response :::: ', response);
-
-            dispatch({
-                type: REQ_LOGIN_PROCESS,
-                response: response
-            });
-        }
-    ).catch(error => {
-
-        console.log('error :::: ', error);
-
-        // 404
-        // Test CODE
-        dispatch({
-            type: REQ_LOGIN_PROCESS,
-            name: 'userToken',
-            value: 'ttt'
-        });
-
-        // dispatch({ type: COMMON_FAILURE, error: error });
+    return dispatch({
+        type: REQ_LOGIN_PROCESS,
+        name: 'userToken',
+        value: 'ttt'
     });
+
+
+    // return requestPostAPI('vdrive/api/login.rim', {
+    //     userid: userId,
+    //     passwd: password
+    // }).then(
+    //     (response) => {
+    //         dispatch({
+    //             type: REQ_LOGIN_PROCESS,
+    //             response: response
+    //         });
+    //     }
+    // ).catch(error => {
+    //     console.log('error :::: ', error);
+    //     // 404
+    //     // Test CODE
+    //     dispatch({
+    //         type: REQ_LOGIN_PROCESS,
+    //         name: 'userToken',
+    //         value: 'ttt'
+    //     });
+
+    //     // dispatch({ type: COMMON_FAILURE, error: error });
+    // });
 };
 
 export default handleActions({
