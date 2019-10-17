@@ -7,12 +7,6 @@ import FormData from 'form-data';
 import fs from 'fs';
 import axios from 'axios';
 
-import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
-
-// import https from 'https';
-// import axios, { post, get } from 'axios';
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as FileActions from 'modules/FileModule';
@@ -21,52 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-
-
-
-// const BASE_URL = "https://gpms.gooroom.kr/gpms/login";
-// const axiosInstance = axios.create({
-//   httpsAgent: new https.Agent({
-//     rejectUnauthorized: false
-//   }),
-//   baseURL: BASE_URL
-// });
-
-// const createSession = async () => {
-//   console.log("create session");
-//   const agent = new https.Agent({
-//     rejectUnauthorized: false
-//   });
-//   const authParams = {
-//     userId: "admins",
-//     userPw: "224de469ac2cdb434d225ffa2aece72c6e793a100be5b3da98570b4b17f29110",
-//     httpsAgent: agent
-//   };
-//   const resp = await axios.get(BASE_URL, { httpsAgent: agent });
-//   // const resp = await axios.post(BASE_URL, authParams);
-//   const cookie = resp.headers["set-cookie"][0]; // get cookie from request
-//   console.log("cookie :: ", cookie);
-//   axiosInstance.defaults.headers.Cookie = cookie;   // attach cookie to axiosInstance for future requests
-// };
-// const getBreeds = async () => {
-//   try {
-//     return await axios.get('http://localhost:3000/temp/test-api.html');
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-// const countBreeds = async () => {
-//   const breeds = await getBreeds();
-//   if (breeds.data) {
-//     console.log(`data :: ${breeds.data}`);
-//   } else {
-//     console.log(`data is null`);
-//   }
-// };
-
-
 class FileAndFolderView extends Component {
-
 
   constructor(props) {
     super(props);
@@ -84,11 +33,11 @@ class FileAndFolderView extends Component {
     let dirents = fs.readdirSync(pathString, { withFileTypes: true });
     let innerItems = [];
 
-    dirents.map((path, i) => {
+    dirents.forEach((path, i) => {
       if (path.isDirectory()) {
         console.log('FOLDER :: ', path.name);
         innerItems.push(path.name);
-        const childItem = this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
+        this.selectLocalFolder(`${pathString}/${path.name}`, depth + 1);
       } else {
         console.log('FILE :: ', path.name);
         innerItems.push(path.name);
@@ -110,17 +59,21 @@ class FileAndFolderView extends Component {
     //   console.log(filelist);
     // })
 
-    let form = new FormData();
+    const form = new FormData();
+    const stream = fs.createReadStream('/flower.jpg');
+    form.append('image', stream);
+
 //    form.append('my_file', fs.createReadStream('/foo/bar.jpg'), 'bar.jpg' );
 
-    form.append( 'my_file', fs.createReadStream('/flower.jpg'), {filename: 'flower.jpg', contentType: 'image/jpeg', knownLength: 9568} );
+    // form.append( 'my_file', fs.createReadStream('/flower.jpg'), {filename: 'flower.jpg', contentType: 'image/jpeg', knownLength: 9568} );
 
     //form.append('file', ff, 'flower.jpg');
 
+    
+    const url = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=UPLOAD&userid=test01&path=/개인저장소/모든파일/test1/flower.jpg';
+    console.log(encodeURI(url));
 
-    axios.create({
-      headers: form.getHeaders()
-    }).post('http://localhost:8001/sample/upload', form).then(response => {
+    axios.post(encodeURI(url), form).then(response => {
       console.log(response);
     }).catch(error => {
       if (error.response) {
