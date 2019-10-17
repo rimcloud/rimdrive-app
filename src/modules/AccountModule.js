@@ -2,8 +2,6 @@
 import { handleActions } from 'redux-actions';
 import { Map } from 'immutable';
 
-import { requestPostAPI } from 'components/utils/RCRequester';
-
 const COMMON_PENDING = 'account/COMMON_PENDING';
 const COMMON_FAILURE = 'account/COMMON_FAILURE';
 const CHG_ACCOUNTPARAM_DATA = 'account/CHG_ACCOUNTPARAM_DATA';
