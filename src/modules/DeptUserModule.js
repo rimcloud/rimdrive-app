@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
-import { Map, List, fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
-import { requestPostAPI, requestGetAPI } from 'components/utils/RCRequester';
+import { requestGetAPI } from 'components/utils/RCRequester';
 
 const GET_USERLIST_SUCCESS = 'user/GET_USERLIST_SUCCESS';
 const SET_DEPTINFO_SUCCESS = 'user/SET_DEPTINFO_SUCCESS';

@@ -1,6 +1,6 @@
 
 import { handleActions } from 'redux-actions';
-import { Map, List, fromJS } from 'immutable';
+import { Map } from 'immutable';
 
 const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';

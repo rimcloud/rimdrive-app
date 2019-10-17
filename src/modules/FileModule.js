@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import { Map, List, fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 const GET_FILELIST_SUCCESS = 'file/GET_FILELIST_SUCCESS';
 const SET_SELECTEDFILE_SUCCESS = 'file/SET_SELECTEDFILE_SUCCESS';

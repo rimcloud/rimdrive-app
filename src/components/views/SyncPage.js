@@ -25,7 +25,6 @@ import FolderTreeDialog from 'components/parts/FolderTreeDialog';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import TreeItem from '@material-ui/lab/TreeItem';
 
 class SyncPage extends Component {
 

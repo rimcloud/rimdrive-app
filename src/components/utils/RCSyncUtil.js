@@ -171,13 +171,13 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
           if(stateFile === null || stateFile === undefined) {
             // UPLOAD
             // temp copy to cloudFolder
-            let type = '';
+            // let type = '';
             if(n.type === 'D') {
               fs.mkdirSync(cloudTarget + n.relPath);
-              type = 'D';
+              // type = 'D';
             } else {
               fs.copyFileSync(n.targetPath + n.relPath, cloudTarget + n.relPath);
-              type = 'F';
+              // type = 'F';
             }
           } else {
             if(n.size === stateFile.size && n.mtime === stateFile.local_mtime) {

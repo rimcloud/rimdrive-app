@@ -13,8 +13,6 @@ import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import RemoveIcon from '@material-ui/icons/Remove';
-
 
 function ItemCircle(props) {
   return (
@@ -49,7 +47,6 @@ class FolderTreeComp extends Component {
 
   render() {
     const { classes } = this.props;
-    const { FileProps } = this.props;
 
     const pathItems = <React.Fragment>
             <TreeItem nodeId='1' label='폴더1' onClick={() => this.handleSelectFolder(Map({folderName:'폴더1',folderId:'folder001'}))}>
