@@ -11,7 +11,8 @@ function createWindow() {
         width: 600,
         height: 480,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            webSecurity: false
         }
     });
     mainWindow.setMenu(null);
