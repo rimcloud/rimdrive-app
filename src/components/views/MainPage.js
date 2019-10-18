@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import electron from 'electron';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -7,6 +6,8 @@ import * as GlobalActions from 'modules/GlobalModule';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
+
+import { getAppRoot } from 'components/utils/RCCommonUtil';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -20,21 +21,12 @@ import SharePage from 'components/views/SharePage';
 import SyncPage from 'components/views/SyncPage';
 import SetupPage from 'components/views/SetupPage';
 
-const path = require('path');
 
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`
     };
-}
-
-function getAppRoot() {
-    if ( process.platform === 'win32' ) {
-      return path.join( electron.remote.app.getAppPath(), '/../../../' );
-    }  else {
-      return path.join( electron.remote.app.getAppPath(), '/../../../../' );
-    }
 }
 
 class MainPage extends Component {
@@ -48,14 +40,16 @@ class MainPage extends Component {
 
     componentDidMount() {
         const { GlobalActions } = this.props;
-        const confFile = getAppRoot() + 'rimdrive.json';
-        const adapter = new FileSync(confFile);
+        // load and init rimdrive config
+        const adapter = new FileSync(getAppRoot() + 'rimdrive.json');
+        const driveConfig = low(adapter);
 
-        const test = low(adapter);
-        test.set({test: '11111'}).write();
-        
+        if(driveConfig !== undefined && driveConfig.get('syncItems').value() === undefined) {
+            driveConfig.assign({syncItems: []}).write();
+        }
+
         GlobalActions.setDataStorage({
-            driveConfig: low(adapter)
+            driveConfig: driveConfig
         });
     }
 
@@ -65,6 +59,7 @@ class MainPage extends Component {
         });
     };
 
+
     render() {
         const { classes } = this.props;
         const selectedTab = this.state.selectedTab;
@@ -72,9 +67,7 @@ class MainPage extends Component {
         return (
             <React.Fragment>
                 <div className={classes.mainPage} > 
-                <div>TEST1 : {electron.remote.app.getAppPath()}</div>
-                <div>TEST2 : {process.platform}</div>
-                <div>TEST3 : {path.join( electron.remote.app.getAppPath(), '/../../../' )}</div>
+                    <div>VAR => {getAppRoot()} ::: {process.platform}</div>
                     <AppBar position="relative" style={{backgroundColor:'#2c387b'}}>
                         <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
                             <Tab label="정보" {...a11yProps(0)} />

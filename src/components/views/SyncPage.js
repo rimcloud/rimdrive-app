@@ -37,21 +37,28 @@ class SyncPage extends Component {
         };
     }
 
-    // componentDidMount() {
-    //     const { GlobalProps } = this.props;
+    componentDidMount() {
+        const { GlobalProps } = this.props;
+        // driveConfig
+        if(GlobalProps.get('driveConfig') !== undefined) {
+            const driveConfig = GlobalProps.get('driveConfig');
+            
+            driveConfig.assign({test: '4444'}).write();
+            // let itemCount = 0;
+            // if(driveConfig.get('syncItems') && driveConfig.get('syncItems').value().length > 0) {
+            //     itemCount = driveConfig.get('syncItems').value().length;
+            // }
+            // this.setState({
+            //     itemCount: itemCount
+            // });
+        }
 
-    //     // driveConfig
-    //     if(GlobalProps.get('driveConfig') !== undefined) {
-    //         const driveConfig = GlobalProps.get('driveConfig');
-    //         let itemCount = 0;
-    //         if(driveConfig.get('syncItems') && driveConfig.get('syncItems').value().length > 0) {
-    //             itemCount = driveConfig.get('syncItems').value().length;
-    //         }
-    //         this.setState({
-    //             itemCount: itemCount
-    //         });
-    //     }
-    // }
+        // const confFile = getAppRoot() + 'rimdrive.json';
+        // const adapter = new FileSync(confFile);
+        // const test = low(adapter);
+        // test.assign({test: '3333'}).write();
+
+    }
 
     handleChangeValue = name => event => {
         this
@@ -73,14 +80,14 @@ class SyncPage extends Component {
         const driveConfig = GlobalProps.get('driveConfig');
 
         let newNo = 1;
-        if(driveConfig.get('syncItems') === undefined) {
-            driveConfig.set('syncItems', [])
-            .write();
-        } else {
-            const syncItems = driveConfig.get('syncItems').value();
+        if(driveConfig.get('syncItems').value() === undefined) {
+            driveConfig.assign('syncItems', []).write();
+        }
+        
+        const syncItems = driveConfig.get('syncItems').value();
+        if(syncItems.length > 0) {
             const getMax = (accumulator, currentValue) => accumulator.no < currentValue.no ? currentValue : accumulator;
-            const latest = syncItems
-                .reduce(getMax);
+            const latest = syncItems.reduce(getMax);
             newNo = Number(latest.no) + 1;
         }
 
@@ -234,7 +241,6 @@ class SyncPage extends Component {
         return (
             <React.Fragment>
                 <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>
-                    <div>driveConfig : {(driveConfig !== undefined) ? low(driveConfig) : 'no'}</div>
                     <Button onClick={this.handleAddSyncClick} className={classes.RCSmallButton} variant="contained" color="primary">
                         파일 동기화 추가
                     </Button>
