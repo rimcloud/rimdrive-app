@@ -1,3 +1,13 @@
+import electron from 'electron';
+import path from 'path';
+
+export const getAppRoot = () => {
+  if ( process.platform === 'win32' ) {
+    return path.join( electron.remote.app.getAppPath(), '/../../../' );
+  }  else {
+    return path.join( electron.remote.app.getAppPath(), '/../../../../' );
+  }
+}
 
 export const formatDate = (date) => {
   const d = new Date(date);
