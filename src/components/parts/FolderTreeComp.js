@@ -32,25 +32,62 @@ class FolderTreeComp extends Component {
   }
 
   handleNodeToggle = (id, extend) => {
+    // const { folderList } = this.props;
     // console.log('id :: ', id);
     // console.log('extend :: ', extend);
+
+    // const folder = folderList.find(e => (e.get('folderId') === id));
+    // console.log('clicked folder  = ', folder);
+    // FileActions.showFolderInfo({
+    //   selectedFolder: folder
+    // });
   }
 
-
-  handleSelectFolder = (folder) => {
-    const { FileActions } = this.props;
+  handleSelectFolder = (folderId) => {
+    const { folderList, FileActions } = this.props;
     // // show folder info and file list
+    const folder = folderList.find(n => (n.get('folderId') === folderId));
     FileActions.showFolderInfo({
       selectedFolder: folder
     });
   }
 
+  getTreeItemMap = (folderList, folderId) => {
+    const folder = folderList.find(e => (e.get('folderId') === folderId));
+    let item = null;
+    if(folder.get('children').size > 0) {
+      item = <TreeItem key={folderId}
+              nodeId={folderId.toString()} label={folder.get('folderName')}
+              onClick={() => this.handleSelectFolder(folderId)}
+              >
+              {(folder.get('children').size > 0) ?
+                folder.get('children').map((e) => {
+                  return this.getTreeItemMap(folderList, e);
+                }) : <div></div>}
+              </TreeItem>;
+    } else {
+      item = <TreeItem key={folderId}
+        nodeId={folderId.toString()} label={folder.get('folderName')}
+        onClick={() => this.handleSelectFolder(folderId)}
+        />
+    }
+    return item;
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, folderList } = this.props;
+    // console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
+
+    let folderTree = null;
+    if(folderList !== undefined) {
+      folderTree = this.getTreeItemMap(folderList, folderList.getIn([0, 'folderId']), 1);
+    }
+    // console.log('folderTree =========================================== ', folderTree);
 
     const pathItems = <React.Fragment>
             <TreeItem nodeId='1' label='폴더1' onClick={() => this.handleSelectFolder(Map({folderName:'폴더1',folderId:'folder001'}))}>
-                <TreeItem nodeId='2' label='폴더2' onClick={() => this.handleSelectFolder(Map({folderName:'폴더2',folderId:'folder002'}))} />
+                <TreeItem nodeId='2' label='폴더2' onClick={() => this.handleSelectFolder(Map({folderName:'폴더2',folderId:'folder002'}))} ></TreeItem>
+
                 <TreeItem nodeId='3' label='폴더3' onClick={() => this.handleSelectFolder(Map({folderName:'폴더3',folderId:'folder003'}))}>
                   <TreeItem nodeId='31' label='폴더31' onClick={() => this.handleSelectFolder(Map({folderName:'폴더31',folderId:'folder0031'}))} />
                   <TreeItem nodeId='32' label='폴더32' onClick={() => this.handleSelectFolder(Map({folderName:'폴더32',folderId:'folder0032'}))} />
@@ -65,7 +102,7 @@ class FolderTreeComp extends Component {
 
     return (
       <div>
-      {(pathItems) && 
+      {(folderTree) && 
         <TreeView
           className={classes.shareFilesCard}
           defaultCollapseIcon={<ExpandMoreIcon />}
@@ -73,7 +110,7 @@ class FolderTreeComp extends Component {
           defaultEndIcon={<ItemCircle />}
           onNodeToggle={this.handleNodeToggle}
         >
-          {pathItems}
+          {folderTree}
         </TreeView>
       }
       </div>

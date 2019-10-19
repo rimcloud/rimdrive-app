@@ -59,9 +59,16 @@ class FileAndFolderView extends Component {
     //   console.log(filelist);
     // })
 
+    const flowerFile = fs.readFileSync('/flower.jpg');
+
+    console.log('flowerFile ::: ', flowerFile.length);
+
     const form = new FormData();
     const stream = fs.createReadStream('/flower.jpg');
-    form.append('image', stream);
+    form.append('method', 'UPLOAD');
+    form.append('userid', 'test01');
+    form.append('path', encodeURI('/개인저장소/모든파일/test1/flower.jpg'));
+    form.append('file', flowerFile);
 
 //    form.append('my_file', fs.createReadStream('/foo/bar.jpg'), 'bar.jpg' );
 
@@ -70,10 +77,9 @@ class FileAndFolderView extends Component {
     //form.append('file', ff, 'flower.jpg');
 
     
-    const url = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=UPLOAD&userid=test01&path=/개인저장소/모든파일/test1/flower.jpg';
-    console.log(encodeURI(url));
-
-    axios.post(encodeURI(url), form).then(response => {
+    const url = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
+    const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+    axios.post(url, form, config).then(response => {
       console.log(response);
     }).catch(error => {
       if (error.response) {

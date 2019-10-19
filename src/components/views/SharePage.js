@@ -6,7 +6,7 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as GlobalActions from 'modules/GlobalModule';
-import * as AccountActions from 'modules/AccountModule';
+import * as FileActions from 'modules/FileModule';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 import FileListComp from 'components/parts/FileListComp';
@@ -46,6 +46,13 @@ class SharePage extends Component {
         };
     }
 
+    componentDidMount() {
+        console.log('>>> SharePage :::  componentDidMount............');
+        // get cloud folders
+        const { FileActions } = this.props;
+        FileActions.getDriveFolderList()
+    }
+
     handleClickOpen = () => {
         this.setState({
             dialogOpen: true
@@ -59,8 +66,7 @@ class SharePage extends Component {
     }
 
     render() {
-        const { classes } = this.props;
-
+        const { classes, FileProps } = this.props;
         const { dialogOpen } = this.state;
 
         return (
@@ -71,7 +77,7 @@ class SharePage extends Component {
                         <Grid container style={{ margin: 0 }}>
                             <Grid item xs={6}>
                                 <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                                    <FolderTreeComp />
+                                    <FolderTreeComp folderList={FileProps.get('folderList')} />
                                 </Box>
                             </Grid>
                             <Grid item xs={6}>
@@ -118,10 +124,12 @@ class SharePage extends Component {
     }
 }
 
-const mapStateToProps = (state) => ({ AccountProps: state.AccountModule });
+const mapStateToProps = (state) => ({ 
+    FileProps: state.FileModule 
+});
 
 const mapDispatchToProps = (dispatch) => ({
-    AccountActions: bindActionCreators(AccountActions, dispatch),
+    FileActions: bindActionCreators(FileActions, dispatch),
     GlobalActions: bindActionCreators(GlobalActions, dispatch)
 });
 

@@ -40,7 +40,7 @@ export function grRequestPromise(url, param) {
 export function requestPostAPI(url, param, headers) {
   return axios({
     method: "post",
-    url: SERVER_URL + url,
+    url: url,
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     transformRequest: [
       function(data, headers) {
@@ -55,7 +55,7 @@ export function requestPostAPI(url, param, headers) {
 export function requestGetAPI(url, param, headers) {
   return axios({
     method: "get",
-    url: SERVER_URL + url,
+    url: url,
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     transformRequest: [
       function(data, headers) {
