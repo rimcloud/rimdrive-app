@@ -35,10 +35,10 @@ export const styles = theme => ({
   action: {
     flex: '0 0 auto',
     alignSelf: 'flex-start',
-    marginTop: -8,
-    marginRight: -12,
+    marginTop: 2,
+    marginRight: 0,
     [theme.breakpoints.up('sm')]: {
-      marginRight: -20,
+      marginRight: 4,
     },
   },
   /* Styles applied to the content wrapper element. */

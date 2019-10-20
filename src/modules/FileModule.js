@@ -3,7 +3,11 @@ import { Map, List, fromJS } from 'immutable';
 
 import { requestPostAPI } from 'components/utils/RCRequester';
 
+const GET_SHAREDINFO_SUCCESS = 'file/GET_SHAREDINFO_SUCCESS';
+
 const GET_FOLDERLIST_SUCCESS = 'file/GET_FOLDERLIST_SUCCESS';
+const SET_SELECTEDITEM_SUCCESS = 'file/SET_SELECTEDITEM_SUCCESS';
+
 
 const GET_FILELIST_SUCCESS = 'file/GET_FILELIST_SUCCESS';
 const SET_SELECTEDFILE_SUCCESS = 'file/SET_SELECTEDFILE_SUCCESS';
@@ -15,16 +19,44 @@ const CHG_SYNCTYPE_SUCCESS = 'global/CHG_SYNCTYPE_SUCCESS';
 
 // ...
 const initialState = Map({
+    sharedList: null,
     listData: null
 });
 
-export const showFolderInfo = (param) => dispatch => {
+export const getSharedInfoList = (param) => dispatch => {
+    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/list.ros', {
+        uid: 'test01'
+    }).then(
+        (response) => {
+            let sharedList = List([]);
+            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
+                if(response.data.data.files && response.data.data.files.length > 0) {
+                    console.log('data success...............');
+                    sharedList = response.data.data.files.map((n) => ({
+                        fileId : n.fileId,
+                        name: n.name,
+                        path: n.path,
+                        shareWithCnt: n.shareWithCnt,
+                        shareWithAll: n.shareWithAll
+                    }));
+                }
+            }
+            dispatch({
+                type: GET_SHAREDINFO_SUCCESS,
+                sharedList: fromJS(sharedList)
+            });
+        }
+    ).catch(error => {
+        console.log('error : ', error);
+    });
+}
 
-    const selectedFolder = param.selectedFolder;
+
+export const showFolderInfo = (param) => dispatch => {
     return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
         method: 'FINDFILES',
         userid: 'test01',
-        path: '/개인저장소/모든파일' + selectedFolder.get('folderPath')
+        path: '/개인저장소/모든파일' + param.path
     }).then(
         (response) => {
             let fileList = List([]);
@@ -42,28 +74,12 @@ export const showFolderInfo = (param) => dispatch => {
 
             dispatch({
                 type: GET_FILELIST_SUCCESS,
-                listData : fileList,
-                selectedFolder: param.selectedFolder
+                listData : fileList
             });
         }
     ).catch(error => {
         console.log('error : ', error);
     });
-
-    
-    // return dispatch({
-    //     type: GET_FILELIST_SUCCESS,
-    //     listData: fromJS([
-    //         { fileId: "f1", fileName: "file1", fileSize: "100" },
-    //         { fileId: "f2", fileName: "file2", fileSize: "200" },
-    //         { fileId: "f3", fileName: "file3", fileSize: "300" },
-    //         { fileId: "f4", fileName: "file4", fileSize: "400" },
-    //         { fileId: "f5", fileName: "file5", fileSize: "500" },
-    //         { fileId: "f6", fileName: "file6", fileSize: "600" },
-    //         { fileId: "f7", fileName: "file7", fileSize: "700" },
-    //     ]),
-    //     selectedFolder: param.selectedFolder
-    // });
 };
 
 const makeFolderList = (data, folderList) => {
@@ -132,6 +148,18 @@ export const getDriveFolderList = (param) => dispatch => {
     });
 }
 
+export const setSelectedItem = (param) => dispatch => {
+    return dispatch({
+        type: SET_SELECTEDFILE_SUCCESS,
+        selectedItem: param.selectedFile
+    });
+};
+
+
+
+
+
+
 export const showFileDetail = (param) => dispatch => {
     return dispatch({
         type: SET_SELECTEDFILE_SUCCESS,
@@ -169,15 +197,26 @@ export const chgSyncTypeData = (param) => dispatch => {
 
 export default handleActions({
 
+    
+
+    [GET_SHAREDINFO_SUCCESS]: (state, action) => {
+        const sharedList = action.sharedList;
+        console.log('module set :::: ', sharedList);
+        return state.set('sharedList', sharedList);
+    },
     [GET_FOLDERLIST_SUCCESS]: (state, action) => {
         const folderList = action.folderList;
         return state.set('folderList', folderList);
     },
     [GET_FILELIST_SUCCESS]: (state, action) => {
-        return state.set('listData', action.listData)
-                .set('selectedFile', null)
-                .set('selectedFolder', action.selectedFolder);
+        return state.set('listData', action.listData);
     },
+    [SET_SELECTEDITEM_SUCCESS]: (state, action) => {
+        return state.set('selectedItem', action.selectedItem);
+    },
+
+
+
     [SET_SELECTEDFILE_SUCCESS]: (state, action) => {
         return state.set('selectedFolder', null)
                 .set('selectedFile', action.selectedFile);

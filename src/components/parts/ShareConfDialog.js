@@ -7,10 +7,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as GlobalActions from 'modules/GlobalModule';
+import * as FileActions from 'modules/FileModule';
 import * as DeptUserActions from 'modules/DeptUserModule';
 
 import DeptTreeComp from 'components/parts/DeptTreeComp';
 import UserListComp from 'components/parts/UserListComp';
+
+import FileListComp from 'components/parts/FileListComp';
+import FolderTreeComp from 'components/parts/FolderTreeComp';
+import FileAndFolderView from 'components/parts/FileAndFolderView';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -36,7 +41,8 @@ class ShareConfDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedId: ''
+      selectedId: '',
+      showObjectSelect: true
     };
   }
 
@@ -44,44 +50,76 @@ class ShareConfDialog extends Component {
     console.log('>>> ShareConfDialog :::  componentDidMount............');
   }
 
-
   handleClose = () => {
     this.props.onDialogClose();
+  }
+
+  handleSelectItem = (selectedItem) => {
+    if(selectedItem.type === 'D') {
+      this.props.FileActions.showFolderInfo({
+        path: selectedItem.path
+      });
+    }
+    this.props.FileActions.setSelectedItem({
+      selectedItem: selectedItem
+    });
   }
 
 
   render() {
     const { classes, dialogOpen } = this.props;
-    const { DeptUserProps, open = false, pathItems } = this.props;
+    const { DeptUserProps, FileProps } = this.props;
 
     console.log('DeptUserProps ::::: ', DeptUserProps.get('deptList'));
 
     return (
       <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
-      <AppBar className={classes.shareAppBar}>
+        <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
-              <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 설정</Typography>
-              <Button color="primary" variant="contained" className={classes.RCSmallButton} onClick={this.handleClose}>저장</Button>
-              <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
-                  <CloseIcon />
-              </IconButton>
+            <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 설정</Typography>
+            <Button color="primary" variant="contained" className={classes.RCSmallButton} onClick={this.handleClose}>저장</Button>
+            <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
           </Toolbar>
-      </AppBar>
-      <Grid container style={{ margin: 0 }}>
+        </AppBar>
+        <Divider />
+        <div>선택된 조직 또는 사용자를 표시한다.</div>
+        <Divider />
+        {(!this.state.showObjectSelect) &&
+        <Grid container style={{ margin: 0 }}>
           <Grid item xs={6} >
-              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                  <DeptTreeComp deptList={DeptUserProps.get('deptList')} />
-              </Box>
+            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+              <DeptTreeComp deptList={DeptUserProps.get('deptList')} />
+            </Box>
           </Grid>
           <Grid item xs={6} >
-              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
-                  <UserListComp />
-              </Box>
+            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <UserListComp />
+            </Box>
           </Grid>
-      </Grid>
-      <Divider />
-      <div>선택된 조직 또는 사용자를 표시한다.</div>
-  </Dialog>
+        </Grid>
+        }
+        {this.state.showObjectSelect &&
+        <Grid container style={{ margin: 0 }}>
+          <Grid item xs={6}>
+            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+              <FolderTreeComp folderList={FileProps.get('folderList')} onSelectFolder={this.handleSelectItem} />
+            </Box>
+          </Grid>
+          <Grid item xs={6}>
+            <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <FileListComp onSelectFile={this.handleSelectItem} />
+            </Box>
+          </Grid>
+          <Grid item xs={12} style={{ padding: 10 }}>
+            <Grid container style={{ margin: 0 }}>
+            </Grid>
+            <FileAndFolderView onOpenShare={this.handleClickOpen} />
+          </Grid>
+        </Grid>
+        }
+      </Dialog>
 
     );
   }
@@ -89,12 +127,14 @@ class ShareConfDialog extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
-  DeptUserProps: state.DeptUserModule
+  DeptUserProps: state.DeptUserModule,
+  FileProps: state.FileModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
   GlobalActions: bindActionCreators(GlobalActions, dispatch),
-  DeptUserActions: bindActionCreators(DeptUserActions, dispatch)
+  DeptUserActions: bindActionCreators(DeptUserActions, dispatch),
+  FileActions: bindActionCreators(FileActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(ShareConfDialog));
