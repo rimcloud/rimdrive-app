@@ -21,7 +21,6 @@ const initialState = Map({
 export const showFolderInfo = (param) => dispatch => {
 
     const selectedFolder = param.selectedFolder;
-
     return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
         method: 'FINDFILES',
         userid: 'test01',

@@ -42,16 +42,44 @@ class DeptTreeComp extends Component {
     // show dept info and user list
 
     DeptUserActions.getUserList({
-      selectedDept: dept
+      selectedDeptCd: dept
     });
 
     DeptUserActions.showDeptInfo({
-      selectedDept: dept
+      selectedDeptCd: dept
     });
   }
 
+  getTreeItemMap = (deptList, deptCd) => {
+    const dept = deptList.find(e => (e.get('deptCd') === deptCd));
+    let item = null;
+    if(dept.get('children').size > 0) {
+      item = <TreeItem key={deptCd}
+              nodeId={deptCd.toString()} label={dept.get('deptNm')}
+              onClick={() => this.handleSelectDept(deptCd)}
+              >
+              {(dept.get('children').size > 0) ?
+                dept.get('children').map((e) => {
+                  return this.getTreeItemMap(deptList, e);
+                }) : <div></div>}
+              </TreeItem>;
+    } else {
+      item = <TreeItem key={deptCd}
+        nodeId={deptCd.toString()} label={dept.get('deptNm')}
+        onClick={() => this.handleSelectDept(deptCd)}
+        />
+    }
+    return item;
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, deptList } = this.props;
+    
+    let deptTree = null;
+    if(deptList !== undefined) {
+      console.log('deptList >>>>>>>>> ', deptList.toJS());
+      deptTree = this.getTreeItemMap(deptList, deptList.getIn([0, 'deptCd']), 1);
+    }
 
     const pathItems = <React.Fragment>
             <TreeItem nodeId='1' label='부서1' onClick={() => this.handleSelectDept(Map({deptName:'부서1',deptId:'dept001'}))}>
@@ -70,7 +98,7 @@ class DeptTreeComp extends Component {
 
     return (
       <div>
-      {(pathItems) && 
+      {(deptTree) && 
         <TreeView
           className={classes.shareFilesCard}
           defaultCollapseIcon={<ExpandMoreIcon />}
@@ -78,7 +106,7 @@ class DeptTreeComp extends Component {
           defaultEndIcon={<ItemCircle />}
           onNodeToggle={this.handleNodeToggle}
         >
-          {pathItems}
+          {deptTree}
         </TreeView>
       }
       </div>
