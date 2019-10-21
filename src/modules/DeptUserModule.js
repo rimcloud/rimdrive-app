@@ -9,10 +9,29 @@ const GET_USERLIST_SUCCESS = 'user/GET_USERLIST_SUCCESS';
 const SET_DEPTINFO_SUCCESS = 'user/SET_DEPTINFO_SUCCESS';
 const SET_SELECTEDUSER_SUCCESS = 'user/SET_SELECTEDUSER_SUCCESS';
 
+const SET_SHAREDDEPT_SUCCESS = 'file/SET_SHAREDDEPT_SUCCESS';
+const SET_SHAREDUSER_SUCCESS = 'file/SET_SHAREDUSER_SUCCESS';
+
 // ...
 const initialState = Map({
-    listData: null
+    userListData: null
 });
+
+export const setDeptForShare = (param) => dispatch => {
+    return dispatch({
+        type: SET_SHAREDDEPT_SUCCESS,
+        selectedDept: param.selectedDept,
+        isChecked: param.isChecked
+    });
+};
+
+export const setUserForShare = (param) => dispatch => {
+    return dispatch({
+        type: SET_SHAREDUSER_SUCCESS,
+        selecteUser: param.selecteUser,
+        isChecked: param.isChecked
+    });
+};
 
 export const showDeptInfo = (param) => dispatch => {
     return dispatch({
@@ -50,7 +69,7 @@ const makeDeptList = (data, deptList) => {
         if(deptList.size < 1) {
             deptList = deptList.push(Map({
                 deptCd: '0',
-                deptNm: '__ROOT__',
+                deptNm: '__ROOTDEPT__',
                 children: List([])
             }));
         }
@@ -95,7 +114,6 @@ export const getDeptList = (param) => dispatch => {
             if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
                 deptList = makeDeptList(response.data.data, deptList);
                 deptList = makeDeptList(response.data.data, deptList);
-                // console.log('deptList ::: ', deptList.toJS());
             }
             dispatch({
                 type: GET_DEPTLIST_SUCCESS,
@@ -131,13 +149,48 @@ export const getUserList = (param) => dispatch => {
 
 export default handleActions({
 
+    [SET_SHAREDDEPT_SUCCESS]: (state, action) => {
+        let shareDepts = state.get('shareDepts');
+        if(shareDepts !== undefined) {
+            if(action.isChecked) {
+                shareDepts = shareDepts.push(action.selectedDept);
+            } else {
+                const i = shareDepts.findIndex((n) => (n.get('deptCd') === action.selectedDept.get('deptCd')));
+                shareDepts = shareDepts.delete(i);
+            }
+        } else {
+            if(action.isChecked) {
+                shareDepts = List([action.selectedDept]);
+            }
+        }
+        return state.set('shareDepts', shareDepts);
+    },
+    [SET_SHAREDUSER_SUCCESS]: (state, action) => {
+        let shareUsers = state.get('shareUsers');
+        if(shareUsers !== undefined) {
+            if(action.isChecked) {
+                shareUsers = shareUsers.push(action.selectedUser);
+            } else {
+                const i = shareUsers.findIndex((n) => (n.get('deptCd') === action.selectedUser.get('deptCd')));
+                shareUsers = shareUsers.delete(i);
+            }
+        } else {
+            if(action.isChecked) {
+                shareUsers = List([action.selectedUser]);
+            }
+        }
+        return state.set('shareUsers', shareUsers);
+    },
+
+
+
     [GET_DEPTLIST_SUCCESS]: (state, action) => {
         const deptList = action.deptList;
         return state.set('deptList', deptList);
     },
     [GET_USERLIST_SUCCESS]: (state, action) => {
         const data = action.response.data;
-        return state.set('listData', fromJS(data.data));
+        return state.set('userListData', fromJS(data.data));
     },
     [SET_DEPTINFO_SUCCESS]: (state, action) => {
         return state.set('selectedUser', null)

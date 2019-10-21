@@ -8,7 +8,6 @@ const GET_SHAREDINFO_SUCCESS = 'file/GET_SHAREDINFO_SUCCESS';
 const GET_FOLDERLIST_SUCCESS = 'file/GET_FOLDERLIST_SUCCESS';
 const SET_SELECTEDITEM_SUCCESS = 'file/SET_SELECTEDITEM_SUCCESS';
 
-
 const GET_FILELIST_SUCCESS = 'file/GET_FILELIST_SUCCESS';
 const SET_SELECTEDFILE_SUCCESS = 'file/SET_SELECTEDFILE_SUCCESS';
 
@@ -52,7 +51,7 @@ export const getSharedInfoList = (param) => dispatch => {
 }
 
 
-export const showFolderInfo = (param) => dispatch => {
+export const showFilesInFolder = (param) => dispatch => {
     return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
         method: 'FINDFILES',
         userid: 'test01',
@@ -71,7 +70,6 @@ export const showFolderInfo = (param) => dispatch => {
                 });
                 fileList = List(files);
             }
-
             dispatch({
                 type: GET_FILELIST_SUCCESS,
                 listData : fileList
@@ -89,7 +87,7 @@ const makeFolderList = (data, folderList) => {
         if(folderList.size < 1) {
             folderList = folderList.push(Map({
                 folderId: data[0].parentId,
-                folderName: '__ROOT__',
+                folderName: '__ROOTFOLDER__',
                 folderPath: '/',
                 children: List([])
             }));
@@ -150,8 +148,8 @@ export const getDriveFolderList = (param) => dispatch => {
 
 export const setSelectedItem = (param) => dispatch => {
     return dispatch({
-        type: SET_SELECTEDFILE_SUCCESS,
-        selectedItem: param.selectedFile
+        type: SET_SELECTEDITEM_SUCCESS,
+        selectedItem: param.selectedItem
     });
 };
 
@@ -197,11 +195,8 @@ export const chgSyncTypeData = (param) => dispatch => {
 
 export default handleActions({
 
-    
-
     [GET_SHAREDINFO_SUCCESS]: (state, action) => {
         const sharedList = action.sharedList;
-        console.log('module set :::: ', sharedList);
         return state.set('sharedList', sharedList);
     },
     [GET_FOLDERLIST_SUCCESS]: (state, action) => {

@@ -41,7 +41,7 @@ class MainPage extends Component {
     componentDidMount() {
         const { GlobalActions } = this.props;
         // load and init rimdrive config
-        const adapter = new FileSync(getAppRoot() + 'rimdrive.json');
+        const adapter = new FileSync(getAppRoot() + 'config/rimdrive.json');
         const driveConfig = low(adapter);
 
         if(driveConfig !== undefined && driveConfig.get('syncItems').value() === undefined) {

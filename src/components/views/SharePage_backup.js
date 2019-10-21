@@ -15,7 +15,7 @@ import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 import FileListComp from 'components/parts/FileListComp';
 import FolderTreeComp from 'components/parts/FolderTreeComp';
 
-import FileAndFolderView from 'components/parts/FileAndFolderView';
+import FileOrFolderView from 'components/parts/FileOrFolderView';
 
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
@@ -80,7 +80,7 @@ class SharePage extends Component {
                         </Grid>
                         <Divider />
                         <Paper elevation={2} style={{ margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                            <FileAndFolderView
+                            <FileOrFolderView
                                 onOpenShare={this.handleClickOpen}
                             />
                         </Paper>

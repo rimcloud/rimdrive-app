@@ -54,7 +54,7 @@ class ShareConfDialog extends Component {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps } = this.props;
 
-    console.log('DeptUserProps ::::: ', DeptUserProps.get('deptList'));
+    // console.log('DeptUserProps ::::: ', DeptUserProps.get('deptList'));
 
     return (
       <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>

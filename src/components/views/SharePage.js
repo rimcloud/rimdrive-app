@@ -54,15 +54,12 @@ class SharePage extends Component {
     }
 
     handleAddShareInfo = () => {
-
-        console.log('handleAddShareInfo....');
         this.setState({
             dialogOpen: true
         });
     }
 
     handleDeleteShareInfo = () => {
-
         console.log('handleDeleteShareInfo....');
     }
 
@@ -71,7 +68,7 @@ class SharePage extends Component {
         const { dialogOpen } = this.state;
 
         const sharedList = FileProps.get('sharedList');
-        console.log('nsharedList >>>>>>>>> ', (sharedList) ? sharedList.toJS() : '00000');
+        // console.log('nsharedList >>>>>>>>> ', (sharedList) ? sharedList.toJS() : '00000');
 
 
         return (

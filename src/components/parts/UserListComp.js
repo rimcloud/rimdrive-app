@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Map } from 'immutable';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -12,6 +13,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Checkbox from '@material-ui/core/Checkbox';
 
 class UserListComp extends Component {
 
@@ -23,35 +25,47 @@ class UserListComp extends Component {
   }
 
   handleSelectUser = (user) => {
-    const { UserActions } = this.props;
-    UserActions.showUserDetail({
-      selectedUser: user
-    });
+  }
+
+  isCheckedSharedUser(empId) {
+    const { shareUsers } = this.props;
+    if(shareUsers !== undefined && shareUsers.size > 0) {
+      if(shareUsers.findIndex((n) => (n.get('empId') === empId)) > -1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   render() {
     const { classes } = this.props;
-    const { UserProps } = this.props;
-
-    const listData = UserProps.get('listData');
+    const { userListData } = this.props;
 
     return (
       <div>
-      {(listData && listData.size > 0) && 
+      {(userListData && userListData.size > 0) && 
       <Table className={classes.table} size="small" stickyHeader>
       <TableHead>
         <TableRow className={classes.fileTableHeadRow}>
-          <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
-          <TableCell className={classes.fileTableHeadCell} >아이디</TableCell>
+        <TableCell className={classes.fileTableHeadCell} >선택</TableCell>
+        <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
+        <TableCell className={classes.fileTableHeadCell} >아이디</TableCell>
           <TableCell className={classes.fileTableHeadCell} >직급</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {listData.map(user => {
+        {userListData.map(user => {
           return (
           <TableRow hover className={classes.fileTableRow} key={user.get('empId')}
-            onClick={() => this.handleSelectUser(user)}
+            onClick={() => this.props.onSelectUser(user)}
           >
+          <TableCell><Checkbox style={{ padding: 0 }}
+          checked={this.isCheckedSharedUser(user.get('empId'))}
+          onChange={(event) => this.props.onChangeUserCheck(event, user)}
+          inputProps={{
+            'aria-label': 'primary checkbox',
+          }}
+        /></TableCell>
             <TableCell component="th" align="center" scope="user">{user.get('empId')}</TableCell>
             <TableCell>{user.get('empNm')}</TableCell>
             <TableCell align="right">{user.get('grade')}</TableCell>
@@ -66,12 +80,4 @@ class UserListComp extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  UserProps: state.DeptUserModule
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  UserActions: bindActionCreators(UserActions, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(UserListComp));
+export default withStyles(CommonStyle)(UserListComp);

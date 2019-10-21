@@ -38,7 +38,7 @@ class FolderTreeComp extends Component {
 
     // const folder = folderList.find(e => (e.get('folderId') === id));
     // console.log('clicked folder  = ', folder);
-    // FileActions.showFolderInfo({
+    // FileActions.showFilesInFolder({
     //   selectedFolder: folder
     // });
   }
@@ -47,7 +47,7 @@ class FolderTreeComp extends Component {
   //   const { folderList, FileActions } = this.props;
   //   // // show folder info and file list
   //   const folder = folderList.find(n => (n.get('folderId') === folderId));
-  //   FileActions.showFolderInfo({
+  //   FileActions.showFilesInFolder({
   //     selectedFolder: folder
   //   });
   // }

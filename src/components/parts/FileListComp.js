@@ -36,39 +36,46 @@ class FileListComp extends Component {
     const listData = FileProps.get('listData');
 
     return (
-      <div style={{margin: 4}}>
-      {(listData && listData.size > 0) && 
-      <Table className={classes.table} size="small" stickyHeader>
-      <TableHead>
-        <TableRow className={classes.fileTableHeadRow}>
-          <TableCell className={classes.fileTableHeadCell} >아이디</TableCell>
-          <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
-          <TableCell className={classes.fileTableHeadCell} >사이즈</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {listData.map(file => {
-          return (
-          <TableRow hover className={classes.fileTableRow} key={file.get('fileId')}
-            onClick={() => this.props.onSelectFile({
-              type: 'F',
-              id: file.get('fileId'),
-              name: file.get('fileName'),
-              size: file.get('fileSize')              
-            })}
-          >
-            <TableCell component="th" align="center" scope="file">
-              {file.get('fileId')}
-            </TableCell>
-            <TableCell>{file.get('fileName')}</TableCell>
-            <TableCell align="right">{file.get('fileSize')}</TableCell>
-          </TableRow>
-        );
-      })}
-      </TableBody>
-    </Table>
-        }
-</div>
+      <div style={{ margin: 4 }}>
+        <Table className={classes.table} size="small" stickyHeader>
+          <TableHead>
+            <TableRow className={classes.fileTableHeadRow}>
+              <TableCell className={classes.fileTableHeadCell} >아이디</TableCell>
+              <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
+              <TableCell className={classes.fileTableHeadCell} >사이즈</TableCell>
+            </TableRow>
+          </TableHead>
+          {(listData && listData.size > 0) &&
+            <TableBody>
+              {listData.map(file => {
+                return (
+                  <TableRow hover className={classes.fileTableRow} key={file.get('fileId')}
+                    onClick={() => this.props.onSelectFile({
+                      type: 'F',
+                      id: file.get('fileId'),
+                      name: file.get('fileName'),
+                      size: file.get('fileSize')
+                    })}
+                  >
+                    <TableCell component="th" align="center" scope="file">
+                      {file.get('fileId')}
+                    </TableCell>
+                    <TableCell>{file.get('fileName')}</TableCell>
+                    <TableCell align="right">{file.get('fileSize')}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          }
+          {(listData === null || listData.size < 1) &&
+            <TableBody>
+              <TableRow hover className={classes.fileTableRow} >
+                <TableCell component="th" align="center" colSpan="3">파일이 없습니다.</TableCell>
+              </TableRow>
+            </TableBody>
+          }
+        </Table>
+      </div>
     );
   }
 }
