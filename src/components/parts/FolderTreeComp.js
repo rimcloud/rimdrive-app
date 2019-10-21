@@ -52,17 +52,17 @@ class FolderTreeComp extends Component {
   //   });
   // }
 
-  getTreeItemMap = (folderList, folderId) => {
-    const folder = folderList.find(e => (e.get('folderId') === folderId));
+  getTreeItemMap = (folderList, fileId) => {
+    const folder = folderList.find(e => (e.get('fileId') === fileId));
     let item = null;
     if(folder.get('children').size > 0) {
-      item = <TreeItem key={folderId}
-              nodeId={folderId.toString()} label={folder.get('folderName')}
+      item = <TreeItem key={fileId}
+              nodeId={fileId.toString()} label={folder.get('name')}
               onClick={() => this.props.onSelectFolder({
                 type: 'D',
-                id: folderId,
-                name: folder.get('folderName'),
-                path: folder.get('folderPath')
+                id: fileId,
+                name: folder.get('name'),
+                path: folder.get('path')
               })}
               >
               {(folder.get('children').size > 0) ?
@@ -71,13 +71,13 @@ class FolderTreeComp extends Component {
                 }) : <div></div>}
               </TreeItem>;
     } else {
-      item = <TreeItem key={folderId}
-        nodeId={folderId.toString()} label={folder.get('folderName')}
+      item = <TreeItem key={fileId}
+        nodeId={fileId.toString()} label={folder.get('name')}
         onClick={() => this.props.onSelectFolder({
           type: 'D',
-          id: folderId,
-          name: folder.get('folderName'),
-          path: folder.get('folderPath')
+          id: fileId,
+          name: folder.get('name'),
+          path: folder.get('path')
         })}
         />
     }
@@ -86,29 +86,12 @@ class FolderTreeComp extends Component {
 
   render() {
     const { classes, folderList } = this.props;
-    // console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
+    console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
 
     let folderTree = null;
     if(folderList !== undefined) {
-      folderTree = this.getTreeItemMap(folderList, folderList.getIn([0, 'folderId']), 1);
+      folderTree = this.getTreeItemMap(folderList, folderList.getIn([0, 'fileId']), 1);
     }
-    // console.log('folderTree =========================================== ', folderTree);
-
-    // const pathItems = <React.Fragment>
-    //         <TreeItem nodeId='1' label='폴더1' onClick={() => this.handleSelectFolder(Map({folderName:'폴더1',folderId:'folder001'}))}>
-    //             <TreeItem nodeId='2' label='폴더2' onClick={() => this.handleSelectFolder(Map({folderName:'폴더2',folderId:'folder002'}))} ></TreeItem>
-
-    //             <TreeItem nodeId='3' label='폴더3' onClick={() => this.handleSelectFolder(Map({folderName:'폴더3',folderId:'folder003'}))}>
-    //               <TreeItem nodeId='31' label='폴더31' onClick={() => this.handleSelectFolder(Map({folderName:'폴더31',folderId:'folder0031'}))} />
-    //               <TreeItem nodeId='32' label='폴더32' onClick={() => this.handleSelectFolder(Map({folderName:'폴더32',folderId:'folder0032'}))} />
-    //             </TreeItem>
-    //             <TreeItem nodeId='4' label='폴더4' onClick={() => this.handleSelectFolder(Map({folderName:'폴더4',folderId:'folder004'}))} />
-    //             <TreeItem nodeId='5' label='폴더5' onClick={() => this.handleSelectFolder(Map({folderName:'폴더5',folderId:'folder005'}))}>
-    //                 <TreeItem nodeId='6' label='폴더6' onClick={() => this.handleSelectFolder(Map({folderName:'폴더6',folderId:'folder006'}))} />
-    //                 <TreeItem nodeId='7' label='폴더7' onClick={() => this.handleSelectFolder(Map({folderName:'폴더7',folderId:'folder007'}))} />
-    //             </TreeItem>
-    //         </TreeItem>
-    //     </React.Fragment>;
 
     return (
       <div>

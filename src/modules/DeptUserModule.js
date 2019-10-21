@@ -48,6 +48,8 @@ export const showDeptInfo = (param) => dispatch => {
         selectedDept: param.selectedDept
     });
 };
+
+// data
 // {
 //     "deptCd": "cloud00000",
 //     "deptNm": "test",
@@ -62,19 +64,49 @@ export const showDeptInfo = (param) => dispatch => {
 //     "createDate": 1564481814000,
 //     "createUid": "admin"
 // }
-const makeDeptList = (data, deptList) => {
 
+// const makeDeptListOLD = (data, deptList) => {
+//     if(data && data.length > 0) {
+//         // add root node for tree
+//         if(deptList.size < 1) {
+//             deptList = deptList.push(Map({
+//                 deptCd: '0',
+//                 deptNm: '__ROOTDEPT__',
+//                 children: List([])
+//             }));
+//         }
+//         data.forEach((n, i) => {
+//             if(n.deptCd !== '0') {
+//                 const parentIndex = deptList.findIndex(e => (e.get('deptCd') === n.uprDeptCd));
+//                 if(parentIndex > -1) {
+//                     // 부모가 이미 들어있음, 칠드런에 추가
+//                     let parent = deptList.get(parentIndex);
+//                     let children = parent.get('children');
+//                     if(!children.includes(n.deptCd)) {
+//                         children = children.push(n.deptCd);
+//                         parent = parent.set('children', children);
+//                         deptList = deptList.set(parentIndex, parent);
+//                     }
+//                 }
+//                 // deptList 에 자신 추가 - 없으면 추가
+//                 const selfIndex = deptList.findIndex(e => (e.get('deptCd') === n.deptCd));
+//                 if(selfIndex < 0) {
+//                     // add this node for tree
+//                     deptList = deptList.push(Map({
+//                         deptCd: n.deptCd,
+//                         deptNm: n.deptNm,
+//                         children: List([])
+//                     }));
+//                 }
+//             }
+//         });
+//     }
+//     return deptList;
+// }
+
+const makeDeptList = (data, deptList) => {
     if(data && data.length > 0) {
-        // add root node for tree
-        if(deptList.size < 1) {
-            deptList = deptList.push(Map({
-                deptCd: '0',
-                deptNm: '__ROOTDEPT__',
-                children: List([])
-            }));
-        }
         data.forEach((n, i) => {
-            
             if(n.deptCd !== '0') {
                 const parentIndex = deptList.findIndex(e => (e.get('deptCd') === n.uprDeptCd));
                 if(parentIndex > -1) {
@@ -87,21 +119,9 @@ const makeDeptList = (data, deptList) => {
                         deptList = deptList.set(parentIndex, parent);
                     }
                 }
-    
-                // deptList 에 자신 추가 - 없으면 추가
-                const selfIndex = deptList.findIndex(e => (e.get('deptCd') === n.deptCd));
-                if(selfIndex < 0) {
-                    // add this node for tree
-                    deptList = deptList.push(Map({
-                        deptCd: n.deptCd,
-                        deptNm: n.deptNm,
-                        children: List([])
-                    }));
-                }
             }
         });
     }
-
     return deptList;
 }
 
@@ -112,7 +132,7 @@ export const getDeptList = (param) => dispatch => {
         (response) => {
             let deptList = List([]);
             if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                deptList = makeDeptList(response.data.data, deptList);
+                deptList = fromJS(response.data.data.map(n => {n['children'] = []; return n;}));
                 deptList = makeDeptList(response.data.data, deptList);
             }
             dispatch({

@@ -80,48 +80,69 @@ export const showFilesInFolder = (param) => dispatch => {
     });
 };
 
+// const makeFolderListOLD = (data, folderList) => {
+//     if(data && data.length > 0) {
+//         // add root node for tree
+//         if(folderList.size < 1) {
+//             folderList = folderList.push(Map({
+//                 folderId: data[0].parentId,
+//                 folderName: '__ROOTFOLDER__',
+//                 folderPath: '/',
+//                 children: List([])
+//             }));
+//         }
+//         data.forEach((n, i) => {
+//             // console.log(n.fileType, n.name, n.fileId, n.parentId, n.path, n.orgPath);
+//             const parentIndex = folderList.findIndex(e => (e.get('folderId') === n.parentId));
+//             if(parentIndex > -1) {
+//                 // 부모가 이미 들어있음, 칠드런에 추가
+//                 let parent = folderList.get(parentIndex);
+//                 let children = parent.get('children');
+//                 if(!children.includes(n.fileId)) {
+//                     children = children.push(n.fileId);
+//                     parent = parent.set('children', children);
+//                     folderList = folderList.set(parentIndex, parent);
+//                 }
+//             }
+
+//             // folderList 에 자신 추가 - 없으면 추가
+//             const selfIndex = folderList.findIndex(e => (e.get('folderId') === n.fileId));
+//             if(selfIndex < 0) {
+//                 // add this node for tree
+//                 folderList = folderList.push(Map({
+//                     folderId: n.fileId,
+//                     folderName: n.name,
+//                     folderPath: n.path,
+//                     children: List([])
+//                 }));
+//             }
+//         });
+//     }
+//     return folderList;
+// }
+
 const makeFolderList = (data, folderList) => {
-
+    console.log('folderList >>>> ', folderList.toJS());
     if(data && data.length > 0) {
-        // add root node for tree
-        if(folderList.size < 1) {
-            folderList = folderList.push(Map({
-                folderId: data[0].parentId,
-                folderName: '__ROOTFOLDER__',
-                folderPath: '/',
-                children: List([])
-            }));
-        }
         data.forEach((n, i) => {
-            // console.log(n.fileType, n.name, n.fileId, n.parentId, n.path, n.orgPath);
-            const parentIndex = folderList.findIndex(e => (e.get('folderId') === n.parentId));
-            if(parentIndex > -1) {
-                // 부모가 이미 들어있음, 칠드런에 추가
-                let parent = folderList.get(parentIndex);
-                let children = parent.get('children');
-                if(!children.includes(n.fileId)) {
-                    children = children.push(n.fileId);
-                    parent = parent.set('children', children);
-                    folderList = folderList.set(parentIndex, parent);
+            if(n.folderId !== '10') {
+                const parentIndex = folderList.findIndex(e => (e.get('fileId') === n.parentId));
+                if(parentIndex > -1) {
+                    // 부모가 이미 들어있음, 칠드런에 추가
+                    let parent = folderList.get(parentIndex);
+                    let children = parent.get('children');
+                    if(!children.includes(n.fileId)) {
+                        children = children.push(n.fileId);
+                        parent = parent.set('children', children);
+                        folderList = folderList.set(parentIndex, parent);
+                    }
                 }
-            }
-
-            // folderList 에 자신 추가 - 없으면 추가
-            const selfIndex = folderList.findIndex(e => (e.get('folderId') === n.fileId));
-            if(selfIndex < 0) {
-                // add this node for tree
-                folderList = folderList.push(Map({
-                    folderId: n.fileId,
-                    folderName: n.name,
-                    folderPath: n.path,
-                    children: List([])
-                }));
             }
         });
     }
-
     return folderList;
 }
+
 
 export const getDriveFolderList = (param) => dispatch => {
     return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
@@ -132,9 +153,13 @@ export const getDriveFolderList = (param) => dispatch => {
         (response) => {
             let folderList = List([]);
             if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
+                folderList = (fromJS(response.data.data.map(n => {n['children'] = []; return n;})).unshift(fromJS({
+                    fileId: 10,
+                    name: '__ROOTFOLDER__',
+                    path: '/',
+                    children: []
+                })));
                 folderList = makeFolderList(response.data.data, folderList);
-                folderList = makeFolderList(response.data.data, folderList);
-                // console.log('folderList ::: ', folderList.toJS());
             }
             dispatch({
                 type: GET_FOLDERLIST_SUCCESS,

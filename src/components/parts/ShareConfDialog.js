@@ -18,6 +18,16 @@ import FileListComp from 'components/parts/FileListComp';
 import FolderTreeComp from 'components/parts/FolderTreeComp';
 import FileOrFolderView from 'components/parts/FileOrFolderView';
 
+import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -92,11 +102,11 @@ class ShareConfDialog extends Component {
 
   handleChangeDeptCheck = (e, dept) => {
     const { DeptUserActions } = this.props;
+
+    console.log('dept ::: ', dept.toJS());
+
     DeptUserActions.setDeptForShare({
-      selectedDept: Map({
-        deptCd: dept.get('deptCd'),
-        deptNm: dept.get('deptNm')
-      }),
+      selectedDept: dept,
       isChecked: e.target.checked
     });
   }
@@ -111,23 +121,32 @@ class ShareConfDialog extends Component {
   handleChangeUserCheck = (e, user) => {
     const { DeptUserActions } = this.props;
     DeptUserActions.setUserForShare({
-      selectedUser: Map({
-        empId: user.get('empId'),
-        empNm: user.get('empNm')
-      }),
+      selectedUser: user,
       isChecked: e.target.checked
     });
+  }
+
+  handleDeleteDeptFromShare = () => {
+
+  }
+
+  handleDeleteUserFromShare = () => {
+
   }
 
   render() {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps, FileProps } = this.props;
 
-    // console.log('DeptUserProps ::::: ', DeptUserProps.get('deptList'));
+    console.log('DeptUserProps ::::: ', (DeptUserProps) ? DeptUserProps.toJS() : '--');
+
+    const shareDepts = DeptUserProps.get('shareDepts') ? DeptUserProps.get('shareDepts') : [];
+    const shareUsers = DeptUserProps.get('shareUsers') ? DeptUserProps.get('shareUsers') : [];
+
     let stepInfo = '';
-    if(this.state.shareStep === 1) {
+    if (this.state.shareStep === 1) {
       stepInfo = '공유할 폴더 또는 파일을 선택 후 폴더공유/파일공유 버튼을 클릭하세요.';
-    } else if(this.state.shareStep === 2) {
+    } else if (this.state.shareStep === 2) {
       stepInfo = '선택한 폴더 또는 파일을 공유할 조직 또는 사용자를 선택한 후 공유저장 버튼을 클릭하세요.';
     }
 
@@ -143,38 +162,8 @@ class ShareConfDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
-        <Typography edge="start" variant="caption" style={{color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'right'}}>{stepInfo}</Typography>
+        <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'right' }}>{stepInfo}</Typography>
         <Divider />
-        {(this.state.shareStep === 2) &&
-          <Grid container style={{ margin: 0 }}>
-            <Grid item xs={12} style={{ padding: 10 }}>
-              <Grid container style={{ margin: 0 }}>
-                <Grid item xs={12}>
-                  <FileOrFolderView selectedItem={FileProps.get('selectedItem')} onShareStepBack={this.handleShareStepBack} />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={6} >
-              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                <DeptTreeComp deptList={DeptUserProps.get('deptList')} 
-                  shareDepts={DeptUserProps.get('shareDepts')}
-                  onSelectDept={this.handleSelectDept}
-                  onChangeDeptCheck={this.handleChangeDeptCheck}
-                />
-              </Box>
-            </Grid>
-            <Grid item xs={6} >
-              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
-                <UserListComp 
-                  userListData={DeptUserProps.get('userListData')}
-                  shareUsers={DeptUserProps.get('shareUsers')}
-                  onSelectUser={this.handleSelectUser}
-                  onChangeUserCheck={this.handleChangeUserCheck}
-                />
-              </Box>
-            </Grid>
-          </Grid>
-        }
         {(this.state.shareStep === 1) &&
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
@@ -196,6 +185,85 @@ class ShareConfDialog extends Component {
             </Grid>
           </Grid>
         }
+        {(this.state.shareStep === 2) &&
+          <div>
+            <Grid container style={{ margin: 0 }}>
+              <Grid item xs={12} style={{ padding: 10 }}>
+                <Grid container style={{ margin: 0 }}>
+                  <Grid item xs={12}>
+                    <FileOrFolderView selectedItem={FileProps.get('selectedItem')} onShareStepBack={this.handleShareStepBack} />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={6} >
+                <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+                  <DeptTreeComp deptList={DeptUserProps.get('deptList')}
+                    shareDepts={DeptUserProps.get('shareDepts')}
+                    onSelectDept={this.handleSelectDept}
+                    onChangeDeptCheck={this.handleChangeDeptCheck}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={6} >
+                <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+                  <UserListComp
+                    userListData={DeptUserProps.get('userListData')}
+                    shareUsers={DeptUserProps.get('shareUsers')}
+                    onSelectUser={this.handleSelectUser}
+                    onChangeUserCheck={this.handleChangeUserCheck}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+            <Card className={classes.card}>
+              <CardContent>
+                  <Table className={classes.table} size="small" stickyHeader>
+                    <TableHead>
+                      <TableRow className={classes.fileTableHeadRow}>
+                        <TableCell className={classes.fileTableHeadCell} >구분</TableCell>
+                        <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
+                        <TableCell className={classes.fileTableHeadCell} >위치</TableCell>
+                        <TableCell className={classes.fileTableHeadCell} >권한</TableCell>
+                        <TableCell className={classes.fileTableHeadCell} >삭제</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
+                      {shareDepts.map(dept => {
+                        return (
+                          <TableRow hover className={classes.fileTableRow} key={dept.get('deptCd')}>
+                            <TableCell component="th" align="center" scope="dept">조직</TableCell>
+                            <TableCell>{dept.get('deptNm')}</TableCell>
+                            <TableCell>{dept.get('whleDeptCd')}</TableCell>
+                            <TableCell>읽기/편집</TableCell>
+                            <TableCell>
+                              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleDeleteDeptFromShare}>삭제</Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {shareUsers.map(user => {
+                        return (
+                          <TableRow hover className={classes.fileTableRow} key={user.get('empId')}>
+                            <TableCell component="th" align="center" scope="dept">사용자</TableCell>
+                            <TableCell>{user.get('empNm')}</TableCell>
+                            <TableCell>{user.get('deptNm')}</TableCell>
+                            <TableCell>읽기/편집</TableCell>
+                            <TableCell>
+                              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleDeleteUserFromShare}>삭제</Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+              </CardContent>
+            </Card>
+          </div>
+        }
+
+
+
+
       </Dialog>
 
     );
