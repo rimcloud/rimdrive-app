@@ -57,16 +57,16 @@ class FileOrFolderView extends Component {
     //   console.log(filelist);
     // })
 
-    const flowerFile = fs.readFileSync('/flower.jpg');
+    const flowerFile = fs.readFileSync('/config/flower.jpeg');
 
 // console.log('flowerFile ::: ', flowerFile.length);
 
     const form = new FormData();
-    const stream = fs.createReadStream('/flower.jpg');
+//    const stream = fs.createReadStream('/flower.jpg');
     form.append('method', 'UPLOAD');
     form.append('userid', 'test01');
     form.append('path', encodeURI('/개인저장소/모든파일/test1/flower.jpg'));
-    form.append('file', flowerFile);
+    form.append('rimUploadFile', flowerFile);
 
     // form.append('my_file', fs.createReadStream('/foo/bar.jpg'), 'bar.jpg' );
     // form.append( 'my_file', fs.createReadStream('/flower.jpg'), {filename: 'flower.jpg', contentType: 'image/jpeg', knownLength: 9568} );
@@ -134,6 +134,7 @@ class FileOrFolderView extends Component {
               <Typography variant="subtitle2" >폴더이름: {selectedFolder.get('folderName')}</Typography>
             </Grid>
             <Grid item xs={6}>
+            <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleUploadTest}>UPLOAD</Button>
             </Grid>
             <Grid item xs={12} style={{ textAlign: 'right' }}>
               {(this.props.onShareStepNext) &&

@@ -28,7 +28,7 @@ export const setDeptForShare = (param) => dispatch => {
 export const setUserForShare = (param) => dispatch => {
     return dispatch({
         type: SET_SHAREDUSER_SUCCESS,
-        selecteUser: param.selecteUser,
+        selectedUser: param.selectedUser,
         isChecked: param.isChecked
     });
 };
@@ -171,7 +171,7 @@ export default handleActions({
             if(action.isChecked) {
                 shareUsers = shareUsers.push(action.selectedUser);
             } else {
-                const i = shareUsers.findIndex((n) => (n.get('deptCd') === action.selectedUser.get('deptCd')));
+                const i = shareUsers.findIndex((n) => (n.get('empId') === action.selectedUser.get('empId')));
                 shareUsers = shareUsers.delete(i);
             }
         } else {
