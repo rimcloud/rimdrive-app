@@ -134,7 +134,6 @@ class FileOrFolderView extends Component {
               <Typography variant="subtitle2" >폴더이름: {selectedFolder.get('folderName')}</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleUploadTest}>UPLOAD</Button>
             </Grid>
             <Grid item xs={12} style={{ textAlign: 'right' }}>
               {(this.props.onShareStepNext) &&

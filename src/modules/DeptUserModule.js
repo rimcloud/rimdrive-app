@@ -9,27 +9,109 @@ const GET_USERLIST_SUCCESS = 'user/GET_USERLIST_SUCCESS';
 const SET_DEPTINFO_SUCCESS = 'user/SET_DEPTINFO_SUCCESS';
 const SET_SELECTEDUSER_SUCCESS = 'user/SET_SELECTEDUSER_SUCCESS';
 
-const SET_SHAREDDEPT_SUCCESS = 'file/SET_SHAREDDEPT_SUCCESS';
-const SET_SHAREDUSER_SUCCESS = 'file/SET_SHAREDUSER_SUCCESS';
+const ADD_SHAREDDEPT_SUCCESS = 'file/ADD_SHAREDDEPT_SUCCESS';
+const DELETE_SHAREDDEPT_SUCCESS = 'file/DELETE_SHAREDDEPT_SUCCESS';
+const ADD_SHAREDUSER_SUCCESS = 'file/ADD_SHAREDUSER_SUCCESS';
+const DELETE_SHAREDUSER_SUCCESS = 'file/DELETE_SHAREDUSER_SUCCESS';
+
+
+const SET_PERMISSION_SUCCESS = 'user/SET_PERMISSION_SUCCESS';
+const DELETE_SHAREDITEM_SUCCESS = 'file/DELETE_SHAREDITEM_SUCCESS';
+
+const SET_SHAREINFO_SUCCESS = 'user/SET_SHAREINFO_SUCCESS';
 
 // ...
 const initialState = Map({
     userListData: null
 });
 
-export const setDeptForShare = (param) => dispatch => {
+
+
+export const setShareInfo = (param) => dispatch => {
+
+    console.log('param ::: ', param);
+
+    let shareList = [];
+    if(param.shareDepts !== undefined && param.shareDepts.size > 0) {
+        shareList = shareList.concat(param.shareDepts.toJS());
+    }
+    if(param.shareUsers !== undefined && param.shareUsers.size > 0) {
+        shareList = shareList.concat(param.shareUsers.toJS());
+    }
+
+    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/add.ros', {
+        uid: param.uid,
+        fid: param.fid,
+        it: JSON.stringify(shareList)
+    }).then(
+        (response) => {
+
+            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
+
+                console.log('add share result :: ', response.data);
+            }
+            // dispatch({
+            //     type: GET_DEPTLIST_SUCCESS,
+            //     deptList: deptList
+            // });
+        }
+    ).catch(error => {
+        console.log('error : ', error);
+    });
+}
+
+export const changePermission = (param) => dispatch => {
+    let shareType = '';
+    if(param.group === 'dept') {
+        shareType = 'shareDepts';
+    } else {
+        shareType = 'shareUsers';
+    }
+
     return dispatch({
-        type: SET_SHAREDDEPT_SUCCESS,
+        type: SET_PERMISSION_SUCCESS,
+        shareType: shareType,
+        id: param.id,
+        value: param.value
+    });
+};
+
+
+export const addDeptForShare = (param) => dispatch => {
+    return dispatch({
+        type: ADD_SHAREDDEPT_SUCCESS,
         selectedDept: param.selectedDept,
         isChecked: param.isChecked
     });
 };
 
-export const setUserForShare = (param) => dispatch => {
+export const deleteItemForShare = (param) => dispatch => {
+    let shareType = '';
+    if(param.group === 'dept') {
+        shareType = 'shareDepts';
+    } else {
+        shareType = 'shareUsers';
+    }
+
     return dispatch({
-        type: SET_SHAREDUSER_SUCCESS,
+        type: DELETE_SHAREDITEM_SUCCESS,
+        shareType: shareType,
+        id: param.id
+    });
+};
+
+export const addUserForShare = (param) => dispatch => {
+    return dispatch({
+        type: ADD_SHAREDUSER_SUCCESS,
         selectedUser: param.selectedUser,
         isChecked: param.isChecked
+    });
+};
+
+export const deleteUserForShare = (param) => dispatch => {
+    return dispatch({
+        type: DELETE_SHAREDUSER_SUCCESS,
+        empId: param.empId
     });
 };
 
@@ -169,7 +251,25 @@ export const getUserList = (param) => dispatch => {
 
 export default handleActions({
 
-    [SET_SHAREDDEPT_SUCCESS]: (state, action) => {
+    [SET_PERMISSION_SUCCESS]: (state, action) => {
+        let shares = state.get(action.shareType);
+        console.log('shares =========== ', shares.toJS());
+        if(shares !== undefined) {
+            const i = shares.findIndex((n) => (n.get('shareWithUid') === action.id));
+            shares = shares.setIn([i, 'permissions'], action.value);
+        }
+        return state.set(action.shareType, shares);
+    },
+    [DELETE_SHAREDITEM_SUCCESS]: (state, action) => {
+        let shares = state.get(action.shareType);
+        if(shares !== undefined) {
+            const i = shares.findIndex((n) => (n.get('shareWithUid') === action.id));
+            shares = shares.delete(i);
+        }
+        return state.set(action.shareType, shares);
+    },
+
+    [ADD_SHAREDDEPT_SUCCESS]: (state, action) => {
         let shareDepts = state.get('shareDepts');
         if(shareDepts !== undefined) {
             if(action.isChecked) {
@@ -185,7 +285,15 @@ export default handleActions({
         }
         return state.set('shareDepts', shareDepts);
     },
-    [SET_SHAREDUSER_SUCCESS]: (state, action) => {
+    [DELETE_SHAREDDEPT_SUCCESS]: (state, action) => {
+        let shareDepts = state.get('shareDepts');
+        if(shareDepts !== undefined) {
+            const i = shareDepts.findIndex((n) => (n.get('deptCd') === action.deptCd));
+            shareDepts = shareDepts.delete(i);
+        }
+        return state.set('shareDepts', shareDepts);
+    },
+    [ADD_SHAREDUSER_SUCCESS]: (state, action) => {
         let shareUsers = state.get('shareUsers');
         if(shareUsers !== undefined) {
             if(action.isChecked) {
@@ -201,8 +309,17 @@ export default handleActions({
         }
         return state.set('shareUsers', shareUsers);
     },
-
-
+    [DELETE_SHAREDUSER_SUCCESS]: (state, action) => {
+        let shareUsers = state.get('shareUsers');
+        if(shareUsers !== undefined) {
+            const i = shareUsers.findIndex((n) => (n.get('empId') === action.empId));
+            shareUsers = shareUsers.delete(i);
+        }
+        return state.set('shareUsers', shareUsers);
+    },
+    [SET_SHAREINFO_SUCCESS]: (state, action) => {
+        return state;
+    },
 
     [GET_DEPTLIST_SUCCESS]: (state, action) => {
         const deptList = action.deptList;

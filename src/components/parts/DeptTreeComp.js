@@ -86,7 +86,7 @@ class DeptTreeComp extends Component {
   isCheckedSharedDept(deptCd) {
     const { shareDepts } = this.props;
     if(shareDepts !== undefined && shareDepts.size > 0) {
-      if(shareDepts.findIndex((n) => (n.get('deptCd') === deptCd)) > -1) {
+      if(shareDepts.findIndex((n) => (n.get('shareWithUid') === deptCd)) > -1) {
         return true;
       }
     }

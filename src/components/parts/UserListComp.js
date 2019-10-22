@@ -25,7 +25,7 @@ class UserListComp extends Component {
   isCheckedSharedUser(empId) {
     const { shareUsers } = this.props;
     if(shareUsers !== undefined && shareUsers.size > 0) {
-      if(shareUsers.findIndex((n) => (n.get('empId') === empId)) > -1) {
+      if(shareUsers.findIndex((n) => (n.get('shareWithUid') === empId)) > -1) {
         return true;
       }
     }

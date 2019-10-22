@@ -28,6 +28,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -102,11 +104,15 @@ class ShareConfDialog extends Component {
 
   handleChangeDeptCheck = (e, dept) => {
     const { DeptUserActions } = this.props;
-
-    console.log('dept ::: ', dept.toJS());
-
-    DeptUserActions.setDeptForShare({
-      selectedDept: dept,
+    DeptUserActions.addDeptForShare({
+      selectedDept: Map({
+        'shareTargetNo': '',
+        'shareId': '',
+        'targetTp': 'D',
+        'shareWithName': dept.get('deptNm'),
+        'shareWithUid': dept.get('deptCd'),
+        'permissions': 'R'
+      }),
       isChecked: e.target.checked
     });
   }
@@ -120,26 +126,57 @@ class ShareConfDialog extends Component {
 
   handleChangeUserCheck = (e, user) => {
     const { DeptUserActions } = this.props;
-    DeptUserActions.setUserForShare({
-      selectedUser: user,
+    DeptUserActions.addUserForShare({
+      selectedUser: Map({
+        'shareTargetNo': '',
+        'shareId': '',
+        'targetTp': 'U',
+        'shareWithName': user.get('empNm'),
+        'shareWithUid': user.get('empId'),
+        'permissions': 'R'
+      }),
       isChecked: e.target.checked
     });
   }
 
-  handleDeleteDeptFromShare = () => {
-
+  handleDeleteFromShare = (group, id) => {
+    const { DeptUserActions } = this.props;
+    DeptUserActions.deleteItemForShare({
+      group: group,
+      id: id
+    });
   }
 
-  handleDeleteUserFromShare = () => {
+  handleChangePermission = (group, id, value) => {
+    const { DeptUserActions } = this.props;
+    DeptUserActions.changePermission({
+      group: group,
+      id: id,
+      value: value
+    });
+  }
 
+  handleSaveShareInfo = () => {
+    const { FileProps } = this.props;
+    const { DeptUserProps, DeptUserActions } = this.props;
+    // create share data
+    console.log('############## SAVE #############');
+    console.log('FileProps ::::: ', (FileProps) ? FileProps.toJS() : '--');
+    console.log('DeptUserProps ::::: ', (DeptUserProps) ? DeptUserProps.toJS() : '--');
+
+    DeptUserActions.setShareInfo({
+      uid: 'test01',
+      fid: FileProps.getIn(['selectedItem', 'id']),
+      shareDepts: DeptUserProps.get('shareDepts'),
+      shareUsers: DeptUserProps.get('shareUsers')
+    });
   }
 
   render() {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps, FileProps } = this.props;
 
-    console.log('DeptUserProps ::::: ', (DeptUserProps) ? DeptUserProps.toJS() : '--');
-
+    
     const shareDepts = DeptUserProps.get('shareDepts') ? DeptUserProps.get('shareDepts') : [];
     const shareUsers = DeptUserProps.get('shareUsers') ? DeptUserProps.get('shareUsers') : [];
 
@@ -214,7 +251,14 @@ class ShareConfDialog extends Component {
                   />
                 </Box>
               </Grid>
+              <Grid item xs={12} style={{ padding: 10 }}>
+                <Button className={classes.RCSmallButton} variant="contained" color="secondary" 
+                  onClick={this.handleSaveShareInfo}>저장</Button>
+              </Grid>
             </Grid>
+
+
+
             <Card className={classes.card}>
               <CardContent>
                   <Table className={classes.table} size="small" stickyHeader>
@@ -230,26 +274,48 @@ class ShareConfDialog extends Component {
                     <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
                       {shareDepts.map(dept => {
                         return (
-                          <TableRow hover className={classes.fileTableRow} key={dept.get('deptCd')}>
+                          <TableRow hover className={classes.fileTableRow} key={dept.get('shareWithUid')}>
                             <TableCell component="th" align="center" scope="dept">조직</TableCell>
-                            <TableCell>{dept.get('deptNm')}</TableCell>
+                            <TableCell>{dept.get('shareWithName')}</TableCell>
                             <TableCell>{dept.get('whleDeptCd')}</TableCell>
-                            <TableCell>읽기/편집</TableCell>
                             <TableCell>
-                              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleDeleteDeptFromShare}>삭제</Button>
+                            <ButtonGroup size="small" variant="contained" 
+                              aria-label="small contained primary button group"
+                            >
+                              <Button color={dept.get('permissions') === 'R' ? 'secondary' : 'primary'}
+                                onClick={() => this.handleChangePermission('dept', dept.get('shareWithUid'), 'R')}
+                              >읽기</Button>
+                              <Button color={dept.get('permissions') === 'U' ? 'secondary' : 'primary'}
+                                onClick={() => this.handleChangePermission('dept', dept.get('shareWithUid'), 'U')}
+                              >편집</Button>
+                            </ButtonGroup>
+                            </TableCell>
+                            <TableCell>
+                              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={() => this.handleDeleteFromShare('dept', dept.get('shareWithUid'))}>삭제</Button>
                             </TableCell>
                           </TableRow>
                         );
                       })}
                       {shareUsers.map(user => {
                         return (
-                          <TableRow hover className={classes.fileTableRow} key={user.get('empId')}>
+                          <TableRow hover className={classes.fileTableRow} key={user.get('shareWithUid')}>
                             <TableCell component="th" align="center" scope="dept">사용자</TableCell>
-                            <TableCell>{user.get('empNm')}</TableCell>
+                            <TableCell>{user.get('shareWithName')}</TableCell>
                             <TableCell>{user.get('deptNm')}</TableCell>
-                            <TableCell>읽기/편집</TableCell>
                             <TableCell>
-                              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleDeleteUserFromShare}>삭제</Button>
+                            <ButtonGroup size="small" variant="contained" 
+                              aria-label="small contained primary button group"
+                            >
+                              <Button color={user.get('permissions') === 'R' ? 'secondary' : 'primary'}
+                                onClick={() => this.handleChangePermission('user', user.get('shareWithUid'), 'R')}
+                              >읽기</Button>
+                              <Button color={user.get('permissions') === 'U' ? 'secondary' : 'primary'}
+                                onClick={() => this.handleChangePermission('user', user.get('shareWithUid'), 'U')}
+                              >편집</Button>
+                            </ButtonGroup>
+                            </TableCell>
+                            <TableCell>
+                              <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={() => this.handleDeleteFromShare('user', user.get('shareWithUid'))}>삭제</Button>
                             </TableCell>
                           </TableRow>
                         );
