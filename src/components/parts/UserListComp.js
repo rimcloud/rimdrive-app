@@ -1,12 +1,7 @@
 import React, { Component } from "react";
-import { Map } from 'immutable';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
-
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import * as UserActions from 'modules/DeptUserModule';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';

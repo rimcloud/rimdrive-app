@@ -53,11 +53,6 @@ class SyncPage extends Component {
             // });
         }
 
-        // const confFile = getAppRoot() + 'rimdrive.json';
-        // const adapter = new FileSync(confFile);
-        // const test = low(adapter);
-        // test.assign({test: '3333'}).write();
-
     }
 
     handleChangeValue = name => event => {

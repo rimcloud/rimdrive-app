@@ -46,6 +46,21 @@ function createWindow() {
             }
         });
     });
+
+    ipcMain.on('sync-msg-select-file', (event, arg) => {
+        dialog.showOpenDialog({ 
+            title: '파일 선택',
+            properties: ['openFile'],
+            message: '파일를 선택하세요'
+        }).then(result => {
+            if(result.canceled) {
+                event.returnValue = null;
+            } else {
+                event.returnValue = result.filePaths;
+            }
+        });
+    });
+
 }
 
 app.on('ready', createWindow);
