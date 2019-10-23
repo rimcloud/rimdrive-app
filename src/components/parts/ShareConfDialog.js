@@ -45,7 +45,8 @@ class ShareConfDialog extends Component {
     super(props);
     this.state = {
       selectedId: '',
-      shareStep: 1
+      shareStep: 1,
+      actType: 'CREATE'
     };
   }
 
@@ -57,7 +58,7 @@ class ShareConfDialog extends Component {
     this.props.onDialogClose();
   }
 
-  handleSelectItem = (selectedItem) => {
+  handleSelectFolderFile = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
         path: selectedItem.path
@@ -69,9 +70,22 @@ class ShareConfDialog extends Component {
   }
 
   handleShareStepNext = () => {
-    this.setState({
-      shareStep: 2
-    })
+    // get before share info by selected folder or file
+    const { ShareActions, FileProps } = this.props;
+    ShareActions.getShareInfo({
+      sid: 'test01',
+      fid: FileProps.getIn(['selectedItem', 'id'])
+    }).then((res) => {
+
+      console.log('handleShareStepNext res ::: ', res);
+      if (res.status && res.status.result === 'SUCCESS') {
+        if (res.data) {
+          this.setState({ shareStep: 2, actType: 'UPDATE' });
+        } else {
+          this.setState({ shareStep: 2, actType: 'CREATE' });
+        }
+      }
+    });
   }
 
   handleShareStepBack = () => {
@@ -146,30 +160,51 @@ class ShareConfDialog extends Component {
     });
   }
 
-  handleShareInfoCreate = () => {
+  handleShareInfoSave = () => {
     const { FileProps } = this.props;
     const { ShareProps, ShareActions } = this.props;
-    // create share data
-    // console.log('############## CREATE #############');
-    // console.log('FileProps ::::: ', (FileProps) ? FileProps.toJS() : '--');
-    // console.log('ShareProps ::::: ', (ShareProps) ? ShareProps.toJS() : '--');
 
-    ShareActions.setShareInfoCreate({
-      uid: 'test01',
-      fid: FileProps.getIn(['selectedItem', 'id']),
-      shareDepts: ShareProps.get('shareDepts'),
-      shareUsers: ShareProps.get('shareUsers')
-    }).then((res) => {
-      // get share info
-      console.log('res :: ', res);
-      if(res.status && res.status.result === 'SUCCESS') {
-        alert('공유정보가 생성되었습니다.');
-        this.setState({ shareInfoDialogOpen: true });
-        ShareActions.getShareInfoList();
-      } else {
-        alert('공유정보 생성중 오류가 발생하였습니다.');
-      }
-    });
+    if (this.state.actType === 'CREATE') {
+      // create share data
+      ShareActions.setShareInfoCreate({
+        uid: 'test01',
+        fid: FileProps.getIn(['selectedItem', 'id']),
+        shareDepts: ShareProps.get('shareDepts'),
+        shareUsers: ShareProps.get('shareUsers')
+      }).then((res) => {
+        // get share info
+        if (res.status) {
+          if (res.status.result === 'SUCCESS') {
+            alert('공유정보가 생성되었습니다.');
+          } else if (res.status.result === 'FAIL') {
+            alert(res.status.message);
+          }
+        } else {
+          alert('공유정보 생성중 오류가 발생하였습니다.');
+        }
+      });
+    } else if (this.state.actType === 'UPDATE') {
+      // update share data
+      ShareActions.setShareInfoUpdate({
+        uid: 'test01',
+        shid: ShareProps.getIn(['shareInfo', 'shareId']),
+        shareDepts: ShareProps.get('shareDepts'),
+        shareUsers: ShareProps.get('shareUsers'),
+        formerShareDepts: ShareProps.get('formerShareDepts'),
+        formerShareUsers: ShareProps.get('formerShareUsers'),
+      }).then((res) => {
+        // get share info
+        if (res.status) {
+          if (res.status.result === 'SUCCESS') {
+            alert('공유정보가 수정되었습니다.');
+          } else if (res.status.result === 'FAIL') {
+            alert(res.status.message);
+          }
+        } else {
+          alert('공유정보 수정중 오류가 발생하였습니다.');
+        }
+      });
+    }
   }
 
   render() {
@@ -201,12 +236,12 @@ class ShareConfDialog extends Component {
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
               <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                <FolderTreeComp folderList={FileProps.get('folderList')} onSelectFolder={this.handleSelectItem} />
+                <FolderTreeComp folderList={FileProps.get('folderList')} onSelectFolder={this.handleSelectFolderFile} />
               </Box>
             </Grid>
             <Grid item xs={6}>
               <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
-                <FileListComp onSelectFile={this.handleSelectItem} />
+                <FileListComp onSelectFile={this.handleSelectFolderFile} />
               </Box>
             </Grid>
             <Grid item xs={12} style={{ padding: 10 }}>
@@ -248,11 +283,11 @@ class ShareConfDialog extends Component {
                 </Box>
               </Grid>
               <Grid item xs={12} style={{ padding: 10 }}>
-                <Button className={classes.RCSmallButton} variant="contained" color="secondary" 
-                  onClick={this.handleShareInfoCreate}>저장</Button>
+                <Button className={classes.RCSmallButton} variant="contained" color="secondary"
+                  onClick={this.handleShareInfoSave}>저장</Button>
               </Grid>
             </Grid>
-            <ShareListComp />
+            <ShareListComp isEdit={true} />
           </div>
         }
       </Dialog>

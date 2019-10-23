@@ -67,23 +67,28 @@ export const getShareInfo = (param) => dispatch => {
             try {
                 let shareDepts = List([]);
                 let shareUsers = List([]);
+                let shareInfo = null;
                 if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                    const list = response.data.data.listShareTargetVO;
-                    if(list) {
-                        list.forEach(n => {
-                            if(n.targetTp === 'D') {
-                                shareDepts = shareDepts.push(fromJS(n));
-                            } else if(n.targetTp === 'U') {
-                                shareUsers = shareUsers.push(fromJS(n));
-                            }
+                    const share = response.data.data;
+                    if(share.listShareTargetVO && share.shareVO) {
+                        const list = share.listShareTargetVO;
+                        if(list) {
+                            list.forEach(n => {
+                                if(n.targetTp === 'D') {
+                                    shareDepts = shareDepts.push(fromJS(n));
+                                } else if(n.targetTp === 'U') {
+                                    shareUsers = shareUsers.push(fromJS(n));
+                                }
+                            });
+                        }
+                        dispatch({
+                            type: GET_SHAREINFO_SUCCESS,
+                            shareDepts: shareDepts,
+                            shareUsers: shareUsers,
+                            shareInfo: share.shareVO
                         });
                     }
                 }
-                dispatch({
-                    type: GET_SHAREINFO_SUCCESS,
-                    shareDepts: shareDepts,
-                    shareUsers: shareUsers
-                });
 
                 return response.data;
             } catch(error) {
@@ -117,10 +122,6 @@ export const setShareInfoCreate = (param) => dispatch => {
                 } else {
 
                 }
-            // dispatch({
-            //     type: GET_DEPTLIST_SUCCESS,
-            //     deptList: deptList
-            // });
                 return response.data;
             } catch(error) {
                 dispatch({ type: COMMON_FAILURE, error: error });
@@ -129,6 +130,49 @@ export const setShareInfoCreate = (param) => dispatch => {
         }
     ).catch(error => {
         console.log('error : ', error);
+        return error;
+    });
+}
+
+export const setShareInfoUpdate = (param) => dispatch => {
+    let modifyShareList = [];
+    if(param.shareDepts !== undefined && param.shareDepts.size > 0) {
+        modifyShareList = modifyShareList.concat(param.shareDepts.toJS());
+    }
+    if(param.shareUsers !== undefined && param.shareUsers.size > 0) {
+        modifyShareList = modifyShareList.concat(param.shareUsers.toJS());
+    }
+
+    let deleteShareList = [];
+    if(param.formerShareDepts !== undefined && param.formerShareDepts.size > 0) {
+        deleteShareList = deleteShareList.concat(param.formerShareDepts.toJS());
+    }
+    if(param.formerShareUsers !== undefined && param.formerShareUsers.size > 0) {
+        deleteShareList = deleteShareList.concat(param.formerShareUsers.toJS());
+    }
+
+    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/update.ros', {
+        uid: param.uid,
+        shid: param.shid,
+        it: JSON.stringify(modifyShareList),
+        dt: JSON.stringify(deleteShareList)
+    }).then(
+        (response) => {
+            try {
+                if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
+
+                } else {
+
+                }
+                return response.data;
+            } catch(error) {
+                dispatch({ type: COMMON_FAILURE, error: error });
+                return error;
+            }
+        }
+    ).catch(error => {
+        console.log('error : ', error);
+        return error;
     });
 }
 
@@ -210,7 +254,8 @@ export default handleActions({
         return state.set('shareDepts', action.shareDepts)
                 .set('formerShareDepts', action.shareDepts)
                 .set('shareUsers', action.shareUsers)
-                .set('formerShareUsers', action.shareUsers);
+                .set('formerShareUsers', action.shareUsers)
+                .set('shareInfo', action.shareInfo);
     },
 
     [SET_PERMISSION_SUCCESS]: (state, action) => {

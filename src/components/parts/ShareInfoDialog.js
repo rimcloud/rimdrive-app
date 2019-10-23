@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Map } from 'immutable';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -7,8 +8,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as GlobalActions from 'modules/GlobalModule';
-import * as FileActions from 'modules/FileModule';
+import * as DeptUserActions from 'modules/DeptUserModule';
 import * as ShareActions from 'modules/ShareModule';
+
+import DeptTreeComp from 'components/parts/DeptTreeComp';
+import UserListComp from 'components/parts/UserListComp';
 
 import { compareShareInfo } from 'components/utils/RCCommonUtil';
 
@@ -16,7 +20,10 @@ import ShareListComp from 'components/parts/ShareListComp';
 import Typography from '@material-ui/core/Typography';
 
 import Dialog from '@material-ui/core/Dialog';
+import Box from '@material-ui/core/Box';
 
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -51,9 +58,9 @@ class ShareInfoDialog extends Component {
     // console.log('COMPARE ##########################################');
 
     let isChanged = false;
-    if(compareShareInfo(ShareProps.get('formerShareDepts'), ShareProps.get('shareDepts'))) {
+    if (compareShareInfo(ShareProps.get('formerShareDepts'), ShareProps.get('shareDepts'))) {
       isChanged = false;
-      if(compareShareInfo(ShareProps.get('formerShareUsers'), ShareProps.get('shareUsers'))) {
+      if (compareShareInfo(ShareProps.get('formerShareUsers'), ShareProps.get('shareUsers'))) {
         isChanged = false;
       } else {
         isChanged = true;
@@ -62,21 +69,21 @@ class ShareInfoDialog extends Component {
       isChanged = true;
     }
 
-    if(isChanged) {
+    if (isChanged) {
       this.props.GlobalActions.showConfirm({
         confirmTitle: "공유정보 수정",
         confirmMsg: "공유 정보가 변경되었습니다. 저장하겠습니까?",
         handleConfirmResult: (confirmValue, paramObject) => {
-            if(confirmValue) {
-              // SAVE
-                // const { GlobalProps } = this.props;
-                // const driveConfig = GlobalProps.get('driveConfig');
-                // driveConfig.get('syncItems')
-                // .remove({ no: paramObject })
-                // .write();
-            } else {
-              this.props.onDialogClose();
-            }
+          if (confirmValue) {
+            // SAVE
+            // const { GlobalProps } = this.props;
+            // const driveConfig = GlobalProps.get('driveConfig');
+            // driveConfig.get('syncItems')
+            // .remove({ no: paramObject })
+            // .write();
+          } else {
+            this.props.onDialogClose();
+          }
         },
         confirmObject: null
       });
@@ -112,8 +119,59 @@ class ShareInfoDialog extends Component {
     });
   }
 
+  handleSelectDept = (dept) => {
+    const { DeptUserActions } = this.props;
+    // show dept info and user list
+    DeptUserActions.getUserList({
+      selectedDeptCd: dept
+    });
+
+    DeptUserActions.showDeptInfo({
+      selectedDeptCd: dept
+    });
+  }
+
+  handleChangeDeptCheck = (e, dept) => {
+    const { ShareActions } = this.props;
+    ShareActions.addDeptForShare({
+      selectedDept: Map({
+        'shareTargetNo': '',
+        'shareId': '',
+        'targetTp': 'D',
+        'shareWithName': dept.get('deptNm'),
+        'shareWithUid': dept.get('deptCd'),
+        'permissions': 'R'
+      }),
+      isChecked: e.target.checked
+    });
+  }
+
+  handleSelectUser = (user) => {
+    // const { DeptUserActions } = this.props;
+    // DeptUserActions.showUserInfo({
+    //   selectedUser: user
+    // });
+  }
+
+  handleChangeUserCheck = (e, user) => {
+    const { ShareActions } = this.props;
+    ShareActions.addUserForShare({
+      selectedUser: Map({
+        'shareTargetNo': '',
+        'shareId': '',
+        'targetTp': 'U',
+        'shareWithName': user.get('empNm'),
+        'shareWithUid': user.get('empId'),
+        'permissions': 'R'
+      }),
+      isChecked: e.target.checked
+    });
+  }
+
   render() {
     const { classes, dialogOpen } = this.props;
+    const { DeptUserProps, FileProps, ShareProps } = this.props;
+
     let stepInfo = '공유한 대상 정보입니다. 권한수정 및 삭제작업후 저장버튼을 클릭하세요.';
 
     console.log('[ShareInfoDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
@@ -130,9 +188,37 @@ class ShareInfoDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
-        <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'right' }}>{stepInfo}</Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={10} style={{ paddingTop: 20 }}>
+            <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
+          </Grid>
+          <Grid item xs={2} style={{ textAlign: 'right' }}>
+            <Button className={classes.RCSmallButton} variant="contained" color="secondary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoSave('UPDATE')}>저장</Button>
+          </Grid>
+        </Grid>
         <Divider />
-        <ShareListComp />
+        <Grid container style={{ margin: 0 }}>
+          <Grid item xs={6} >
+            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+              <DeptTreeComp deptList={DeptUserProps.get('deptList')}
+                shareDepts={ShareProps.get('shareDepts')}
+                onSelectDept={this.handleSelectDept}
+                onChangeDeptCheck={this.handleChangeDeptCheck}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={6} >
+            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <UserListComp
+                userListData={DeptUserProps.get('userListData')}
+                shareUsers={ShareProps.get('shareUsers')}
+                onSelectUser={this.handleSelectUser}
+                onChangeUserCheck={this.handleChangeUserCheck}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+        <ShareListComp isEdit={true} />
       </Dialog>
     );
   }
@@ -141,13 +227,13 @@ class ShareInfoDialog extends Component {
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
   ShareProps: state.ShareModule,
-  FileProps: state.FileModule
+  DeptUserProps: state.DeptUserModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
   GlobalActions: bindActionCreators(GlobalActions, dispatch),
   ShareActions: bindActionCreators(ShareActions, dispatch),
-  FileActions: bindActionCreators(FileActions, dispatch)
+  DeptUserActions: bindActionCreators(DeptUserActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(ShareInfoDialog));

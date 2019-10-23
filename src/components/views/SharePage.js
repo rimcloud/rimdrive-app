@@ -13,8 +13,10 @@ import * as DeptUserActions from 'modules/DeptUserModule';
 
 import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+
 import ShareConfDialog from 'components/parts/ShareConfDialog';
 import ShareInfoDialog from 'components/parts/ShareInfoDialog';
+import ShareViewDialog from 'components/parts/ShareViewDialog';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -32,7 +34,8 @@ class SharePage extends Component {
         super(props);
         this.state = {
             shareConfDialogOpen: false,
-            shareInfoDialogOpen: false
+            shareInfoDialogOpen: false,
+            shareViewDialogOpen: false
         };
     }
 
@@ -49,23 +52,28 @@ class SharePage extends Component {
     handleShareConfDialogClose = () => {
         this.setState({ shareConfDialogOpen: false });
     }
+    handleShareInfoDialogClose = () => {
+        this.setState({ shareInfoDialogOpen: false });
+    }
+    handleShareViewDialogClose = () => {
+        this.setState({ shareViewDialogOpen: false });
+    }
 
-    handleAddShareInfo = () => {
+    handleClickShareEdit = () => {
+        this.setState({
+            shareViewDialogOpen: false,
+            shareInfoDialogOpen: true
+        });
+    }
+
+    handleClickShareInfoCreate = () => {
         this.props.ShareActions.setShareItemRemove();
         this.setState({ shareConfDialogOpen: true });
     }
 
-    handleShareInfoDialogClose = () => {
-        this.setState({ shareInfoDialogOpen: false });
-    }
-
-    handleShareInfoDialogOpen = () => {
-        this.setState({ shareInfoDialogOpen: true });
-    }
-
     handleDeleteShareInfo = () => {
         console.log('handleDeleteShareInfo....');
-        
+
     }
 
     handleClickShareInfo = (fid, sid) => {
@@ -74,15 +82,62 @@ class SharePage extends Component {
             sid: sid,
             fid: fid
         }).then((res) => {
-            if(res.status && res.status.result === 'SUCCESS') {
-                this.setState({ shareInfoDialogOpen: true });
+            if (res.status && res.status.result === 'SUCCESS') {
+                this.setState({ shareViewDialogOpen: true });
             }
         });
     }
 
+    handleShareInfoSave = (actType) => {
+        const { FileProps } = this.props;
+        const { ShareProps, ShareActions } = this.props;
+
+        if (actType === 'CREATE') {
+            // create share data
+            ShareActions.setShareInfoCreate({
+                uid: 'test01',
+                fid: FileProps.getIn(['selectedItem', 'id']),
+                shareDepts: ShareProps.get('shareDepts'),
+                shareUsers: ShareProps.get('shareUsers')
+            }).then((res) => {
+                // get share info
+                if (res.status) {
+                    if (res.status.result === 'SUCCESS') {
+                        alert('공유정보가 생성되었습니다.');
+                    } else if (res.status.result === 'FAIL') {
+                        alert(res.status.message);
+                    }
+                } else {
+                    alert('공유정보 생성중 오류가 발생하였습니다.');
+                }
+            });
+        } else if (actType === 'UPDATE') {
+            // update share data
+            ShareActions.setShareInfoUpdate({
+                uid: 'test01',
+                shid: ShareProps.getIn(['shareInfo', 'shareId']),
+                shareDepts: ShareProps.get('shareDepts'),
+                shareUsers: ShareProps.get('shareUsers'),
+                formerShareDepts: ShareProps.get('formerShareDepts'),
+                formerShareUsers: ShareProps.get('formerShareUsers'),
+            }).then((res) => {
+                // get share info
+                if (res.status) {
+                    if (res.status.result === 'SUCCESS') {
+                        alert('공유정보가 수정되었습니다.');
+                    } else if (res.status.result === 'FAIL') {
+                        alert(res.status.message);
+                    }
+                } else {
+                    alert('공유정보 수정중 오류가 발생하였습니다.');
+                }
+            });
+        }
+    }
+
     render() {
         const { classes, ShareProps } = this.props;
-        const { shareConfDialogOpen, shareInfoDialogOpen } = this.state;
+        const { shareConfDialogOpen, shareInfoDialogOpen, shareViewDialogOpen } = this.state;
 
         const shareInfoList = ShareProps.get('shareInfoList');
         // console.log('[SharePage] - shareInfoList >>> ', (shareInfoList) ? shareInfoList.toJS() : 'none');
@@ -93,7 +148,7 @@ class SharePage extends Component {
                     <RCContentCardHeader
                         title="공유 정보"
                         action={
-                            <Button className={classes.RCSmallButton} variant="contained" color="secondary" onClick={this.handleAddShareInfo}>공유 추가</Button>
+                            <Button className={classes.RCSmallButton} variant="contained" color="secondary" onClick={this.handleClickShareInfoCreate}>공유 추가</Button>
                         }
                         subheader="" />
                     <CardContent>
@@ -117,8 +172,8 @@ class SharePage extends Component {
                                                 <TableCell component="th" align="center" scope="sn">{sn.get('fileId')}</TableCell>
                                                 <TableCell>{sn.get('name')}</TableCell>
                                                 <TableCell>{sn.get('path')}</TableCell>
-                                                <TableCell>{sn.get('shareWithCnt')}</TableCell>
-                                                <TableCell>
+                                                <TableCell style={{ textAlign: 'center' }}>{sn.get('shareWithCnt')}</TableCell>
+                                                <TableCell style={{ textAlign: 'center' }}>
                                                     <Button className={classes.RCSmallButton} variant="contained" color="primary" onClick={this.handleDeleteShareInfo}>삭제</Button>
                                                 </TableCell>
                                             </TableRow>
@@ -129,8 +184,9 @@ class SharePage extends Component {
                         }
                     </CardContent>
                 </Card>
-                <ShareConfDialog dialogOpen={shareConfDialogOpen} onDialogClose={this.handleShareConfDialogClose} />
-                <ShareInfoDialog dialogOpen={shareInfoDialogOpen} onDialogClose={this.handleShareInfoDialogClose} />
+                <ShareConfDialog dialogOpen={shareConfDialogOpen} onDialogClose={this.handleShareConfDialogClose} onShareInfoSave={this.handleShareInfoSave} />
+                <ShareInfoDialog dialogOpen={shareInfoDialogOpen} onDialogClose={this.handleShareInfoDialogClose} onShareInfoSave={this.handleShareInfoSave} />
+                <ShareViewDialog dialogOpen={shareViewDialogOpen} onDialogClose={this.handleShareViewDialogClose} onClickShareEdit={this.handleClickShareEdit} />
                 <RCDialogConfirm />
             </div>
         );
