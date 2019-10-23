@@ -84,7 +84,8 @@ export const CommonStyle = theme => ({
     bullet: {
         display: 'inline-block',
         margin: '0 2px',
-        transform: 'scale(0.8)'
+        transform: 'scale(1.8)',
+        fontSize: '16px'
     },
     title: {
         fontSize: 14

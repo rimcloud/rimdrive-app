@@ -215,8 +215,8 @@ class ShareConfDialog extends Component {
     if (this.state.shareStep === 1) {
       stepInfo = '공유할 폴더 또는 파일을 선택 후 폴더공유/파일공유 버튼을 클릭하세요.';
     } else if (this.state.shareStep === 2) {
-      stepInfo = '공유할 조직 또는 사용자를 선택한 후 공유저장 버튼을 클릭하세요.';
-    }
+      stepInfo = '공유할 조직 또는 사용자를 선택한 후 저장 버튼을 클릭하세요.';
+    }    
 
     return (
       <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
@@ -236,7 +236,9 @@ class ShareConfDialog extends Component {
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
           <Grid item xs={2} style={{ textAlign: 'right' }}>
+            {(this.state.shareStep === 2) &&
             <Button className={classes.RCSmallButton} variant="contained" color="secondary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoSave(this.state.actType)}>저장</Button>
+            }
           </Grid>
         </Grid>
 
@@ -244,14 +246,14 @@ class ShareConfDialog extends Component {
         {(this.state.shareStep === 1) &&
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FolderTreeComp folderList={FileProps.get('folderList')} 
                   onSelectFolder={this.handleSelectFolderFile} 
                 />
               </Box>
             </Grid>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FileListComp onSelectFile={this.handleSelectFolderFile} />
               </Box>
             </Grid>
@@ -275,7 +277,7 @@ class ShareConfDialog extends Component {
                 </Grid>
               </Grid>
               <Grid item xs={6} >
-                <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                   <DeptTreeComp deptList={DeptUserProps.get('deptList')}
                     shareDepts={ShareProps.get('shareDepts')}
                     onSelectDept={this.handleSelectDept}
@@ -284,7 +286,7 @@ class ShareConfDialog extends Component {
                 </Box>
               </Grid>
               <Grid item xs={6} >
-                <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                   <UserListComp
                     userListData={DeptUserProps.get('userListData')}
                     shareUsers={ShareProps.get('shareUsers')}

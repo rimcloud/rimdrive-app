@@ -87,9 +87,7 @@ class ShareListComp extends Component {
                       <TableCell>{dept.get('whleDeptCd')}</TableCell>
                       <TableCell style={{textAlign:'center'}}>
                       {isEdit &&
-                        <ButtonGroup size="small" variant="contained"
-                          aria-label="small contained primary button group"
-                        >
+                        <ButtonGroup size="small" variant="contained" aria-label="small contained primary button group">
                           <Button color={dept.get('permissions') === 'R' ? 'secondary' : 'primary'}
                             onClick={() => this.handleChangePermission('dept', dept.get('shareWithUid'), 'R')}
                           >읽기</Button>
@@ -118,9 +116,7 @@ class ShareListComp extends Component {
                       <TableCell>{user.get('deptNm')}</TableCell>
                       <TableCell style={{textAlign:'center'}}>
                       {isEdit &&
-                        <ButtonGroup size="small" variant="contained"
-                          aria-label="small contained primary button group"
-                        >
+                        <ButtonGroup size="small" variant="contained" aria-label="small contained primary button group">
                           <Button color={user.get('permissions') === 'R' ? 'secondary' : 'primary'}
                             onClick={() => this.handleChangePermission('user', user.get('shareWithUid'), 'R')}
                           >읽기</Button>
