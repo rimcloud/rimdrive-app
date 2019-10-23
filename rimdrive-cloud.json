@@ -1,88 +1,28 @@
 {
   "files": [
     {
-      "name": "111.txt",
+      "name": "sub01.txt",
       "type": "F",
-      "size": 13,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\111.txt",
-      "pathHash": "180264fac79143056399808513043b86a70e2bd5f44f1effe19fbc3d18f9c824",
-      "atime": "2019-10-15 19:39:58",
-      "ctime": "2019-10-15 17:53:31",
-      "birthtime": "2019-10-15 19:34:10",
-      "mtime": "2019-10-15 17:53:31"
+      "size": 9344,
+      "targetPath": "D:\\test\\sub1",
+      "relPath": "\\sub01.txt",
+      "pathHash": "5756fb7f95ebd567e458407a82f6cea75328724060c5a263fa55c97dda41b737",
+      "atime": "2019-10-12 4:18:52",
+      "ctime": "2019-10-12 4:18:59",
+      "birthtime": "2019-10-12 4:18:52",
+      "mtime": "2018-11-03 20:47:5"
     },
     {
-      "name": "aaa",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\aaa",
-      "pathHash": "613f43c371cef628cccce9341ab1683b85cad528466a0914c6f03de091f9f8e8",
-      "atime": "2019-10-15 19:39:58",
-      "ctime": "2019-10-15 19:39:58",
-      "birthtime": "2019-10-15 19:39:58",
-      "mtime": "2019-10-15 19:39:58"
-    },
-    {
-      "name": "a111.txt",
+      "name": "sub02.txt",
       "type": "F",
-      "size": 18,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\aaa\\a111.txt",
-      "pathHash": "b0f6099707af2996c4cd1edd1ea1512bea8a7ec4f6ffb16fc299c7b54170f6b1",
-      "atime": "2019-10-15 19:39:58",
-      "ctime": "2019-10-15 17:53:53",
-      "birthtime": "2019-10-15 19:39:58",
-      "mtime": "2019-10-15 17:53:53"
-    },
-    {
-      "name": "bbb",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\bbb",
-      "pathHash": "53c33768466d09554a1eacac312944c9a4f2054c65aaf06383bb3b0ff7c6d120",
-      "atime": "2019-10-15 19:39:58",
-      "ctime": "2019-10-15 19:39:58",
-      "birthtime": "2019-10-15 19:39:58",
-      "mtime": "2019-10-15 19:39:58"
-    },
-    {
-      "name": "b111.txt",
-      "type": "F",
-      "size": 18,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\bbb\\b111.txt",
-      "pathHash": "19f685fb9163ea92800590700c5c88b3812747798f70fbba26c434ab4e56ab17",
-      "atime": "2019-10-15 19:39:58",
-      "ctime": "2019-10-15 17:54:17",
-      "birthtime": "2019-10-15 19:39:58",
-      "mtime": "2019-10-15 17:54:17"
-    },
-    {
-      "name": "ccc",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\ccc",
-      "pathHash": "e5186aa8d446e58e3ffc1a9627d8d5435b8c44871cf5fb5b049e302e2e94f6c4",
-      "atime": "2019-10-15 19:10:22",
-      "ctime": "2019-10-15 19:10:22",
-      "birthtime": "2019-10-15 19:10:9",
-      "mtime": "2019-10-15 19:10:22"
-    },
-    {
-      "name": "c111.txt",
-      "type": "F",
-      "size": 18,
-      "targetPath": "D:\\cloudFolder",
-      "relPath": "\\ccc\\c111.txt",
-      "pathHash": "4d5322ffa815beca0a80d84282fa525191aca2fa44bc2f892632cf76bfe1c320",
-      "atime": "2019-10-15 19:10:30",
-      "ctime": "2019-10-15 19:10:30",
-      "birthtime": "2019-10-15 19:10:20",
-      "mtime": "2019-10-15 19:10:30"
+      "size": 9344,
+      "targetPath": "D:\\test\\sub1",
+      "relPath": "\\sub02.txt",
+      "pathHash": "73e9e478f022449d4418aff3f103ad8e52c46eb41ffac2db5bf009d41b59e80b",
+      "atime": "2019-10-12 4:19:3",
+      "ctime": "2019-10-12 4:19:8",
+      "birthtime": "2019-10-12 4:19:3",
+      "mtime": "2018-11-03 20:47:5"
     }
   ]
 }

@@ -72,7 +72,6 @@ export default handleActions({
         return state.set(action.name, action.value);
     },
     [REQ_LOGIN_PROCESS]: (state, action) => {
-        console.log('REQ_LOGIN_PROCESS : action :: ', action);
         return state.merge({[action.name]: action.value});
     }
 

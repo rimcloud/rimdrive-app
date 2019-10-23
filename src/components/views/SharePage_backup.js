@@ -36,7 +36,6 @@ class SharePage extends Component {
     }
 
     componentDidMount() {
-        console.log('>>> SharePage :::  componentDidMount............');
         // get cloud folders
         const { FileActions, DeptUserActions } = this.props;
         

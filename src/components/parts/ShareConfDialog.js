@@ -50,10 +50,6 @@ class ShareConfDialog extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log('>>> ShareConfDialog :::  componentDidMount............');
-  }
-
   handleClose = () => {
     this.props.onDialogClose();
   }

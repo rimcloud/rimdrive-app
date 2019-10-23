@@ -46,16 +46,8 @@ class ShareInfoDialog extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log('>>> ShareInfoDialog :::  componentDidMount............');
-  }
-
   handleClose = () => {
-    //
     const { ShareProps } = this.props;
-    // console.log('[ShareInfoDialog] ShareProps =>> ', (ShareProps) ? ShareProps.toJS() : 'none');
-    // console.log('[ShareInfoDialog] ShareProps.shareUsers =>> ', (ShareProps) ? ShareProps.getIn(['shareUsers', 0]) : 'none');
-    // console.log('COMPARE ##########################################');
 
     let isChanged = false;
     if (compareShareInfo(ShareProps.get('formerShareDepts'), ShareProps.get('shareDepts'))) {
@@ -107,10 +99,6 @@ class ShareInfoDialog extends Component {
     const { FileProps } = this.props;
     const { ShareProps, ShareActions } = this.props;
     // create share data
-    console.log('############## SAVE #############');
-    console.log('FileProps ::::: ', (FileProps) ? FileProps.toJS() : '--');
-    console.log('ShareProps ::::: ', (ShareProps) ? ShareProps.toJS() : '--');
-
     ShareActions.setShareInfoCreate({
       uid: 'test01',
       fid: FileProps.getIn(['selectedItem', 'id']),

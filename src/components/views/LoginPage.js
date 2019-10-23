@@ -35,8 +35,6 @@ class LoginPage extends Component {
     }
 
     render() {
-        console.log('LOGIN render...........................................');
-
         const { classes } = this.props;
         const { AccountProps } = this.props;
 
