@@ -18,15 +18,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import MailIcon from '@material-ui/icons/Mail';
 
-
-const useStyles = makeStyles({
-  root: {
-    height: 264,
-    flexGrow: 1,
-    maxWidth: 400,
-  },
-});
-
 const useTreeItemStyles = makeStyles(theme => ({
   labelRoot: {
     display: 'flex',
@@ -83,7 +74,7 @@ class DeptTreeComp extends Component {
     // console.log('extend :: ', extend);
   }
 
-  isCheckedSharedDept(deptCd) {
+  isChecked(deptCd) {
     const { shareDepts } = this.props;
     if(shareDepts !== undefined && shareDepts.size > 0) {
       if(shareDepts.findIndex((n) => (n.get('shareWithUid') === deptCd)) > -1) {
@@ -99,7 +90,7 @@ class DeptTreeComp extends Component {
     if (dept.get('children').size > 0) {
       return <StyledTreeItem key={deptCd} labelIcon={MailIcon}
         nodeId={deptCd.toString()} labelText={dept.get('deptNm')}
-        isChecked={this.isCheckedSharedDept(deptCd)}
+        isChecked={this.isChecked(deptCd)}
         onItemClick={() => this.props.onSelectDept(deptCd)}
         onItemChange={(event) => this.props.onChangeDeptCheck(event, dept)}
       >
@@ -111,7 +102,7 @@ class DeptTreeComp extends Component {
     } else {
       return <StyledTreeItem key={deptCd} labelIcon={MailIcon}
         nodeId={deptCd.toString()} labelText={dept.get('deptNm')}
-        isChecked={this.isCheckedSharedDept(deptCd)}
+        isChecked={this.isChecked(deptCd)}
         onItemClick={() => this.props.onSelectDept(deptCd)}
         onItemChange={(event) => this.props.onChangeDeptCheck(event, dept)}
       />

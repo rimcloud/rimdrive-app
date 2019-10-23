@@ -22,7 +22,7 @@ class UserListComp extends Component {
   handleSelectUser = (user) => {
   }
 
-  isCheckedSharedUser(empId) {
+  isChecked(empId) {
     const { shareUsers } = this.props;
     if(shareUsers !== undefined && shareUsers.size > 0) {
       if(shareUsers.findIndex((n) => (n.get('shareWithUid') === empId)) > -1) {
@@ -55,7 +55,7 @@ class UserListComp extends Component {
             onClick={() => this.props.onSelectUser(user)}
           >
           <TableCell><Checkbox style={{ padding: 0 }}
-          checked={this.isCheckedSharedUser(user.get('empId'))}
+          checked={this.isChecked(user.get('empId'))}
           onChange={(event) => this.props.onChangeUserCheck(event, user)}
           inputProps={{
             'aria-label': 'primary checkbox',

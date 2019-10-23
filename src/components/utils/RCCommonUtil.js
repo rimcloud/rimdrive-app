@@ -46,3 +46,32 @@ export const formatDateTime = (date) => {
 
   return [[year, month, day].join('-'), ' ', [hour, minute, second].join(':')].join('');
 }
+
+export const compareShareInfo = (former, curr) => {
+  if(former !== undefined && curr !== undefined) {
+    if(former.size !== curr.size) {
+      return false;
+    }
+    // loop
+    let loopResult = true;
+    former.forEach(n => {
+      const c = curr.find(e => (e.get('shareId') === n.get('shareId') 
+          && e.get('shareTargetNo') === n.get('shareTargetNo')
+          && e.get('permissions') === n.get('permissions')
+          && e.get('shareWithName') === n.get('shareWithName')
+          && e.get('shareWithUid') === n.get('shareWithUid')
+          && e.get('targetTp') === n.get('targetTp')
+      ));
+      if(c === undefined) {
+        loopResult = false;
+        return;
+      }
+    });
+
+    return loopResult;
+  }
+
+  return false;
+}
+
+

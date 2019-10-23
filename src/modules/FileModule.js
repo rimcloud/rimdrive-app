@@ -3,8 +3,6 @@ import { Map, List, fromJS } from 'immutable';
 
 import { requestPostAPI } from 'components/utils/RCRequester';
 
-const GET_SHAREDINFO_SUCCESS = 'file/GET_SHAREDINFO_SUCCESS';
-
 const GET_FOLDERLIST_SUCCESS = 'file/GET_FOLDERLIST_SUCCESS';
 const SET_SELECTEDITEM_SUCCESS = 'file/SET_SELECTEDITEM_SUCCESS';
 
@@ -18,38 +16,8 @@ const CHG_SYNCTYPE_SUCCESS = 'global/CHG_SYNCTYPE_SUCCESS';
 
 // ...
 const initialState = Map({
-    sharedList: null,
     listData: null
 });
-
-export const getSharedInfoList = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/list.ros', {
-        uid: 'test01'
-    }).then(
-        (response) => {
-            let sharedList = List([]);
-            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                if(response.data.data.files && response.data.data.files.length > 0) {
-                    console.log('data success...............');
-                    sharedList = response.data.data.files.map((n) => ({
-                        fileId : n.fileId,
-                        name: n.name,
-                        path: n.path,
-                        shareWithCnt: n.shareWithCnt,
-                        shareWithAll: n.shareWithAll
-                    }));
-                }
-            }
-            dispatch({
-                type: GET_SHAREDINFO_SUCCESS,
-                sharedList: fromJS(sharedList)
-            });
-        }
-    ).catch(error => {
-        console.log('error : ', error);
-    });
-}
-
 
 export const showFilesInFolder = (param) => dispatch => {
     return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
@@ -122,7 +90,7 @@ export const showFilesInFolder = (param) => dispatch => {
 // }
 
 const makeFolderList = (data, folderList) => {
-    console.log('folderList >>>> ', folderList.toJS());
+    // console.log('folderList >>>> ', folderList.toJS());
     if(data && data.length > 0) {
         data.forEach((n, i) => {
             if(n.folderId !== '10') {
@@ -220,10 +188,6 @@ export const chgSyncTypeData = (param) => dispatch => {
 
 export default handleActions({
 
-    [GET_SHAREDINFO_SUCCESS]: (state, action) => {
-        const sharedList = action.sharedList;
-        return state.set('sharedList', sharedList);
-    },
     [GET_FOLDERLIST_SUCCESS]: (state, action) => {
         const folderList = action.folderList;
         return state.set('folderList', folderList);
@@ -234,8 +198,6 @@ export default handleActions({
     [SET_SELECTEDITEM_SUCCESS]: (state, action) => {
         return state.set('selectedItem', action.selectedItem);
     },
-
-
 
     [SET_SELECTEDFILE_SUCCESS]: (state, action) => {
         return state.set('selectedFolder', null)

@@ -21,7 +21,7 @@ export function grRequestPromise(url, param) {
     }).then(function(response) {
 
       if (response.data) {
-        if (response.data.status && response.data.status.result === "success" && response.data.data && response.data.data.length > 0) {
+        if (response.data.status && response.data.status.result === 'SUCCESS' && response.data.data && response.data.data.length > 0) {
             resolve(response.data);
         } else {
           resolve(response.data);

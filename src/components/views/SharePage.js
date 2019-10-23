@@ -5,12 +5,16 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
 import * as GlobalActions from 'modules/GlobalModule';
+import * as ShareActions from 'modules/ShareModule';
 import * as FileActions from 'modules/FileModule';
 import * as DeptUserActions from 'modules/DeptUserModule';
 
+import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 import ShareConfDialog from 'components/parts/ShareConfDialog';
+import ShareInfoDialog from 'components/parts/ShareInfoDialog';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -27,49 +31,61 @@ class SharePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dialogOpen: false
+            shareConfDialogOpen: false,
+            shareInfoDialogOpen: false
         };
     }
 
     componentDidMount() {
-        console.log('>>> SharePage :::  componentDidMount............');
-        const { FileActions, DeptUserActions } = this.props;
+        const { ShareActions, FileActions, DeptUserActions } = this.props;
         // get share info
-        FileActions.getSharedInfoList();
+        ShareActions.getShareInfoList();
         // get cloud folders
         FileActions.getDriveFolderList();
+        // get cloud depts
         DeptUserActions.getDeptList();
     }
 
-    handleClickOpen = () => {
-        this.setState({
-            dialogOpen: true
-        });
-    };
-
-    handleDialogClose = () => {
-        this.setState({
-            dialogOpen: false
-        });
+    handleShareConfDialogClose = () => {
+        this.setState({ shareConfDialogOpen: false });
     }
 
     handleAddShareInfo = () => {
-        this.setState({
-            dialogOpen: true
-        });
+        this.props.ShareActions.setShareItemRemove();
+        this.setState({ shareConfDialogOpen: true });
+    }
+
+    handleShareInfoDialogClose = () => {
+        this.setState({ shareInfoDialogOpen: false });
+    }
+
+    handleShareInfoDialogOpen = () => {
+        this.setState({ shareInfoDialogOpen: true });
     }
 
     handleDeleteShareInfo = () => {
         console.log('handleDeleteShareInfo....');
+        
+    }
+
+    handleClickShareInfo = (fid, sid) => {
+        const { ShareActions } = this.props;
+        ShareActions.getShareInfo({
+            sid: sid,
+            fid: fid
+        }).then((res) => {
+            if(res.status && res.status.result === 'SUCCESS') {
+                this.setState({ shareInfoDialogOpen: true });
+            }
+        });
     }
 
     render() {
-        const { classes, FileProps } = this.props;
-        const { dialogOpen } = this.state;
+        const { classes, ShareProps } = this.props;
+        const { shareConfDialogOpen, shareInfoDialogOpen } = this.state;
 
-        const sharedList = FileProps.get('sharedList');
-        // console.log('nsharedList >>>>>>>>> ', (sharedList) ? sharedList.toJS() : '00000');
-
+        const shareInfoList = ShareProps.get('shareInfoList');
+        // console.log('[SharePage] - shareInfoList >>> ', (shareInfoList) ? shareInfoList.toJS() : 'none');
 
         return (
             <div>
@@ -81,7 +97,7 @@ class SharePage extends Component {
                         }
                         subheader="" />
                     <CardContent>
-                        {(sharedList && sharedList.size > 0) &&
+                        {(shareInfoList && shareInfoList.size > 0) &&
                             <Table className={classes.table} size="small" stickyHeader>
                                 <TableHead>
                                     <TableRow className={classes.fileTableHeadRow}>
@@ -93,12 +109,12 @@ class SharePage extends Component {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
-                                    {sharedList.map(sn => {
+                                    {shareInfoList.map(sn => {
                                         return (
-                                            <TableRow hover className={classes.fileTableRow} key={sn.get('fileId')}>
-                                                <TableCell component="th" align="center" scope="sn">
-                                                    {sn.get('fileId')}
-                                                </TableCell>
+                                            <TableRow hover className={classes.fileTableRow} key={sn.get('fileId')}
+                                                onClick={() => this.handleClickShareInfo(sn.get('fileId'), sn.get('storageId'))}
+                                            >
+                                                <TableCell component="th" align="center" scope="sn">{sn.get('fileId')}</TableCell>
                                                 <TableCell>{sn.get('name')}</TableCell>
                                                 <TableCell>{sn.get('path')}</TableCell>
                                                 <TableCell>{sn.get('shareWithCnt')}</TableCell>
@@ -113,19 +129,23 @@ class SharePage extends Component {
                         }
                     </CardContent>
                 </Card>
-                <ShareConfDialog dialogOpen={dialogOpen} onDialogClose={this.handleDialogClose} />
+                <ShareConfDialog dialogOpen={shareConfDialogOpen} onDialogClose={this.handleShareConfDialogClose} />
+                <ShareInfoDialog dialogOpen={shareInfoDialogOpen} onDialogClose={this.handleShareInfoDialogClose} />
+                <RCDialogConfirm />
             </div>
         );
     }
 }
 
 const mapStateToProps = (state) => ({
+    ShareProps: state.ShareModule,
     FileProps: state.FileModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    FileActions: bindActionCreators(FileActions, dispatch),
+    ShareActions: bindActionCreators(ShareActions, dispatch),
     GlobalActions: bindActionCreators(GlobalActions, dispatch),
+    FileActions: bindActionCreators(FileActions, dispatch),
     DeptUserActions: bindActionCreators(DeptUserActions, dispatch),
 });
 
