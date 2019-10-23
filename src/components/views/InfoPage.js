@@ -15,12 +15,18 @@ import path from 'path';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 
-import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import TableBody from '@material-ui/core/TableBody';
+
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 class InfoPage extends Component {
 
@@ -92,7 +98,6 @@ class InfoPage extends Component {
 
         return (
             <React.Fragment>
-                {/**
                 <Card className={classes.card}>
                     <RCContentCardHeader title="사용자 정보" subheader="" />
                     <CardContent>
@@ -145,7 +150,7 @@ class InfoPage extends Component {
                         </Table>
                     </CardContent>
                 </Card>
-                */}
+                {/**
                 <Card>
                     <RCContentCardHeader title='업로드 테스트' subheader="" />
                     <CardContent>
@@ -160,7 +165,7 @@ class InfoPage extends Component {
                         onChange={this.handleValueChange('serverUrl')}
                     />
                     </Grid>
-                </Grid>
+                    </Grid>
 
                         <Grid container spacing={3}>
                             <Grid item xs={2}><Typography variant="body2" component="p">파일 선택</Typography></Grid>
@@ -192,6 +197,7 @@ class InfoPage extends Component {
 
                     </CardContent>
                 </Card>
+                */}
 
             </React.Fragment>
         );
