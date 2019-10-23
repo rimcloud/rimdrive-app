@@ -86,7 +86,7 @@ class FolderTreeComp extends Component {
 
   render() {
     const { classes, folderList } = this.props;
-    console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
+    // console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
 
     let folderTree = null;
     if(folderList !== undefined) {

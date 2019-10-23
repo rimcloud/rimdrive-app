@@ -15,13 +15,6 @@ import TableRow from '@material-ui/core/TableRow';
 
 class FileListComp extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedId: ''
-    };
-  }
-
   handleSelectFile = (file) => {
     const { FileActions } = this.props;
     FileActions.showFileDetail({
@@ -36,7 +29,7 @@ class FileListComp extends Component {
     const listData = FileProps.get('listData');
 
     return (
-      <div style={{ margin: 4 }}>
+      <div>
         <Table className={classes.table} size="small" stickyHeader>
           <TableHead>
             <TableRow className={classes.fileTableHeadRow}>

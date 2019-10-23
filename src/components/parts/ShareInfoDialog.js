@@ -172,30 +172,32 @@ class ShareInfoDialog extends Component {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps, FileProps, ShareProps } = this.props;
 
-    let stepInfo = '공유한 대상 정보입니다. 권한수정 및 삭제작업후 저장버튼을 클릭하세요.';
+    let stepInfo = '수정작업후 저장버튼을 클릭하세요.';
 
-    console.log('[ShareInfoDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
+    // console.log('[ShareInfoDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
 
     return (
       <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
             <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 정보</Typography>
-            {/* <Button color="primary" variant="contained" className={classes.RCSmallButton} onClick={this.handleClose}>저장</Button> */}
             <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
               <CloseIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
         <Divider />
+
         <Grid container spacing={3}>
-          <Grid item xs={10} style={{ paddingTop: 20 }}>
+          <Grid item xs={6} style={{ paddingTop: 20 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
-          <Grid item xs={2} style={{ textAlign: 'right' }}>
-            <Button className={classes.RCSmallButton} variant="contained" color="secondary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoSave('UPDATE')}>저장</Button>
+          <Grid item xs={6} style={{ textAlign: 'right' }}>
+          <Button className={classes.RCSmallButton} variant="contained" color="secondary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoSave('UPDATE')}>저장</Button>
+          <Button className={classes.RCSmallButton} variant="contained" color="primary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoDelete()}>삭제</Button>
           </Grid>
         </Grid>
+        
         <Divider />
         <Grid container style={{ margin: 0 }}>
           <Grid item xs={6} >
@@ -218,6 +220,7 @@ class ShareInfoDialog extends Component {
             </Box>
           </Grid>
         </Grid>
+
         <ShareListComp isEdit={true} />
       </Dialog>
     );

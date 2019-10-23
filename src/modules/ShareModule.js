@@ -70,7 +70,7 @@ export const getShareInfo = (param) => dispatch => {
                 let shareInfo = null;
                 if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
                     const share = response.data.data;
-                    if(share.listShareTargetVO && share.shareVO) {
+                    if(share && share.listShareTargetVO && share.shareVO) {
                         const list = share.listShareTargetVO;
                         if(list) {
                             list.forEach(n => {
@@ -114,6 +114,30 @@ export const setShareInfoCreate = (param) => dispatch => {
         uid: param.uid,
         fid: param.fid,
         it: JSON.stringify(modifyShareList)
+    }).then(
+        (response) => {
+            try {
+                if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
+
+                } else {
+
+                }
+                return response.data;
+            } catch(error) {
+                dispatch({ type: COMMON_FAILURE, error: error });
+                return error;
+            }
+        }
+    ).catch(error => {
+        console.log('error : ', error);
+        return error;
+    });
+}
+
+export const setShareInfoDelete = (param) => dispatch => {
+    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/delete.ros', {
+        uid: param.uid,
+        shid: param.shid
     }).then(
         (response) => {
             try {
@@ -281,7 +305,7 @@ export default handleActions({
             if(action.isChecked) {
                 shareDepts = shareDepts.push(action.selectedDept);
             } else {
-                const i = shareDepts.findIndex((n) => (n.get('deptCd') === action.selectedDept.get('deptCd')));
+                const i = shareDepts.findIndex((n) => (n.get('shareWithUid') === action.selectedDept.get('shareWithUid')));
                 shareDepts = shareDepts.delete(i);
             }
         } else {
@@ -294,7 +318,7 @@ export default handleActions({
     [DELETE_DEPTSHARE_SUCCESS]: (state, action) => {
         let shareDepts = state.get('shareDepts');
         if(shareDepts !== undefined) {
-            const i = shareDepts.findIndex((n) => (n.get('deptCd') === action.deptCd));
+            const i = shareDepts.findIndex((n) => (n.get('shareWithUid') === action.deptCd));
             shareDepts = shareDepts.delete(i);
         }
         return state.set('shareDepts', shareDepts);
@@ -305,7 +329,8 @@ export default handleActions({
             if(action.isChecked) {
                 shareUsers = shareUsers.push(action.selectedUser);
             } else {
-                const i = shareUsers.findIndex((n) => (n.get('empId') === action.selectedUser.get('empId')));
+                console.log('>>>>>>>>>>> shareUsers : ', shareUsers.toJS());
+                const i = shareUsers.findIndex((n) => (n.get('shareWithUid') === action.selectedUser.get('shareWithUid')));
                 shareUsers = shareUsers.delete(i);
             }
         } else {
@@ -318,7 +343,7 @@ export default handleActions({
     [DELETE_USERSHARE_SUCCESS]: (state, action) => {
         let shareUsers = state.get('shareUsers');
         if(shareUsers !== undefined) {
-            const i = shareUsers.findIndex((n) => (n.get('empId') === action.empId));
+            const i = shareUsers.findIndex((n) => (n.get('shareWithUid') === action.empId));
             shareUsers = shareUsers.delete(i);
         }
         return state.set('shareUsers', shareUsers);

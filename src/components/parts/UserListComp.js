@@ -12,20 +12,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 class UserListComp extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedId: ''
-    };
-  }
-
-  handleSelectUser = (user) => {
-  }
-
   isChecked(empId) {
     const { shareUsers } = this.props;
-    if(shareUsers !== undefined && shareUsers.size > 0) {
-      if(shareUsers.findIndex((n) => (n.get('shareWithUid') === empId)) > -1) {
+    if (shareUsers !== undefined && shareUsers.size > 0) {
+      if (shareUsers.findIndex((n) => (n.get('shareWithUid') === empId)) > -1) {
         return true;
       }
     }
@@ -38,39 +28,46 @@ class UserListComp extends Component {
 
     return (
       <div>
-      {(userListData && userListData.size > 0) && 
-      <Table className={classes.table} size="small" stickyHeader>
-      <TableHead>
-        <TableRow className={classes.fileTableHeadRow}>
-        <TableCell className={classes.fileTableHeadCell} >선택</TableCell>
-        <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
-        <TableCell className={classes.fileTableHeadCell} >아이디</TableCell>
-          <TableCell className={classes.fileTableHeadCell} >직급</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {userListData.map(user => {
-          return (
-          <TableRow hover className={classes.fileTableRow} key={user.get('empId')}
-            onClick={() => this.props.onSelectUser(user)}
-          >
-          <TableCell><Checkbox style={{ padding: 0 }}
-          checked={this.isChecked(user.get('empId'))}
-          onChange={(event) => this.props.onChangeUserCheck(event, user)}
-          inputProps={{
-            'aria-label': 'primary checkbox',
-          }}
-        /></TableCell>
-            <TableCell component="th" align="center" scope="user">{user.get('empId')}</TableCell>
-            <TableCell>{user.get('empNm')}</TableCell>
-            <TableCell align="right">{user.get('grade')}</TableCell>
-          </TableRow>
-        );
-      })}
-      </TableBody>
-    </Table>
-        }
-</div>
+          <Table className={classes.table} size="small" stickyHeader>
+            <TableHead>
+              <TableRow className={classes.fileTableHeadRow}>
+                <TableCell className={classes.fileTableHeadCell} >선택</TableCell>
+                <TableCell className={classes.fileTableHeadCell} >이름</TableCell>
+                <TableCell className={classes.fileTableHeadCell} >아이디</TableCell>
+                <TableCell className={classes.fileTableHeadCell} >직급</TableCell>
+              </TableRow>
+            </TableHead>
+            {(userListData && userListData.size > 0) &&
+            <TableBody>
+              {userListData.map(user => {
+                return (
+                  <TableRow hover className={classes.fileTableRow} key={user.get('empId')}
+                    onClick={() => this.props.onSelectUser(user)}
+                  >
+                    <TableCell><Checkbox style={{ padding: 0 }}
+                      checked={this.isChecked(user.get('empId'))}
+                      onChange={(event) => this.props.onChangeUserCheck(event, user)}
+                      inputProps={{
+                        'aria-label': 'primary checkbox',
+                      }}
+                    /></TableCell>
+                    <TableCell component="th" align="center" scope="user">{user.get('empId')}</TableCell>
+                    <TableCell>{user.get('empNm')}</TableCell>
+                    <TableCell align="right">{user.get('grade')}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+            }
+            {(userListData && userListData.size > 0) &&
+              <TableBody>
+              <TableRow hover className={classes.fileTableRow} >
+                <TableCell component="th" align="center" colSpan="4">사용자가 없습니다.</TableCell>
+              </TableRow>
+            </TableBody>
+            }
+          </Table>
+      </div>
     );
   }
 }

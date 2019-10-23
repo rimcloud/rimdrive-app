@@ -215,7 +215,7 @@ class ShareConfDialog extends Component {
     if (this.state.shareStep === 1) {
       stepInfo = '공유할 폴더 또는 파일을 선택 후 폴더공유/파일공유 버튼을 클릭하세요.';
     } else if (this.state.shareStep === 2) {
-      stepInfo = '선택한 폴더 또는 파일을 공유할 조직 또는 사용자를 선택한 후 공유저장 버튼을 클릭하세요.';
+      stepInfo = '공유할 조직 또는 사용자를 선택한 후 공유저장 버튼을 클릭하세요.';
     }
 
     return (
@@ -230,17 +230,28 @@ class ShareConfDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
-        <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'right' }}>{stepInfo}</Typography>
+
+        <Grid container spacing={3}>
+          <Grid item xs={10} style={{ paddingTop: 20 }}>
+            <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
+          </Grid>
+          <Grid item xs={2} style={{ textAlign: 'right' }}>
+            <Button className={classes.RCSmallButton} variant="contained" color="secondary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoSave(this.state.actType)}>저장</Button>
+          </Grid>
+        </Grid>
+
         <Divider />
         {(this.state.shareStep === 1) &&
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
               <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-                <FolderTreeComp folderList={FileProps.get('folderList')} onSelectFolder={this.handleSelectFolderFile} />
+                <FolderTreeComp folderList={FileProps.get('folderList')} 
+                  onSelectFolder={this.handleSelectFolderFile} 
+                />
               </Box>
             </Grid>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FileListComp onSelectFile={this.handleSelectFolderFile} />
               </Box>
             </Grid>
@@ -281,10 +292,6 @@ class ShareConfDialog extends Component {
                     onChangeUserCheck={this.handleChangeUserCheck}
                   />
                 </Box>
-              </Grid>
-              <Grid item xs={12} style={{ padding: 10 }}>
-                <Button className={classes.RCSmallButton} variant="contained" color="secondary"
-                  onClick={this.handleShareInfoSave}>저장</Button>
               </Grid>
             </Grid>
             <ShareListComp isEdit={true} />

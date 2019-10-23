@@ -33,7 +33,7 @@ class ShareViewDialog extends Component {
     const { classes, dialogOpen } = this.props;
     let stepInfo = '공유한 대상 정보입니다.';
 
-    console.log('[ShareViewDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
+    // console.log('[ShareViewDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
 
     return (
       <Dialog fullScreen open={dialogOpen} onClose={this.props.onDialogClose} TransitionComponent={Transition}>
