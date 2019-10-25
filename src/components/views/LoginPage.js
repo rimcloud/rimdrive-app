@@ -49,6 +49,7 @@ class LoginPage extends Component {
                     <TextField
                         id="user-id"
                         label="ID"
+                        value="test01"
                         className={classes.textField}
                         onChange={this.handleChangeValue('id')}
                         margin="normal"
@@ -58,6 +59,7 @@ class LoginPage extends Component {
                     <TextField
                         id="user-password"
                         label="Password"
+                        value="test01"
                         className={classes.textField}
                         onChange={this.handleChangeValue('password')}
                         type="password"

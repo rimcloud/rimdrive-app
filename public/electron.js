@@ -34,12 +34,12 @@ function createWindow() {
     // });
 
     ipcMain.on('sync-msg-select-folder', (event, arg) => {
-        dialog.showOpenDialog({ 
+        dialog.showOpenDialog({
             title: '폴더 선택',
             properties: ['openDirectory'],
             message: '폴더를 선택하세요'
         }).then(result => {
-            if(result.canceled) {
+            if (result.canceled) {
                 event.returnValue = null;
             } else {
                 event.returnValue = result.filePaths;
@@ -48,12 +48,12 @@ function createWindow() {
     });
 
     ipcMain.on('sync-msg-select-file', (event, arg) => {
-        dialog.showOpenDialog({ 
+        dialog.showOpenDialog({
             title: '파일 선택',
             properties: ['openFile'],
             message: '파일를 선택하세요'
         }).then(result => {
-            if(result.canceled) {
+            if (result.canceled) {
                 event.returnValue = null;
             } else {
                 event.returnValue = result.filePaths;
@@ -61,6 +61,40 @@ function createWindow() {
         });
     });
 
+    ipcMain.on('login-to-server', (event, arg) => {
+        console.log('arg ::: ', arg);
+        const { net } = require('electron');
+        const req = net.request({
+            url: 'http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=test01&passwd=test01&mac=1'
+        });
+        req.on('response', (response) => {
+            console.log(`STATUS: ${response.statusCode}`)
+            console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+            response.on('data', (chunk) => {
+                console.log(`BODY: ${chunk}`)
+            })
+            response.on('end', () => {
+                console.log('No more data in response.')
+            })
+        });
+        req.end();
+
+        console.log('req :========>> ', req);
+
+        event.returnValue = null;
+
+        // dialog.showOpenDialog({ 
+        //     title: '파일 선택',
+        //     properties: ['openFile'],
+        //     message: '파일를 선택하세요'
+        // }).then(result => {
+        //     if(result.canceled) {
+        //         event.returnValue = null;
+        //     } else {
+        //         event.returnValue = result.filePaths;
+        //     }
+        // });
+    });
 }
 
 app.on('ready', createWindow);

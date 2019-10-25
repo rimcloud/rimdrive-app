@@ -1,6 +1,7 @@
 
 import { handleActions } from 'redux-actions';
 import { Map } from 'immutable';
+import { ipcRenderer } from 'electron';
 
 const COMMON_PENDING = 'account/COMMON_PENDING';
 const COMMON_FAILURE = 'account/COMMON_FAILURE';
@@ -9,8 +10,8 @@ const REQ_LOGIN_PROCESS = 'account/REQ_LOGIN_PROCESS';
 
 // ...
 const initialState = Map({
-    id: 'u1',
-    password: 'p1',
+    id: 'test01',
+    password: 'test01',
     userToken: '',
     loginStatus: 'u3'
 });
@@ -26,10 +27,14 @@ export const changeAccountParamData = (param) => dispatch => {
 export const reqLoginProcess = (userId, password) => dispatch => {
     dispatch({type: COMMON_PENDING});
 
+    console.log('BBBBBBBBBBBBBB ipcResult');
+    const ipcResult = ipcRenderer.sendSync('login-to-server', {'useId': userId, 'password': password});
+    console.log('ipcResult ::->>>>>>>>>>>>>>>>>>> ', ipcResult);
+
     return dispatch({
         type: REQ_LOGIN_PROCESS,
         name: 'userToken',
-        value: 'ttt'
+        value: ''
     });
 
 
