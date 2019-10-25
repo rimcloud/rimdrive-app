@@ -38,6 +38,13 @@ class InfoPage extends Component {
         };
     }
 
+    componentDidMount() {
+        const { AccountProps, AccountActions } = this.props;
+        // load and init rimdrive config
+
+        AccountActions.reqLoginUserInfo(AccountProps.get('userId'));
+    }
+
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
         console.log('AccountProps ::: ', (AccountProps)
@@ -95,6 +102,17 @@ class InfoPage extends Component {
     render() {
         
         const { classes } = this.props;
+        const { AccountProps } = this.props;
+
+        console.log('infoPage render AccountProps : ', (AccountProps) ? AccountProps.toJS() : 'none');
+        let paStorageName = '';
+        let paStorageQuota = '';
+        let paStorageUsed = '';
+        if(AccountProps && AccountProps.get('padata')) {
+            paStorageName = AccountProps.getIn(['padata', 'name']);
+            paStorageQuota = `${AccountProps.getIn(['padata', 'quota'])} GB`;
+            paStorageUsed = AccountProps.getIn(['padata', 'used']);
+        }
 
         return (
             <React.Fragment>
@@ -132,10 +150,11 @@ class InfoPage extends Component {
                             </TableHead>
                             <TableBody>
                                 <TableRow key={1}>
-                                    <TableCell component="th" scope="row">개인저장소</TableCell>
-                                    <TableCell align="right">20 GB</TableCell>
-                                    <TableCell align="right">495 B</TableCell>
+                                    <TableCell component="th" scope="row">{paStorageName}</TableCell>
+                                    <TableCell align="right">{paStorageQuota}</TableCell>
+                                    <TableCell align="right">{paStorageUsed}</TableCell>
                                 </TableRow>
+                                {/*
                                 <TableRow key={2}>
                                     <TableCell component="th" scope="row">nec</TableCell>
                                     <TableCell align="right">10 GB</TableCell>
@@ -146,6 +165,7 @@ class InfoPage extends Component {
                                     <TableCell align="right">10 GB</TableCell>
                                     <TableCell align="right">0 B</TableCell>
                                 </TableRow>
+                                */}
                             </TableBody>
                         </Table>
                     </CardContent>
@@ -204,7 +224,9 @@ class InfoPage extends Component {
     }
 }
 
-const mapStateToProps = (state) => ({ AccountProps: state.AccountModule });
+const mapStateToProps = (state) => ({ 
+    AccountProps: state.AccountModule
+});
 
 const mapDispatchToProps = (dispatch) => ({
     AccountActions: bindActionCreators(AccountActions, dispatch)

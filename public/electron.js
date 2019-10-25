@@ -61,39 +61,70 @@ function createWindow() {
         });
     });
 
-    ipcMain.on('login-to-server', (event, arg) => {
+    ipcMain.on('get-data-from-server', (event, arg) => {
         console.log('arg ::: ', arg);
         const { net } = require('electron');
-        const req = net.request({
-            url: 'http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=test01&passwd=test01&mac=1'
+        const request = net.request({
+            method: 'GET',
+            url: `http://${arg.url}?${arg.params}`
         });
-        req.on('response', (response) => {
-            console.log(`STATUS: ${response.statusCode}`)
-            console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
-            response.on('data', (chunk) => {
-                console.log(`BODY: ${chunk}`)
-            })
+        request.on('response', (response) => {
+            // console.log(`STATUS: ${response.statusCode}`);
+            // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            if(response.statusCode === 200) {
+                response.on('data', (chunk) => {
+                    const responseObj = JSON.parse(chunk.toString());
+                    console.log('responseObj (BODY) : ', responseObj);
+                    event.returnValue = responseObj;
+                    // if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
+                    //     event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
+                    // } else {
+                    //     event.returnValue = {'result': 'FAIL', 'message': responseObj.status.message};
+                    // }
+                })
+            } else {
+                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+            }
             response.on('end', () => {
                 console.log('No more data in response.')
             })
         });
-        req.end();
+        request.end();
+    });
 
-        console.log('req :========>> ', req);
-
-        event.returnValue = null;
-
-        // dialog.showOpenDialog({ 
-        //     title: '파일 선택',
-        //     properties: ['openFile'],
-        //     message: '파일를 선택하세요'
-        // }).then(result => {
-        //     if(result.canceled) {
-        //         event.returnValue = null;
-        //     } else {
-        //         event.returnValue = result.filePaths;
-        //     }
-        // });
+    ipcMain.on('login-to-server', (event, arg) => {
+        console.log('arg ::: ', arg);
+        const { net } = require('electron');
+        // const qs = require('qs');
+        const request = net.request({
+            method: 'GET',
+            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=${arg.userId}&passwd=${arg.password}`
+        });
+        request.on('response', (response) => {
+            // console.log(`STATUS: ${response.statusCode}`);
+            // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            if(response.statusCode === 200) {
+                response.on('data', (chunk) => {
+                    const responseObj = JSON.parse(chunk.toString());
+                    // console.log('responseObj (BODY) : ', responseObj);
+                    if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
+                        event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
+                    } else {
+                        event.returnValue = {'result': 'FAIL', 'message': responseObj.status.message};
+                    }
+                })
+            } else {
+                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+            }
+            response.on('end', () => {
+                console.log('No more data in response.')
+            })
+        });
+        // request.write(qs.stringify({
+        //     'userid': arg.userId,
+        //     'passwd': arg.password
+        // }));
+        request.end();
     });
 }
 

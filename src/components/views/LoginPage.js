@@ -17,7 +17,7 @@ class LoginPage extends Component {
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
         console.log('AccountProps ::: ', (AccountProps) ? AccountProps.toJS() : '--');
-        AccountActions.reqLoginProcess(AccountProps.get('id'), AccountProps.get('password'));
+        AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password'));
     }
 
     handleChangeValue = name => event => {
@@ -27,39 +27,44 @@ class LoginPage extends Component {
         });
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const { AccountProps : NextAccountProps} = nextProps;
-        const { AccountProps } = this.props;
-        return NextAccountProps.get('userToken') !== AccountProps.get('userToken');
-
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     const { AccountProps : NextAccountProps} = nextProps;
+    //     const { AccountProps } = this.props;
+    //     return NextAccountProps.get('userToken') !== AccountProps.get('userToken');
+    // }
 
     render() {
         const { classes } = this.props;
         const { AccountProps } = this.props;
 
+        console.log('render1 AccountProps :: ', AccountProps);
+        console.log('render2 AccountProps :: ', AccountProps.toJS());
+        console.log('render3 AccountProps :: ', AccountProps.toJS().userId);
+        console.log('render4 AccountProps :: ', AccountProps.getIn(["userId"]));
+
         if (AccountProps.get('userToken') !== '') {
             return <Redirect push to ='/Main' />;
         }
+
+        // const userId = AccountProps.get('userId');
+        // console.log('render userId :: ', userId);
 
         return (
             <React.Fragment>
                 <div className={classes.homePage}>
                 <div>
                     <TextField
-                        id="user-id"
                         label="ID"
-                        value="test01"
+                        value={AccountProps.get('userId')}
                         className={classes.textField}
-                        onChange={this.handleChangeValue('id')}
+                        onChange={this.handleChangeValue('userId')}
                         margin="normal"
                     />
                 </div>
                 <div>
                     <TextField
-                        id="user-password"
                         label="Password"
-                        value="test01"
+                        value={AccountProps.get('password')}
                         className={classes.textField}
                         onChange={this.handleChangeValue('password')}
                         type="password"
