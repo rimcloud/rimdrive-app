@@ -21,7 +21,7 @@ import * as GlobalActions from 'modules/GlobalModule';
 
 import SyncItem from 'components/parts/SyncItem';
 import RCDialogConfirm from 'components/utils/RCDialogConfirm';
-import FolderTreeDialog from 'components/parts/FolderTreeDialog';
+import CloudFolderTreeDialog from 'components/parts/CloudFolderTreeDialog';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -33,12 +33,14 @@ class SyncPage extends Component {
         this.state = {
             itemCount: 0,
             selectedTab: 0,
-            pathItems: ''
+            pathItems: '',
+
+            openCloudFolderDialog: true
         };
     }
 
     componentDidMount() {
-        const { GlobalProps } = this.props;
+        const { GlobalProps, FileActions } = this.props;
         // driveConfig
         if(GlobalProps.get('driveConfig') !== undefined) {
             const driveConfig = GlobalProps.get('driveConfig');
@@ -52,6 +54,9 @@ class SyncPage extends Component {
             //     itemCount: itemCount
             // });
         }
+
+        // get cloud folders
+        FileActions.getDriveFolderList();
 
     }
 
@@ -170,32 +175,27 @@ class SyncPage extends Component {
         }
     }
 
-    handleCloseFolderDialog = () => {
+    handleCloseCloudFolderDialog = () => {
         this.setState({
-            openFolderDialog: false
+            openCloudFolderDialog: false
         });
     }
 
-    handleCloseFolderDialog = () => {
+    handleSelectCloudFolder = (selectedItem) => {
+        console.log('SyncPage handleSelectCloudFolder - selectedItem :: ', selectedItem);
         this.setState({
-            openFolderDialog: false
+            openCloudFolderDialog: false
         });
+        // const targetSyncNo = this.state.targetSyncNo;
+        // const targetSyncLoc = this.state.targetSyncLoc;
+
+        // const { GlobalProps } = this.props;
+        // const driveConfig = GlobalProps.get('driveConfig');
+        // driveConfig.get('syncItems')
+        // .find({ no: targetSyncNo })
+        // .assign({ [targetSyncLoc]: selectedFolderPath})
+        // .write();
     }
-
-    // handleSelectFolder = (selectedFolderPath) => {
-    //     this.setState({
-    //         openFolderDialog: false
-    //     });
-    //     const targetSyncNo = this.state.targetSyncNo;
-    //     const targetSyncLoc = this.state.targetSyncLoc;
-
-    //     const { GlobalProps } = this.props;
-    //     const driveConfig = GlobalProps.get('driveConfig');
-    //     driveConfig.get('syncItems')
-    //     .find({ no: targetSyncNo })
-    //     .assign({ [targetSyncLoc]: selectedFolderPath})
-    //     .write();
-    // }
 
     handleChangeSyncType = (syncNo, syncType) => {
         const { GlobalProps } = this.props;
@@ -205,14 +205,15 @@ class SyncPage extends Component {
         .assign({ type: syncType})
         .write();
         this.setState({
-            openFolderDialog: false
+            openCloudFolderDialog: false
         });
     }
 
     render() {
         const { classes, GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
-        const openFolderDialog = this.state.openFolderDialog;
+
+        console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
 
         const items = this.state.pathItems;
         
@@ -229,6 +230,8 @@ class SyncPage extends Component {
         //     }
         // }
 
+        console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas);
+
         
         // console.log('driveConfig :: ', driveConfig);
         // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
@@ -236,9 +239,11 @@ class SyncPage extends Component {
         return (
             <React.Fragment>
                 <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>
+                    {/* 
                     <Button onClick={this.handleAddSyncClick} className={classes.RCSmallButton} variant="contained" color="primary">
                         파일 동기화 추가
                     </Button>
+                    */}
                 </Box>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
                     <SyncItem item={s} index={i+1}
@@ -251,9 +256,9 @@ class SyncPage extends Component {
                 ))
                 }
                 <RCDialogConfirm />
-                <FolderTreeDialog open={openFolderDialog} 
-                    onSelectFolder={this.handleSelectFolder}
-                    onClose={this.handleCloseFolderDialog}
+                <CloudFolderTreeDialog open={this.state.openCloudFolderDialog} 
+                    onSelectCloudFolder={this.handleSelectCloudFolder}
+                    onClose={this.handleCloseCloudFolderDialog}
                     pathItems={items}
                 />
             </React.Fragment>

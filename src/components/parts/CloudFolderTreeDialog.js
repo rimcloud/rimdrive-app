@@ -5,7 +5,11 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
 import * as GlobalActions from 'modules/GlobalModule';
+import * as FileActions from 'modules/FileModule';
+
+import FolderTreeComp from 'components/parts/FolderTreeComp';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -20,13 +24,14 @@ import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
-class FolderTreeDialog extends Component {
+class CloudFolderTreeDialog extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       selectedId: '',
-      folderPath: ''
+      folderPath: '',
+      selectedItem: null
     };
   }
 
@@ -40,7 +45,7 @@ class FolderTreeDialog extends Component {
 
   handleSaveData = () => {
     // send selected folder path and dialog close
-    this.props.onSelectFolder(this.state.folderPath);
+    this.props.onSelectCloudFolder(this.state.selectedItem);
   }
 
   handleNodeToggle = (id, extend) => {
@@ -52,9 +57,26 @@ class FolderTreeDialog extends Component {
     this.props.onClose();
   }
 
+  handleSelectCloudFolder = (selectedItem) => {
+
+    console.log('CloudFolderTreeDialog handleSelectCloudFolder - selectedItem:::  ', selectedItem);
+    this.setState({
+      selectedItem: selectedItem
+    });
+    // if (selectedItem.type === 'D') {
+    //   this.props.FileActions.showFilesInFolder({
+    //     path: selectedItem.path
+    //   });
+    // }
+    // this.props.FileActions.setSelectedItem({
+    //   selectedItem: selectedItem
+    // });
+  }
+
   render() {
     const { classes } = this.props;
     const { open = false, pathItems } = this.props;
+    const { FileProps } = this.props;
 
     return (
       <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
@@ -62,7 +84,9 @@ class FolderTreeDialog extends Component {
           style={{ padding: 4, fontSize: '12px', color: 'black', background: 'linear-gradient(45deg, #A3A3A2 30%, #2c387b 90%)', fontWeight: 'bolder' }}
         >폴더선택</DialogTitle>
         <DialogContent>
-        TreeView
+        <FolderTreeComp folderList={FileProps.get('folderList')} 
+                  onSelectFolder={this.handleSelectCloudFolder} 
+                />
         </DialogContent>
         <DialogActions>
           <Grid container spacing={3}>
@@ -81,11 +105,13 @@ class FolderTreeDialog extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  GlobalProps: state.GlobalModule
+  GlobalProps: state.GlobalModule,
+  FileProps: state.FileModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  GlobalActions: bindActionCreators(GlobalActions, dispatch)
+  GlobalActions: bindActionCreators(GlobalActions, dispatch),
+  FileActions: bindActionCreators(FileActions, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(FolderTreeDialog));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(CloudFolderTreeDialog));
