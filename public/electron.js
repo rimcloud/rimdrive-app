@@ -145,7 +145,8 @@ function createWindow() {
         download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
             .then(dl => {
 
-                console.log('[[download]]  then dl =>>>> ', dl);
+                console.log('[[download]]  then dl.getSavePath =>>>> ', dl.getSavePath());
+                // console.log('[[download]]  then dl =>>>> ', dl);
                 mainWindow.webContents.send('download complete', dl.getSavePath())
             })
             .catch(e => {
