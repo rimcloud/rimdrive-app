@@ -4,73 +4,21 @@
       "name": "sub1",
       "type": "D",
       "size": 0,
-      "targetPath": "D:\\test",
-      "relPath": "\\sub1",
-      "pathHash": "2b291b7b13a11240c1b6d83f147aedfd1380f9467e831d2a84ae03a5407edb17",
-      "atime": "2019-10-12 4:19:8",
-      "ctime": "2019-10-12 4:19:8",
-      "birthtime": "2019-10-12 4:18:45",
-      "mtime": "2019-10-12 4:19:8"
+      "targetPath": "D:\\test2",
+      "relPath": "/sub1",
+      "pathHash": "8c9124bc689ad65d5d2922d1c0599a877597fa811f1d1fe4e0c8a78da624090f",
+      "ctime": "2019-10-28 1:56:43",
+      "mtime": "2019-10-28 1:56:43"
     },
     {
-      "name": "sub01.txt",
-      "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test",
-      "relPath": "\\sub1\\sub01.txt",
-      "pathHash": "cc2ed80d1f0a89315dda3e1ddb0e4f19e2060092725ccfa882778c3efab05231",
-      "atime": "2019-10-12 4:18:52",
-      "ctime": "2019-10-12 4:18:59",
-      "birthtime": "2019-10-12 4:18:52",
-      "mtime": "2018-11-03 20:47:5"
-    },
-    {
-      "name": "sub02.txt",
-      "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test",
-      "relPath": "\\sub1\\sub02.txt",
-      "pathHash": "040be97716bef245455fd263ea49365bd460d73d92a0e4c149ceddc7ed7b5037",
-      "atime": "2019-10-12 4:19:3",
-      "ctime": "2019-10-12 4:19:8",
-      "birthtime": "2019-10-12 4:19:3",
-      "mtime": "2018-11-03 20:47:5"
-    },
-    {
-      "name": "test01.txt",
-      "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test",
-      "relPath": "\\test01.txt",
-      "pathHash": "86b76dc317a6fa05de3dfd5b516819679a7edcff1a5dbe8b7c4a036cef861141",
-      "atime": "2019-10-12 4:18:42",
-      "ctime": "2018-11-03 20:53:22",
-      "birthtime": "2019-10-12 4:18:42",
-      "mtime": "2018-11-03 20:47:5"
-    },
-    {
-      "name": "test02.txt",
-      "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test",
-      "relPath": "\\test02.txt",
-      "pathHash": "bd7e4e97cb99e4381e4200c273c2c339cfd78c542ba10bebfbade43da436387e",
-      "atime": "2019-10-12 4:18:42",
-      "ctime": "2018-11-03 22:21:54",
-      "birthtime": "2019-10-12 4:18:42",
-      "mtime": "2018-11-03 20:47:5"
-    },
-    {
-      "name": "test03.txt",
-      "type": "F",
-      "size": 1209,
-      "targetPath": "D:\\test",
-      "relPath": "\\test03.txt",
-      "pathHash": "47b20cba8c9a1501cb811a90f3c135e7f1cdb1df104003dc81babebbc445c872",
-      "atime": "2019-10-12 4:18:42",
-      "ctime": "2018-11-04 3:54:52",
-      "birthtime": "2019-10-12 4:18:42",
-      "mtime": "2018-11-04 3:54:52"
+      "name": "sub222",
+      "type": "D",
+      "size": 0,
+      "targetPath": "D:\\test2",
+      "relPath": "/sub1/sub222",
+      "pathHash": "4a4d72aab3fbfe87a70f81e1cadf9c2e0df5ce93c417f40d77aec75204a1dc00",
+      "ctime": "2019-10-28 1:56:43",
+      "mtime": "2019-10-28 1:56:43"
     }
   ]
 }

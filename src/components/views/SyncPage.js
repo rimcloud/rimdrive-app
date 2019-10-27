@@ -19,7 +19,7 @@ import * as AccountActions from 'modules/AccountModule';
 import * as FileActions from 'modules/FileModule';
 import * as GlobalActions from 'modules/GlobalModule';
 
-import SyncItem from 'components/parts/SyncItem';
+import SyncSingleItem from 'components/parts/SyncSingleItem';
 import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 import CloudFolderTreeDialog from 'components/parts/CloudFolderTreeDialog';
 
@@ -35,7 +35,7 @@ class SyncPage extends Component {
             selectedTab: 0,
             pathItems: '',
 
-            openCloudFolderDialog: true
+            openCloudFolderDialog: false
         };
     }
 
@@ -122,12 +122,13 @@ class SyncPage extends Component {
     };
 
     handleStartSyncFile = (no) => {
+
         this.props.GlobalActions.showConfirm({
             confirmTitle: "동기화 실행",
             confirmMsg: "동기화를 실행 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
                 if(confirmValue) {
-                    const { GlobalProps } = this.props;
+                    const { GlobalProps, FileProps } = this.props;
                     const driveConfig = GlobalProps.get('driveConfig');
                     const syncItems = driveConfig.get('syncItems')
                     .find({ no: paramObject }).value();
@@ -148,9 +149,10 @@ class SyncPage extends Component {
                     //dbLocal.defaults({ cloudFiles: [] }).write();
                     cloudDB.assign({files: cloudFiles}).write();
 
-                    // ## Compare Data
+                    // // ## Compare Data
                     startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
                         .then((resolvedData) => {
+                            console.log('############### startCompareData.then ################');
                             console.log('resolvedData :::::::: ', resolvedData);
                         });
                 }
@@ -159,20 +161,30 @@ class SyncPage extends Component {
         });
     }
 
-    handleOpenFolderDialog = (syncNo, syncLoc) => {
-        const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
+    handleOpenFolderDialog = (syncNo, locType) => {
 
-        if(pathItems && pathItems.length > 0) {
-            const { GlobalProps } = this.props;
-            const driveConfig = GlobalProps.get('driveConfig');
-            driveConfig.get('syncItems')
-            .find({ no: syncNo })
-            .assign({ [syncLoc]: pathItems[0]})
-            .write();
+        if(locType === 'local') {
+            const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
+
+            console.log('pathItems ::: ', pathItems);
+
+            if(pathItems && pathItems.length > 0) {
+                const { GlobalProps } = this.props;
+                const driveConfig = GlobalProps.get('driveConfig');
+                driveConfig.get('syncItems')
+                .find({ no: syncNo })
+                .assign({ [locType]: pathItems[0]})
+                .write();
+                this.setState({
+                    reload: true
+                });
+            }
+        } else if(locType === 'cloud') {
             this.setState({
-                reload: true
+                openCloudFolderDialog: true
             });
         }
+
     }
 
     handleCloseCloudFolderDialog = () => {
@@ -183,6 +195,17 @@ class SyncPage extends Component {
 
     handleSelectCloudFolder = (selectedItem) => {
         console.log('SyncPage handleSelectCloudFolder - selectedItem :: ', selectedItem);
+
+                const { GlobalProps } = this.props;
+                const driveConfig = GlobalProps.get('driveConfig');
+                driveConfig.get('syncItems')
+                .find({ no: 1 })
+                .assign({ 'cloud': selectedItem.path})
+                .write();
+                this.setState({
+                    reload: true
+                });
+
         this.setState({
             openCloudFolderDialog: false
         });
@@ -212,9 +235,7 @@ class SyncPage extends Component {
     render() {
         const { classes, GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
-
-        console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
-
+        // console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
         const items = this.state.pathItems;
         
         let currSyncDatas = null;
@@ -230,8 +251,7 @@ class SyncPage extends Component {
         //     }
         // }
 
-        console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas);
-
+        // console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas);
         
         // console.log('driveConfig :: ', driveConfig);
         // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
@@ -246,9 +266,8 @@ class SyncPage extends Component {
                     */}
                 </Box>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
-                    <SyncItem item={s} index={i+1}
+                    <SyncSingleItem item={s} index={i + 1}
                         key={s.get('no')} isFirst={i === 0 ? true : false} 
-                        onDeleteItem={this.handleDeleteItem}
                         onShowFolderDialog={this.handleOpenFolderDialog}
                         onChangeSyncType={this.handleChangeSyncType}
                         onStartSyncFile={this.handleStartSyncFile}
@@ -268,7 +287,8 @@ class SyncPage extends Component {
 
 const mapStateToProps = (state) => ({
     AccountProps: state.AccountModule,
-    GlobalProps: state.GlobalModule
+    GlobalProps: state.GlobalModule,
+    FileProps: state.FileModule
 });
 
 const mapDispatchToProps = (dispatch) => ({

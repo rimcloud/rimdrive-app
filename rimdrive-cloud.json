@@ -1,28 +1,54 @@
 {
   "files": [
     {
-      "name": "sub01.txt",
-      "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test\\sub1",
-      "relPath": "\\sub01.txt",
-      "pathHash": "5756fb7f95ebd567e458407a82f6cea75328724060c5a263fa55c97dda41b737",
-      "atime": "2019-10-12 4:18:52",
-      "ctime": "2019-10-12 4:18:59",
-      "birthtime": "2019-10-12 4:18:52",
-      "mtime": "2018-11-03 20:47:5"
+      "name": "sub1",
+      "type": "D",
+      "size": 0,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "",
+      "pathHash": "8c9124bc689ad65d5d2922d1c0599a877597fa811f1d1fe4e0c8a78da624090f",
+      "ctime": "2019-10-27 21:39:34",
+      "mtime": "2019-10-27 21:39:34"
     },
     {
-      "name": "sub02.txt",
+      "name": "sub222",
+      "type": "D",
+      "size": 0,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1",
+      "pathHash": "4a4d72aab3fbfe87a70f81e1cadf9c2e0df5ce93c417f40d77aec75204a1dc00",
+      "ctime": "2019-10-27 21:40:5",
+      "mtime": "2019-10-27 21:40:5"
+    },
+    {
+      "name": "eula.1028.txt",
       "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test\\sub1",
-      "relPath": "\\sub02.txt",
-      "pathHash": "73e9e478f022449d4418aff3f103ad8e52c46eb41ffac2db5bf009d41b59e80b",
-      "atime": "2019-10-12 4:19:3",
-      "ctime": "2019-10-12 4:19:8",
-      "birthtime": "2019-10-12 4:19:3",
-      "mtime": "2018-11-03 20:47:5"
+      "size": 17734,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1",
+      "pathHash": "d80d406a23b8c98001109d995eb7eeaad1e84bfd152f646f8ff5e4e030bf465d",
+      "ctime": "2019-10-27 21:39:58",
+      "mtime": "2019-10-27 21:39:58"
+    },
+    {
+      "name": "eula.2052.txt",
+      "type": "F",
+      "size": 17734,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1",
+      "pathHash": "ed18468935b6ebabc2e1dcf03d4ca99b10b1fe9b381816c23c12cc6f27d26cc1",
+      "ctime": "2019-10-27 21:39:58",
+      "mtime": "2019-10-27 21:39:58"
+    },
+    {
+      "name": "jpeg_43.jpg",
+      "type": "F",
+      "size": 145752,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "",
+      "pathHash": "870e874cf6927e33cbff0efb1e0dc75e1b63f0d71b75d31892b77a3d1bde4817",
+      "ctime": "2019-10-27 21:39:36",
+      "mtime": "2019-10-27 21:39:36"
     }
   ]
 }

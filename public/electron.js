@@ -2,6 +2,8 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 
 const path = require('path');
+const { download } = require('electron-dl');
+
 const isDev = require('electron-is-dev');
 
 let mainWindow;
@@ -62,7 +64,7 @@ function createWindow() {
     });
 
     ipcMain.on('get-data-from-server', (event, arg) => {
-        console.log('arg ::: ', arg);
+        // console.log('arg ::: ', arg);
         const { net } = require('electron');
         const request = net.request({
             method: 'GET',
@@ -71,11 +73,11 @@ function createWindow() {
         request.on('response', (response) => {
             // console.log(`STATUS: ${response.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            let chunks = [];
             if(response.statusCode === 200) {
                 response.on('data', (chunk) => {
-                    const responseObj = JSON.parse(chunk.toString());
-                    console.log('responseObj (BODY) : ', responseObj);
-                    event.returnValue = responseObj;
+                    chunks.push(chunk);
+
                     // if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
                     //     event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
                     // } else {
@@ -86,7 +88,18 @@ function createWindow() {
                 event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
             }
             response.on('end', () => {
-                console.log('No more data in response.')
+                // console.log('No more data in response.', );
+                // console.log('[[[chunks]]] ', chunks);
+                // console.log('[[[chunk.toString()]]] ', chunk.toString());
+
+                try {
+                    const responseObj = JSON.parse(chunks.toString());
+                    // console.log('responseObj (BODY) : ', responseObj);
+                    event.returnValue = responseObj;
+                } catch (e) {
+                    console.log('Exception e :: ', e);
+                }
+
             })
         });
         request.end();
@@ -125,6 +138,20 @@ function createWindow() {
         //     'passwd': arg.password
         // }));
         request.end();
+    });
+
+    ipcMain.on('download', (event, arg) => {
+        console.log('[[download]]  arg ::: ', arg);
+        download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
+            .then(dl => {
+
+                console.log('[[download]]  then dl =>>>> ', dl);
+                mainWindow.webContents.send('download complete', dl.getSavePath())
+            })
+            .catch(e => {
+                console.log('[[download]]  catch e =>>>> ', e);
+            });
+
     });
 }
 

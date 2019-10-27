@@ -37,10 +37,10 @@ class LoginPage extends Component {
         const { classes } = this.props;
         const { AccountProps } = this.props;
 
-        console.log('render1 AccountProps :: ', AccountProps);
-        console.log('render2 AccountProps :: ', AccountProps.toJS());
-        console.log('render3 AccountProps :: ', AccountProps.toJS().userId);
-        console.log('render4 AccountProps :: ', AccountProps.getIn(["userId"]));
+        // console.log('render1 AccountProps :: ', AccountProps);
+        // console.log('render2 AccountProps :: ', AccountProps.toJS());
+        // console.log('render3 AccountProps :: ', AccountProps.toJS().userId);
+        // console.log('render4 AccountProps :: ', AccountProps.getIn(["userId"]));
 
         if (AccountProps.get('userToken') !== '') {
             return <Redirect push to ='/Main' />;

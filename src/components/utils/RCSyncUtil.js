@@ -1,6 +1,11 @@
 import electron from 'electron';
 
+import { ipcRenderer } from 'electron';
+
+import FormData from 'form-data';
 import fs from 'fs';
+import axios from 'axios';
+import path from 'path';
 import crypto from 'crypto';
 
 import low from 'lowdb';
@@ -10,59 +15,118 @@ import { formatDateTime } from 'components/utils/RCCommonUtil';
 
 const SECRET = 'rimdrivezzang';
 
-const selectLocalFiles = (targetPath, relativePath, depth, innerItems) => {
+const selectLocalFiles = (targetPath, relativePath, innerItems) => {
 
-  let dirents = fs.readdirSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}`, { withFileTypes: true });
+  let dirents = fs.readdirSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}`, { withFileTypes: true });
 
   dirents.forEach((path, i) => {
-      if (path.isDirectory()) {
-        const folderInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`);
+    if (path.isDirectory()) {
+      const folderInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}/${path.name}`);
+      innerItems.push({
+        name: path.name,
+        type: 'D',
+        size: folderInfo.size,
+        targetPath: targetPath,
+        relPath: `${relativePath}/${path.name}`,
+        pathHash: crypto.createHmac('sha256', SECRET).update(`${relativePath}/${path.name}`).digest('hex'),
+        // atime: formatDateTime(folderInfo.atime),
+        ctime: formatDateTime(folderInfo.ctime),
+        // birthtime: formatDateTime(folderInfo.birthtime),
+        mtime: formatDateTime(folderInfo.mtime)
+      });
+      // recursive
+      selectLocalFiles(targetPath, `${relativePath}/${path.name}`, innerItems);
+    } else {
+      const stats = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}/${path.name}`);
+      if (stats !== undefined) {
         innerItems.push({
           name: path.name,
-          type: 'D',
-          size: folderInfo.size,
+          type: 'F',
+          size: stats.size,
           targetPath: targetPath,
-          relPath: `${relativePath}\\${path.name}`,
-          pathHash: crypto.createHmac('sha256', SECRET).update(`${relativePath}\\${path.name}`).digest('hex'),
-          atime: formatDateTime(folderInfo.atime),
-          ctime: formatDateTime(folderInfo.ctime),
-          birthtime: formatDateTime(folderInfo.birthtime),
-          mtime: formatDateTime(folderInfo.mtime)
+          relPath: `${relativePath}/${path.name}`,
+          pathHash: crypto.createHmac('sha256', SECRET).update(`${relativePath}/${path.name}`).digest('hex'),
+          // atime: formatDateTime(stats.atime),
+          ctime: formatDateTime(stats.ctime),
+          // birthtime: formatDateTime(stats.birthtime),
+          mtime: formatDateTime(stats.mtime)
+        });
+      }
+    }
+  });
+
+  return innerItems;
+}
+
+const selectCloudFiles = (targetPath, relativePath, innerItems) => {
+
+  const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
+    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
+    params: `method=FINDFILES&userid=test01&path=${targetPath}${relativePath}`
+  });
+
+  if (ipcResult.data && ipcResult.data.length > 0) {
+    ipcResult.data.forEach((cf, i) => {
+      if (cf.fileType === 'D') {
+        innerItems.push({
+          name: cf.name,
+          type: 'D',
+          size: cf.size,
+          targetPath: targetPath,
+          relPath: `${relativePath}`,
+          pathHash: crypto.createHmac('sha256', SECRET).update(`${relativePath}/${cf.name}`).digest('hex'),
+          ctime: formatDateTime(cf.createDate),
+          mtime: formatDateTime(cf.modifyDate)
         });
         // recursive
-        selectLocalFiles(targetPath, `${relativePath}\\${path.name}`, depth + 1, innerItems);
+        selectCloudFiles(targetPath, `${relativePath}/${cf.name}`, innerItems);
       } else {
-        const stats = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '\\' + relativePath}\\${path.name}`);
-        if(stats !== undefined) {
-          innerItems.push({
-            name: path.name,
-            type: 'F',
-            size: stats.size,
-            targetPath: targetPath,
-            relPath: `${relativePath}\\${path.name}`,
-            pathHash: crypto.createHmac('sha256', SECRET).update(`${relativePath}\\${path.name}`).digest('hex'),
-            atime: formatDateTime(stats.atime),
-            ctime: formatDateTime(stats.ctime),
-            birthtime: formatDateTime(stats.birthtime),
-            mtime: formatDateTime(stats.mtime)
-          });
-        }
+        innerItems.push({
+          name: cf.name,
+          type: 'F',
+          size: cf.size,
+          targetPath: targetPath,
+          relPath: `${relativePath}`,
+          pathHash: crypto.createHmac('sha256', SECRET).update(`${relativePath}/${cf.name}`).digest('hex'),
+          ctime: formatDateTime(cf.createDate),
+          mtime: formatDateTime(cf.modifyDate)
+        });
       }
-  });
-  
+    })
+  }
   return innerItems;
 }
 
 export function getLocalFiles(syncItem) {
-  const files = selectLocalFiles(syncItem.local, '', 1, []);
+  const files = selectLocalFiles(syncItem.local, '', []);
   return files;
 };
 
 export function getCloudFiles(syncItem) {
-  const files = selectLocalFiles(syncItem.cloud, '', 1, []);
+  const files = selectCloudFiles(`/개인저장소/모든파일${syncItem.cloud}`, '', []);
   return files;
 };
 
+
+const fileUpload = (localFile, cloudTarget) => {
+
+  const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
+  const filePath = `${localFile.targetPath}${localFile.relPath}`;
+
+  const bbFile = new Blob([fs.readFileSync(filePath)]);
+  const form_data = new FormData();
+  form_data.append('rimUploadFile', bbFile, path.basename(filePath));
+  form_data.append('method', 'UPLOAD');
+  form_data.append('userid', 'test01');
+  form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
+  return axios.post(serverUrl, form_data);
+
+}
+
+ipcRenderer.on("download complete", (event, file) => {
+  console.log("download complete =========================================", event); // Full file path
+  console.log('file::: ', file); // Full file path
+});
 
 export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
@@ -72,115 +136,168 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
     const stateDB = low(stateAdapter);
 
     // check First call : stateDB is empty
-    if(stateDB.get('files').size().value() < 1) {
+    if (stateDB.get('files').size().value() < 1) {
       // First Compare
       let innerItems = [];
       // compare data by 2 times.
       // 1. compare data with local data
       const localFiles = localDB.get('files').value();
-      localFiles.forEach((n, i) => {
-        const cloudFile = cloudDB.get('files').find({ pathHash: n.pathHash }).value();
-        if(cloudFile === null || cloudFile === undefined) {
+      localFiles.forEach((localFile, i) => {
+        const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
+        if (cloudFile === null || cloudFile === undefined) {
           // upload to cloud this file
           // ###################################################################################
           // temp : copy to cloudFolder
           // UPLOAD
           // if it is directory, make directory
           let type = '';
-          if(n.type === 'D') {
-            fs.mkdirSync(cloudTarget + n.relPath);
+          let uploadResult = '';
+          if (localFile.type === 'D') {
             type = 'D';
+
+            // create remote folder
+            const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
+              url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
+              params: `method=MKDIR&userid=test01&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
+            });
+            if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+              uploadResult = 'SUCCESS';
+            } else {
+              uploadResult = 'FAIL';
+            }
+
+            // console.log('ipcResult >>>>>>>>>>>>>>>>>>>>> ', ipcResult);
+
           } else {
-            fs.copyFileSync(n.targetPath + n.relPath, cloudTarget + n.relPath);
             type = 'F';
+            // UPLOAD
+            // 
+            // console.log('localFile ::: ', localFile);
+            // console.log('cloudTarget ::: ', cloudTarget);
+
+            fileUpload(localFile, cloudTarget);
+
+            // fs.copyFileSync(localFile.targetPath + localFile.relPath, cloudTarget + localFile.relPath);
           }
 
           innerItems.push({
-            name: n.name,
+            name: localFile.name,
             type: type,
-            size: n.size,
-            pathHash: n.pathHash,
+            result: uploadResult,
+            size: localFile.size,
+            pathHash: localFile.pathHash,
             local_targetPath: localTarget,
-            local_relPath: `${n.relPath}\\${n.name}`,
-            local_atime: n.atime,
-            local_ctime: n.ctime,
-            local_birthtime: n.birthtime,
-            local_mtime: n.mtime,
+            local_relPath: `${localFile.relPath}/${localFile.name}`,
+            // local_atime: localFile.atime,
+            local_ctime: localFile.ctime,
+            // local_birthtime: localFile.birthtime,
+            local_mtime: localFile.mtime,
             cloud_targetPath: cloudTarget,
-            cloud_relPath: `${n.relPath}\\${n.name}`,
-            cloud_atime: n.atime,
-            cloud_ctime: n.ctime,
-            cloud_birthtime: n.birthtime,
-            cloud_mtime: n.mtime
+            cloud_relPath: `${localFile.relPath}/${localFile.name}`,
+            // cloud_atime: localFile.atime,
+            cloud_ctime: localFile.ctime,
+            // cloud_birthtime: localFile.birthtime,
+            cloud_mtime: localFile.mtime
           });
         }
       });
 
       // 2. compare data with cloud data
       const cloudFiles = cloudDB.get('files').value();
-      cloudFiles.forEach((n, i) => {
-        const localFile = localDB.get('files').find({ pathHash: n.pathHash }).value();
-        if(localFile === null || localFile === undefined) {
-          // upload to cloud this file
-          // ###################################################################################
-          // temp : copy to localFolder
-          // DOWNLOAD
-          // if it is directory, make directory
+      cloudFiles.forEach((cloudFile, i) => {
+        const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
+        if (localFile === null || localFile === undefined) {
           let type = '';
-          if(n.type === 'D') {
-            fs.mkdirSync(localTarget + n.relPath);
+          if (cloudFile.type === 'D') {
             type = 'D';
-          } else {
-            fs.copyFileSync(n.targetPath + n.relPath, localTarget + n.relPath);
-            type = 'F';
+            console.log('DDD localTarget ::: ', localTarget);
+            console.log('DDD cloudFile ::: ', cloudFile);
+            // fs.mkdirSync(`${localTarget}${(cloudFile.relPath).split('/').join('\\')}\\${cloudFile.name}`);
+            fs.mkdirSync(`${localTarget}${cloudFile.relPath}/${cloudFile.name}`);
           }
 
           innerItems.push({
-            name: n.name,
+            name: cloudFile.name,
             type: type,
-            size: n.size,
-            pathHash: n.pathHash,            
+            size: cloudFile.size,
+            pathHash: cloudFile.pathHash,
             local_targetPath: localTarget,
-            local_relPath: `${n.relPath}\\${n.name}`,
-            local_atime: n.atime,
-            local_ctime: n.ctime,
-            local_birthtime: n.birthtime,
-            local_mtime: n.mtime,
+            local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+            local_ctime: cloudFile.ctime,
+            local_mtime: cloudFile.mtime,
             cloud_targetPath: cloudTarget,
-            cloud_relPath: `${n.relPath}\\${n.name}`,
-            cloud_atime: n.atime,
-            cloud_ctime: n.ctime,
-            cloud_birthtime: n.birthtime,
-            cloud_mtime: n.mtime
+            cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+            cloud_ctime: cloudFile.ctime,
+            cloud_mtime: cloudFile.mtime
           });
         }
       });
 
+
+      cloudFiles.forEach((cloudFile, i) => {
+        const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
+        if (localFile === null || localFile === undefined) {
+          let type = '';
+          if (cloudFile.type === 'F') {
+            type = 'F';
+            // DOWNLOAD
+            console.log('=========== DOWNLOAD ============');
+            console.log('FFF localTarget ::: ', localTarget);
+            console.log('FFF cloudFile ::: ', cloudFile);
+            
+            const filePath = `${localTarget}${(cloudFile.relPath).split('/').join('\\')}${'\\'}`
+            console.log('FFF changedPath ::: ', filePath);
+
+            // replace(/\\/g, '/')
+            ipcRenderer.send("download", {
+              url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
+              properties: {directory: filePath}
+            });
+          }
+
+          innerItems.push({
+            name: cloudFile.name,
+            type: type,
+            size: cloudFile.size,
+            pathHash: cloudFile.pathHash,
+            local_targetPath: localTarget,
+            local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+            local_ctime: cloudFile.ctime,
+            local_mtime: cloudFile.mtime,
+            cloud_targetPath: cloudTarget,
+            cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+            cloud_ctime: cloudFile.ctime,
+            cloud_mtime: cloudFile.mtime
+          });
+        }
+      });
+
+
       // Create state database 
-      stateDB.assign({files: innerItems}).write();
+      stateDB.assign({ files: innerItems }).write();
 
     } else {
       // compare data by 3 times.
       // 1. compare data with local data
       const localFiles = localDB.get('files').value();
-      localFiles.forEach((n, i) => {
-        const cloudFile = cloudDB.get('files').find({ pathHash: n.pathHash }).value();
-        const stateFile = stateDB.get('files').find({ pathHash: n.pathHash }).value();
-        
-        if(cloudFile === null || cloudFile === undefined) {
-          if(stateFile === null || stateFile === undefined) {
+      localFiles.forEach((localFile, i) => {
+        const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
+        const stateFile = stateDB.get('files').find({ pathHash: localFile.pathHash }).value();
+
+        if (cloudFile === null || cloudFile === undefined) {
+          if (stateFile === null || stateFile === undefined) {
             // UPLOAD
             // temp copy to cloudFolder
             // let type = '';
-            if(n.type === 'D') {
-              fs.mkdirSync(cloudTarget + n.relPath);
+            if (localFile.type === 'D') {
+              fs.mkdirSync(cloudTarget + localFile.relPath);
               // type = 'D';
             } else {
-              fs.copyFileSync(n.targetPath + n.relPath, cloudTarget + n.relPath);
+              fs.copyFileSync(localFile.targetPath + localFile.relPath, cloudTarget + localFile.relPath);
               // type = 'F';
             }
           } else {
-            if(n.size === stateFile.size && n.mtime === stateFile.local_mtime) {
+            if (localFile.size === stateFile.size && localFile.mtime === stateFile.local_mtime) {
               // DELETE LOCAL FILE
             } else {
               // UPLOAD
@@ -188,9 +305,9 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
           }
         }
 
-        if(cloudFile !== null && cloudFile !== undefined) {
-          if(stateFile === null || stateFile === undefined) {
-            if(n.size === stateFile.size && n.mtime > cloudFile.mtime) {
+        if (cloudFile !== null && cloudFile !== undefined) {
+          if (stateFile === null || stateFile === undefined) {
+            if (localFile.size === stateFile.size && localFile.mtime > cloudFile.mtime) {
               // UPLOAD
             } else {
               // DOWNLOAD
@@ -198,11 +315,11 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
           }
         }
 
-        if(cloudFile !== null && cloudFile !== undefined) {
-          if(stateFile !== null && stateFile !== undefined) {
-            if(n.size === stateFile.size && n.mtime === stateFile.local_mtime) {
+        if (cloudFile !== null && cloudFile !== undefined) {
+          if (stateFile !== null && stateFile !== undefined) {
+            if (localFile.size === stateFile.size && localFile.mtime === stateFile.local_mtime) {
               // SKIP
-            } else if(n.mtime > cloudFile.mtime) {
+            } else if (localFile.mtime > cloudFile.mtime) {
               // UPLOAD
             } else {
               // DOWNLOAD
@@ -213,15 +330,15 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
       // 2. compare data with cloud data
       const cloudFiles = cloudDB.get('files').value();
-      cloudFiles.forEach((n, i) => {
-        const localFile = localDB.get('files').find({ pathHash: n.pathHash }).value();
-        const stateFile = stateDB.get('files').find({ pathHash: n.pathHash }).value();
-        
-        if(localFile === null || localFile === undefined) {
-          if(stateFile === null || stateFile === undefined) {
+      cloudFiles.forEach((cloudFile, i) => {
+        const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
+        const stateFile = stateDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
+
+        if (localFile === null || localFile === undefined) {
+          if (stateFile === null || stateFile === undefined) {
             // DOWNLOAD
           } else {
-            if(n.size === stateFile.size && n.mtime === stateFile.cloud_mtime) {
+            if (cloudFile.size === stateFile.size && cloudFile.mtime === stateFile.cloud_mtime) {
               // DELETE CLOUD FILE
             } else {
               // DOWNLOAD
@@ -232,12 +349,12 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
       // 3. compare data with state data
       const stateFiles = stateDB.get('files').value();
-      stateFiles.forEach((n, i) => {
-        const localFile = localDB.get('files').find({ pathHash: n.pathHash }).value();
-        const cloudFile = cloudDB.get('files').find({ pathHash: n.pathHash }).value();
-        
-        if(localFile === null || localFile === undefined) {
-          if(cloudFile === null || cloudFile === undefined) {
+      stateFiles.forEach((stateFile, i) => {
+        const localFile = localDB.get('files').find({ pathHash: stateFile.pathHash }).value();
+        const cloudFile = cloudDB.get('files').find({ pathHash: stateFile.pathHash }).value();
+
+        if (localFile === null || localFile === undefined) {
+          if (cloudFile === null || cloudFile === undefined) {
             // DELETE DATABASE RECORD
           }
         }
@@ -245,7 +362,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
     }
 
     let c = 0;
-    for(let i = 0; i < 99999999; i++) {
+    for (let i = 0; i < 99999999; i++) {
       c++;
     }
 
