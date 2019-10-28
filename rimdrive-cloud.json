@@ -11,6 +11,26 @@
       "mtime": "2019-10-29 0:57:45"
     },
     {
+      "name": "local01",
+      "type": "D",
+      "size": 0,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "",
+      "pathHash": "4f0320ce62f1868c4f2e9f0d5adbc50a42cafaa7373fa9778d12354d84535b89",
+      "ctime": "2019-10-29 1:9:43",
+      "mtime": "2019-10-29 1:9:43"
+    },
+    {
+      "name": "로컬파일001.txt",
+      "type": "F",
+      "size": 41,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/local01",
+      "pathHash": "88ac2e166c0049c1f13bc0ae1831d9ed039a8f8a943211fe336285d55f271c1f",
+      "ctime": "2019-10-29 1:9:43",
+      "mtime": "2019-10-29 1:9:43"
+    },
+    {
       "name": "sub1",
       "type": "D",
       "size": 0,

@@ -208,49 +208,33 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
       cloudFiles.forEach((cloudFile, i) => {
         const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
         if (localFile === null || localFile === undefined) {
-          let type = '';
           if (cloudFile.type === 'D') {
-            type = 'D';
-            console.log('DDD localTarget ::: ', localTarget);
-            console.log('DDD cloudFile ::: ', cloudFile);
-            // fs.mkdirSync(`${localTarget}${(cloudFile.relPath).split('/').join('\\')}\\${cloudFile.name}`);
             fs.mkdirSync(`${localTarget}${cloudFile.relPath}/${cloudFile.name}`);
+            innerItems.push({
+              name: cloudFile.name,
+              type: 'D',
+              size: cloudFile.size,
+              pathHash: cloudFile.pathHash,
+              local_targetPath: localTarget,
+              local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+              local_ctime: cloudFile.ctime,
+              local_mtime: cloudFile.mtime,
+              cloud_targetPath: cloudTarget,
+              cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+              cloud_ctime: cloudFile.ctime,
+              cloud_mtime: cloudFile.mtime
+            });
           }
-
-          innerItems.push({
-            name: cloudFile.name,
-            type: type,
-            size: cloudFile.size,
-            pathHash: cloudFile.pathHash,
-            local_targetPath: localTarget,
-            local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-            local_ctime: cloudFile.ctime,
-            local_mtime: cloudFile.mtime,
-            cloud_targetPath: cloudTarget,
-            cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-            cloud_ctime: cloudFile.ctime,
-            cloud_mtime: cloudFile.mtime
-          });
         }
       });
-
 
       cloudFiles.forEach((cloudFile, i) => {
         const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
         if (localFile === null || localFile === undefined) {
-          let type = '';
           if (cloudFile.type === 'F') {
-            type = 'F';
             // DOWNLOAD
-            console.log('=========== DOWNLOAD ============');
-            console.log('FFF localTarget ::: ', localTarget);
-            console.log('FFF cloudFile ::: ', cloudFile);
-            
             const filePath = `${localTarget}${(cloudFile.relPath).split('/').join('\\')}${'\\'}`
-            console.log('FFF changedPath ::: ', filePath);
-
-            // replace(/\\/g, '/')
-            const re = ipcRenderer.send("download-cloud", {
+            ipcRenderer.send("download-cloud", {
               url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
               properties: {
                 directory: filePath,
@@ -259,26 +243,23 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
               }
             });
 
-            console.log('FFF re ::: ', re);
+            innerItems.push({
+              name: cloudFile.name,
+              type: 'F',
+              size: cloudFile.size,
+              pathHash: cloudFile.pathHash,
+              local_targetPath: localTarget,
+              local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+              local_ctime: cloudFile.ctime,
+              local_mtime: cloudFile.mtime,
+              cloud_targetPath: cloudTarget,
+              cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
+              cloud_ctime: cloudFile.ctime,
+              cloud_mtime: cloudFile.mtime
+            });
           }
-
-          innerItems.push({
-            name: cloudFile.name,
-            type: type,
-            size: cloudFile.size,
-            pathHash: cloudFile.pathHash,
-            local_targetPath: localTarget,
-            local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-            local_ctime: cloudFile.ctime,
-            local_mtime: cloudFile.mtime,
-            cloud_targetPath: cloudTarget,
-            cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-            cloud_ctime: cloudFile.ctime,
-            cloud_mtime: cloudFile.mtime
-          });
         }
       });
-
 
       // Create state database 
       stateDB.assign({ files: innerItems }).write();
