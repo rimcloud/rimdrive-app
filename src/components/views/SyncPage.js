@@ -24,7 +24,6 @@ import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 import CloudFolderTreeDialog from 'components/parts/CloudFolderTreeDialog';
 
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 
 class SyncPage extends Component {
 
@@ -40,24 +39,22 @@ class SyncPage extends Component {
     }
 
     componentDidMount() {
-        const { GlobalProps, FileActions } = this.props;
-        // driveConfig
-        if(GlobalProps.get('driveConfig') !== undefined) {
-            const driveConfig = GlobalProps.get('driveConfig');
-            
-            driveConfig.assign({test: '4444'}).write();
-            // let itemCount = 0;
-            // if(driveConfig.get('syncItems') && driveConfig.get('syncItems').value().length > 0) {
-            //     itemCount = driveConfig.get('syncItems').value().length;
-            // }
-            // this.setState({
-            //     itemCount: itemCount
-            // });
-        }
+        const { FileActions } = this.props;
+        // const { GlobalProps, FileActions } = this.props;
+        // // driveConfig
+        // if(GlobalProps.get('driveConfig') !== undefined) {
+        //     const driveConfig = GlobalProps.get('driveConfig');
+        //     // let itemCount = 0;
+        //     // if(driveConfig.get('syncItems') && driveConfig.get('syncItems').value().length > 0) {
+        //     //     itemCount = driveConfig.get('syncItems').value().length;
+        //     // }
+        //     // this.setState({
+        //     //     itemCount: itemCount
+        //     // });
+        // }
 
         // get cloud folders
         FileActions.getDriveFolderList();
-
     }
 
     handleChangeValue = name => event => {
@@ -128,7 +125,7 @@ class SyncPage extends Component {
             confirmMsg: "동기화를 실행 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
                 if(confirmValue) {
-                    const { GlobalProps, FileProps } = this.props;
+                    const { GlobalProps } = this.props;
                     const driveConfig = GlobalProps.get('driveConfig');
                     const syncItems = driveConfig.get('syncItems')
                     .find({ no: paramObject }).value();
@@ -233,10 +230,12 @@ class SyncPage extends Component {
     }
 
     render() {
-        const { classes, GlobalProps } = this.props;
+        const { GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
-        // console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
+        // console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.value() : 'null');
+        // console.log('driveConfig.syncItems ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
         const items = this.state.pathItems;
+
         
         let currSyncDatas = null;
         

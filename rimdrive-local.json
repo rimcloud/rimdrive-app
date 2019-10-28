@@ -1,24 +1,3 @@
 {
-  "files": [
-    {
-      "name": "sub1",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1",
-      "pathHash": "8c9124bc689ad65d5d2922d1c0599a877597fa811f1d1fe4e0c8a78da624090f",
-      "ctime": "2019-10-28 1:56:43",
-      "mtime": "2019-10-28 1:56:43"
-    },
-    {
-      "name": "sub222",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/sub222",
-      "pathHash": "4a4d72aab3fbfe87a70f81e1cadf9c2e0df5ce93c417f40d77aec75204a1dc00",
-      "ctime": "2019-10-28 1:56:43",
-      "mtime": "2019-10-28 1:56:43"
-    }
-  ]
+  "files": []
 }

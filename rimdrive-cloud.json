@@ -21,6 +21,16 @@
       "mtime": "2019-10-27 21:40:5"
     },
     {
+      "name": "aaaa.jpg",
+      "type": "F",
+      "size": 145752,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/sub222",
+      "pathHash": "057fddcd526328cdc7671b90ad6984969bc1de72971fab414f854f53c0b0a0f3",
+      "ctime": "2019-10-28 11:15:57",
+      "mtime": "2019-10-28 11:15:57"
+    },
+    {
       "name": "eula.1028.txt",
       "type": "F",
       "size": 17734,
@@ -39,16 +49,6 @@
       "pathHash": "ed18468935b6ebabc2e1dcf03d4ca99b10b1fe9b381816c23c12cc6f27d26cc1",
       "ctime": "2019-10-27 21:39:58",
       "mtime": "2019-10-27 21:39:58"
-    },
-    {
-      "name": "jpeg_43.jpg",
-      "type": "F",
-      "size": 145752,
-      "targetPath": "/개인저장소/모든파일/sync2",
-      "relPath": "",
-      "pathHash": "870e874cf6927e33cbff0efb1e0dc75e1b63f0d71b75d31892b77a3d1bde4817",
-      "ctime": "2019-10-27 21:39:36",
-      "mtime": "2019-10-27 21:39:36"
     }
   ]
 }

@@ -249,10 +249,12 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
             console.log('FFF changedPath ::: ', filePath);
 
             // replace(/\\/g, '/')
-            ipcRenderer.send("download", {
+            const re = ipcRenderer.send("download", {
               url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
-              properties: {directory: filePath}
+              properties: {directory: filePath, filename: 'aaaaaa'+i}
             });
+
+            console.log('FFF re ::: ', re);
           }
 
           innerItems.push({

@@ -140,16 +140,18 @@ function createWindow() {
         request.end();
     });
 
-    ipcMain.on('download', (event, arg) => {
+    ipcMain.on('download', async (event, arg) => {
         console.log('[[download]]  arg ::: ', arg);
-        download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
+        await download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
             .then(dl => {
-
                 console.log('[[download]]  then dl.getSavePath =>>>> ', dl.getSavePath());
+                console.log('[[download]]  then dl.getURL =>>>> ', dl.getURL());
                 // console.log('[[download]]  then dl =>>>> ', dl);
-                mainWindow.webContents.send('download complete', dl.getSavePath())
+                event.returnValue = {result : 'SSSSSS'};
+                //mainWindow.webContents.send('download complete', dl.getSavePath())
             })
             .catch(e => {
+                event.returnValue = {result : 'EEEEE'};
                 console.log('[[download]]  catch e =>>>> ', e);
             });
 

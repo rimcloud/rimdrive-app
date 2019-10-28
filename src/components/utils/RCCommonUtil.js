@@ -2,10 +2,17 @@ import electron from 'electron';
 import path from 'path';
 
 export const getAppRoot = () => {
-  if ( process.platform === 'win32' ) {
-    return path.join( electron.remote.app.getAppPath(), '/../../../' );
-  }  else {
-    return path.join( electron.remote.app.getAppPath(), '/../../../../' );
+  // console.log('electron.remote.app.getAppPath() --------------- >> ', electron.remote.app.getAppPath());
+  // console.log('process.platform ------------------------------- >> ', process.platform);
+
+  if(electron.remote.app.getAppPath() === 'D:\\electron\\rimdrive-app') {
+    return electron.remote.app.getAppPath();
+  } else {
+    if ( process.platform === 'win32' ) {
+      return path.join( electron.remote.app.getAppPath(), '/../../../' );
+    }  else {
+      return path.join( electron.remote.app.getAppPath(), '/../../../../' );
+    }
   }
 }
 

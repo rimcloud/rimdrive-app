@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import path from 'path';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -39,9 +40,10 @@ class MainPage extends Component {
     }
 
     componentDidMount() {
+        // console.log('getAppRoot() ----------------------------------- >> ', getAppRoot());
         const { GlobalActions } = this.props;
         // load and init rimdrive config
-        const adapter = new FileSync(getAppRoot() + 'rimdrive.json');
+        const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
         const driveConfig = low(adapter);
 
         if(driveConfig !== undefined && driveConfig.get('syncItems').value() === undefined) {

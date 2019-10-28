@@ -2,11 +2,12 @@
   "syncItems": [
     {
       "no": 1,
-      "local": "C:\\localFolder",
-      "cloud": "D:\\cloudFolder",
+      "local": "D:\\temp2",
+      "cloud": "/sync2",
       "type": "m",
       "status": "on",
       "files": []
     }
-  ]
+  ],
+  "test": "4444"
 }
