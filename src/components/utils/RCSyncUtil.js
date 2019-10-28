@@ -305,6 +305,11 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
         if (cloudFile !== null && cloudFile !== undefined) {
           if (stateFile !== null && stateFile !== undefined) {
+
+
+// ##### localFile.mtime === stateFile.local_mtime
+// state file 에 local_mtime 은 로컬 시간으로 재조정 해야 한다~~~~~~!!!!!!!!!!!!!!!!
+
             if (localFile.size === stateFile.size && localFile.mtime === stateFile.local_mtime) {
               // SKIP
             } else if (localFile.mtime > cloudFile.mtime) {
