@@ -106,7 +106,7 @@ function createWindow() {
     });
 
     ipcMain.on('login-to-server', (event, arg) => {
-        console.log('arg ::: ', arg);
+        // console.log('arg ::: ', arg);
         const { net } = require('electron');
         // const qs = require('qs');
         const request = net.request({
@@ -140,18 +140,12 @@ function createWindow() {
         request.end();
     });
 
-    ipcMain.on('download', async (event, arg) => {
-        console.log('[[download]]  arg ::: ', arg);
+    ipcMain.on('download-cloud', async (event, arg) => {
         await download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
             .then(dl => {
-                console.log('[[download]]  then dl.getSavePath =>>>> ', dl.getSavePath());
-                console.log('[[download]]  then dl.getURL =>>>> ', dl.getURL());
-                // console.log('[[download]]  then dl =>>>> ', dl);
-                event.returnValue = {result : 'SSSSSS'};
-                //mainWindow.webContents.send('download complete', dl.getSavePath())
+                mainWindow.webContents.send('download complete', dl.getSavePath())
             })
             .catch(e => {
-                event.returnValue = {result : 'EEEEE'};
                 console.log('[[download]]  catch e =>>>> ', e);
             });
 

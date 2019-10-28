@@ -136,6 +136,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
     const stateDB = low(stateAdapter);
 
     // check First call : stateDB is empty
+    
     if (stateDB.get('files').size().value() < 1) {
       // First Compare
       let innerItems = [];
@@ -249,9 +250,13 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
             console.log('FFF changedPath ::: ', filePath);
 
             // replace(/\\/g, '/')
-            const re = ipcRenderer.send("download", {
+            const re = ipcRenderer.send("download-cloud", {
               url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
-              properties: {directory: filePath, filename: 'aaaaaa'+i}
+              properties: {
+                directory: filePath,
+                targetPath: cloudFile.targetPath,
+                localTarget: localTarget
+              }
             });
 
             console.log('FFF re ::: ', re);
@@ -363,12 +368,12 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
       });
     }
 
-    let c = 0;
-    for (let i = 0; i < 99999999; i++) {
-      c++;
-    }
+  //   let c = 0;
+  //   for (let i = 0; i < 99999999; i++) {
+  //     c++;
+  //   }
 
-    resolve(c);
+  //   resolve(c);
   });
 }
 

@@ -149,8 +149,8 @@ class SyncPage extends Component {
                     // // ## Compare Data
                     startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
                         .then((resolvedData) => {
-                            console.log('############### startCompareData.then ################');
-                            console.log('resolvedData :::::::: ', resolvedData);
+                            // console.log('############### startCompareData.then ################');
+                            // console.log('resolvedData :::::::: ', resolvedData);
                         });
                 }
             },

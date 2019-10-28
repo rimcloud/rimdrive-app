@@ -1,6 +1,16 @@
 {
   "files": [
     {
+      "name": "SUB2",
+      "type": "D",
+      "size": 0,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "",
+      "pathHash": "9a0adfe5c3276e1777b6b34b4ebdf64b46412c84c45e1b0e5cfb825a2cbfced4",
+      "ctime": "2019-10-29 0:57:45",
+      "mtime": "2019-10-29 0:57:45"
+    },
+    {
       "name": "sub1",
       "type": "D",
       "size": 0,
@@ -9,6 +19,76 @@
       "pathHash": "8c9124bc689ad65d5d2922d1c0599a877597fa811f1d1fe4e0c8a78da624090f",
       "ctime": "2019-10-27 21:39:34",
       "mtime": "2019-10-27 21:39:34"
+    },
+    {
+      "name": "SUB333",
+      "type": "D",
+      "size": 0,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1",
+      "pathHash": "7be80263e6d9f02e6b28c19148ec97fef042f0e0406862bf4f5def9dab9971f2",
+      "ctime": "2019-10-29 0:56:52",
+      "mtime": "2019-10-29 0:56:52"
+    },
+    {
+      "name": "install.res.1028.dll",
+      "type": "F",
+      "size": 76304,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/SUB333",
+      "pathHash": "1e29b815464bb7fe39f49153105da8217b8fbd3c2fb916eb4a311a04b1e8f078",
+      "ctime": "2019-10-29 0:57:9",
+      "mtime": "2019-10-29 0:57:9"
+    },
+    {
+      "name": "install.res.1031.dll",
+      "type": "F",
+      "size": 96272,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/SUB333",
+      "pathHash": "7ac93263bd90f0a5a2ce6cb5bba30df6279d128198fcd18c650563048bee2d9e",
+      "ctime": "2019-10-29 0:57:9",
+      "mtime": "2019-10-29 0:57:9"
+    },
+    {
+      "name": "install.res.1033.dll",
+      "type": "F",
+      "size": 91152,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/SUB333",
+      "pathHash": "aab489e3abef5770c353e3ecc1fbb530cdf1acebfb50791e113278b9304ebf39",
+      "ctime": "2019-10-29 0:57:9",
+      "mtime": "2019-10-29 0:57:9"
+    },
+    {
+      "name": "install.res.1036.dll",
+      "type": "F",
+      "size": 97296,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/SUB333",
+      "pathHash": "de1a9112b5bb7742c4d9b6f70dc0eeaf63f61001196a2024145fb1184e5ba8aa",
+      "ctime": "2019-10-29 0:57:9",
+      "mtime": "2019-10-29 0:57:9"
+    },
+    {
+      "name": "install.res.1040.dll",
+      "type": "F",
+      "size": 95248,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/SUB333",
+      "pathHash": "9c07d2d677a769e8a298c020aa390b177ae375a5f46a4394028c4d5e8afbf2ed",
+      "ctime": "2019-10-29 0:57:9",
+      "mtime": "2019-10-29 0:57:9"
+    },
+    {
+      "name": "install.res.1041.dll",
+      "type": "F",
+      "size": 81424,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1/SUB333",
+      "pathHash": "e21e839980ff2c77cd2138a9bf46f455a95a1e3c187d41922a7e219eb29c2b31",
+      "ctime": "2019-10-29 0:57:9",
+      "mtime": "2019-10-29 0:57:9"
     },
     {
       "name": "sub222",
@@ -31,14 +111,14 @@
       "mtime": "2019-10-28 11:15:57"
     },
     {
-      "name": "eula.1028.txt",
+      "name": "eula.1042.txt",
       "type": "F",
       "size": 17734,
       "targetPath": "/개인저장소/모든파일/sync2",
       "relPath": "/sub1",
-      "pathHash": "d80d406a23b8c98001109d995eb7eeaad1e84bfd152f646f8ff5e4e030bf465d",
-      "ctime": "2019-10-27 21:39:58",
-      "mtime": "2019-10-27 21:39:58"
+      "pathHash": "2c9d65c21a71742ee3100445b670a65936b1fec1e7a4e9ea47fc8cff9113ec47",
+      "ctime": "2019-10-29 0:57:22",
+      "mtime": "2019-10-29 0:57:22"
     },
     {
       "name": "eula.2052.txt",
@@ -47,8 +127,28 @@
       "targetPath": "/개인저장소/모든파일/sync2",
       "relPath": "/sub1",
       "pathHash": "ed18468935b6ebabc2e1dcf03d4ca99b10b1fe9b381816c23c12cc6f27d26cc1",
-      "ctime": "2019-10-27 21:39:58",
-      "mtime": "2019-10-27 21:39:58"
+      "ctime": "2019-10-29 0:57:22",
+      "mtime": "2019-10-29 0:57:22"
+    },
+    {
+      "name": "test01.txt",
+      "type": "F",
+      "size": 9344,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "/sub1",
+      "pathHash": "c8e50108dddb44fd85d5e325c8a65436a6d4b1ad1e5cfd718fc8443fe68b6971",
+      "ctime": "2019-10-28 22:15:28",
+      "mtime": "2019-10-28 22:15:28"
+    },
+    {
+      "name": "eula.1028.txt",
+      "type": "F",
+      "size": 17734,
+      "targetPath": "/개인저장소/모든파일/sync2",
+      "relPath": "",
+      "pathHash": "5a26794b48f3612657d40c671c342ee8667c3bd372e8ca72efa2f49f1a1f44e1",
+      "ctime": "2019-10-29 0:57:37",
+      "mtime": "2019-10-29 0:57:37"
     }
   ]
 }
