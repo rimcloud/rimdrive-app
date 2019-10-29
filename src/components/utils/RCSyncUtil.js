@@ -92,7 +92,7 @@ const selectCloudFiles = (targetPath, relativePath, innerItems) => {
           mtime: formatDateTime(cf.modifyDate)
         });
       }
-    })
+    });
   }
   return innerItems;
 }
@@ -136,7 +136,6 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
     const stateDB = low(stateAdapter);
 
     // check First call : stateDB is empty
-    
     if (stateDB.get('files').size().value() < 1) {
       // First Compare
       let innerItems = [];
