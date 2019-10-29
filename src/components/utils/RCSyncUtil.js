@@ -109,7 +109,6 @@ export function getCloudFiles(syncItem) {
 
 
 const fileUpload = (localFile, cloudTarget) => {
-
   const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
   const filePath = `${localFile.targetPath}${localFile.relPath}`;
 
@@ -120,13 +119,79 @@ const fileUpload = (localFile, cloudTarget) => {
   form_data.append('userid', 'test01');
   form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
   return axios.post(serverUrl, form_data);
+}
 
+const fileDownload = (cloudFile, localTarget) => {
+  const filePath = `${localTarget}${(cloudFile.relPath).split('/').join('\\')}${'\\'}`
+  ipcRenderer.send("download-cloud", {
+    url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
+    properties: {
+      directory: filePath,
+      targetPath: cloudFile.targetPath,
+      localTarget: localTarget
+    }
+  });
 }
 
 ipcRenderer.on("download complete", (event, file) => {
   console.log("download complete =========================================", event); // Full file path
   console.log('file::: ', file); // Full file path
 });
+
+const createCloudFolder = (cloudTarget, localFile) => {
+  const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
+    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
+    params: `method=MKDIR&userid=test01&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
+  });
+  if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+    // uploadResult = 'SUCCESS';
+  } else {
+    // uploadResult = 'FAIL';
+  }
+}
+
+const deleteCloudFolder = (cloudTarget, localFile) => {
+  const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
+    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
+    params: `method=DELDIR&userid=test01&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
+  });
+  if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+    // uploadResult = 'SUCCESS';
+  } else {
+    // uploadResult = 'FAIL';
+  }
+}
+
+const deleteFolderRecursive = (path) => {
+  if( fs.existsSync(path) ) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+}
+
+const createStateItem = (file, localTarget, cloudTarget) => {
+  return {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    pathHash: file.pathHash,
+    local_targetPath: localTarget,
+    local_relPath: `${file.relPath}/${file.name}`,
+    local_ctime: file.ctime,
+    local_mtime: file.mtime,
+    cloud_targetPath: cloudTarget,
+    cloud_relPath: `${file.relPath}/${file.name}`,
+    cloud_ctime: file.ctime,
+    cloud_mtime: file.mtime
+  }
+}
 
 export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
@@ -137,125 +202,51 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
     // check First call : stateDB is empty
     if (stateDB.get('files').size().value() < 1) {
-      // First Compare
+      
       let innerItems = [];
-      // compare data by 2 times.
+      // compare data by two times.
+
+      // ##[1]##########################################################################################
       // 1. compare data with local data
       const localFiles = localDB.get('files').value();
       localFiles.forEach((localFile, i) => {
         const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
         if (cloudFile === null || cloudFile === undefined) {
-          // upload to cloud this file
-          // ###################################################################################
-          // temp : copy to cloudFolder
-          // UPLOAD
-          // if it is directory, make directory
-          let type = '';
-          let uploadResult = '';
+          // 클라우드데이터에는 없음. 클라우드에 폴더 생성 또는 파이 ㄹ업로드
           if (localFile.type === 'D') {
-            type = 'D';
-
-            // create remote folder
-            const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
-              url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-              params: `method=MKDIR&userid=test01&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
-            });
-            if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
-              uploadResult = 'SUCCESS';
-            } else {
-              uploadResult = 'FAIL';
-            }
-
-            // console.log('ipcResult >>>>>>>>>>>>>>>>>>>>> ', ipcResult);
-
+            // CREATE FOLDER TO CLOUD
+            createCloudFolder(cloudTarget, localFile);
+            innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
           } else {
-            type = 'F';
-            // UPLOAD
-            // 
-            // console.log('localFile ::: ', localFile);
-            // console.log('cloudTarget ::: ', cloudTarget);
-
+            // UPLOAD TO CLOUD
             fileUpload(localFile, cloudTarget);
-
-            // fs.copyFileSync(localFile.targetPath + localFile.relPath, cloudTarget + localFile.relPath);
+            innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
           }
-
-          innerItems.push({
-            name: localFile.name,
-            type: type,
-            result: uploadResult,
-            size: localFile.size,
-            pathHash: localFile.pathHash,
-            local_targetPath: localTarget,
-            local_relPath: `${localFile.relPath}/${localFile.name}`,
-            // local_atime: localFile.atime,
-            local_ctime: localFile.ctime,
-            // local_birthtime: localFile.birthtime,
-            local_mtime: localFile.mtime,
-            cloud_targetPath: cloudTarget,
-            cloud_relPath: `${localFile.relPath}/${localFile.name}`,
-            // cloud_atime: localFile.atime,
-            cloud_ctime: localFile.ctime,
-            // cloud_birthtime: localFile.birthtime,
-            cloud_mtime: localFile.mtime
-          });
         }
       });
 
+      // ##[2]##########################################################################################
       // 2. compare data with cloud data
       const cloudFiles = cloudDB.get('files').value();
+      // [폴더]
       cloudFiles.forEach((cloudFile, i) => {
         const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
         if (localFile === null || localFile === undefined) {
           if (cloudFile.type === 'D') {
+            // 로컬에 폴더 생성
             fs.mkdirSync(`${localTarget}${cloudFile.relPath}/${cloudFile.name}`);
-            innerItems.push({
-              name: cloudFile.name,
-              type: 'D',
-              size: cloudFile.size,
-              pathHash: cloudFile.pathHash,
-              local_targetPath: localTarget,
-              local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-              local_ctime: cloudFile.ctime,
-              local_mtime: cloudFile.mtime,
-              cloud_targetPath: cloudTarget,
-              cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-              cloud_ctime: cloudFile.ctime,
-              cloud_mtime: cloudFile.mtime
-            });
+            innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
           }
         }
       });
-
+      // [파일]
       cloudFiles.forEach((cloudFile, i) => {
         const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
         if (localFile === null || localFile === undefined) {
           if (cloudFile.type === 'F') {
-            // DOWNLOAD
-            const filePath = `${localTarget}${(cloudFile.relPath).split('/').join('\\')}${'\\'}`
-            ipcRenderer.send("download-cloud", {
-              url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
-              properties: {
-                directory: filePath,
-                targetPath: cloudFile.targetPath,
-                localTarget: localTarget
-              }
-            });
-
-            innerItems.push({
-              name: cloudFile.name,
-              type: 'F',
-              size: cloudFile.size,
-              pathHash: cloudFile.pathHash,
-              local_targetPath: localTarget,
-              local_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-              local_ctime: cloudFile.ctime,
-              local_mtime: cloudFile.mtime,
-              cloud_targetPath: cloudTarget,
-              cloud_relPath: `${cloudFile.relPath}/${cloudFile.name}`,
-              cloud_ctime: cloudFile.ctime,
-              cloud_mtime: cloudFile.mtime
-            });
+            // 클라우드에서 파일 다운로드
+            fileDownload(cloudFile, localTarget);
+            innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
           }
         }
       });
@@ -264,93 +255,130 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
       stateDB.assign({ files: innerItems }).write();
 
     } else {
-      // compare data by 3 times.
+      
+      let innerItems = [];
+      // compare data by three times.
+
+      // ##[1]##########################################################################################
       // 1. compare data with local data
       const localFiles = localDB.get('files').value();
       localFiles.forEach((localFile, i) => {
+
+          // ##### localFile.mtime === stateFile.local_mtime
+          // state file 에 local_mtime 은 로컬 시간으로 재조정 해야 한다~~~~~~!!!!!!!!!!!!!!!!
+
+        console.log('======================================================');
+        console.log(' :: localFile :: ', localFile);
+        console.log(' :: localFile path :: ', path.normalize(localFile.targetPath + localFile.relPath));
+        console.log('======================================================');
+        
         const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
         const stateFile = stateDB.get('files').find({ pathHash: localFile.pathHash }).value();
 
         if (cloudFile === null || cloudFile === undefined) {
+          // 클라우드데이터에 없다
           if (stateFile === null || stateFile === undefined) {
-            // UPLOAD
-            // temp copy to cloudFolder
-            // let type = '';
+            // 작업데이터에 없다 - 클라우드에 폴더생성, 파일업로드
             if (localFile.type === 'D') {
-              fs.mkdirSync(cloudTarget + localFile.relPath);
-              // type = 'D';
+              // CREATE FOLDER TO CLOUD
+              createCloudFolder(cloudTarget, localFile);
             } else {
-              fs.copyFileSync(localFile.targetPath + localFile.relPath, cloudTarget + localFile.relPath);
-              // type = 'F';
+              // UPLOAD TO CLOUD
+              fileUpload(localFile, cloudTarget);
             }
           } else {
+            // 작업데이터에는 있다 - 삭제 또는 클라우드에 생성
             if (localFile.size === stateFile.size && localFile.mtime === stateFile.local_mtime) {
+              // 로컬데이터와 작업데이터가 같은면 로컬 삭제
               // DELETE LOCAL FILE
+              deleteFolderRecursive(path.normalize(localFile.targetPath + localFile.relPath));
             } else {
-              // UPLOAD
+              // UPLOAD TO CLOUD
+              fileUpload(localFile, cloudTarget);
             }
           }
-        }
-
-        if (cloudFile !== null && cloudFile !== undefined) {
+        } else {
+          // 로컬데이터와 클라우드데이터가 같다
           if (stateFile === null || stateFile === undefined) {
-            if (localFile.size === stateFile.size && localFile.mtime > cloudFile.mtime) {
-              // UPLOAD
+            // 작업데이터에는 없다 (즉, 로컬과 클라우드의 각각 새롭게 생성되었음)
+            if (localFile.mtime > cloudFile.mtime) {
+              // 로컬데이터가 최신이므로 업로드
+              // UPLOAD TO CLOUD
+              fileUpload(localFile, cloudTarget);
             } else {
-              // DOWNLOAD
+              // 클라우드데이터가 최신이므로 다운로드
+              // DOWNLOAD TO LOCAL
+              fileDownload(cloudFile, localTarget);
             }
-          }
-        }
-
-        if (cloudFile !== null && cloudFile !== undefined) {
-          if (stateFile !== null && stateFile !== undefined) {
-
-
-// ##### localFile.mtime === stateFile.local_mtime
-// state file 에 local_mtime 은 로컬 시간으로 재조정 해야 한다~~~~~~!!!!!!!!!!!!!!!!
-
+          } else {
+            // 작업데이터에도 있다 (즉, 로컬과 클라우드의 각각 비교후 처리여부 확인)
             if (localFile.size === stateFile.size && localFile.mtime === stateFile.local_mtime) {
-              // SKIP
+              // 동기화 되어 있는 상태, 작업 필요 없음
             } else if (localFile.mtime > cloudFile.mtime) {
-              // UPLOAD
+              // 로컬데이터가 최신이므로 업로드
+              // UPLOAD TO CLOUD
+              fileUpload(localFile, cloudTarget);
             } else {
-              // DOWNLOAD
+              // 클라우드데이터가 최신이므로 다운로드
+              // DOWNLOAD TO LOCAL
+              fileDownload(cloudFile, localTarget);
             }
           }
         }
       });
 
+      // ##[2]##########################################################################################
       // 2. compare data with cloud data
       const cloudFiles = cloudDB.get('files').value();
       cloudFiles.forEach((cloudFile, i) => {
+
         const localFile = localDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
         const stateFile = stateDB.get('files').find({ pathHash: cloudFile.pathHash }).value();
 
         if (localFile === null || localFile === undefined) {
+          // 로컬데이터에 없다
           if (stateFile === null || stateFile === undefined) {
-            // DOWNLOAD
-          } else {
-            if (cloudFile.size === stateFile.size && cloudFile.mtime === stateFile.cloud_mtime) {
-              // DELETE CLOUD FILE
+            // 작업데이터에도 없다 (클라우드에 새로생긴 정보, 폴더생성, 파일 다운로드 필요)
+            if (cloudFile.type === 'D') {
+              // 클라우드데이터가 최신임으로 로컬에 폴더 생성 // CREATE FOLDER
+              fs.mkdirSync(`${localTarget}${cloudFile.relPath}/${cloudFile.name}`);
             } else {
-              // DOWNLOAD
+              // 클라우드데이터가 최신임으로 다운로드 // DOWNLOAD TO LOCAL
+              fileDownload(cloudFile, localTarget);
+            }
+          } else {
+            // 작업데이터에는 있다. (클라우드에만 있음, 비교후 클라우드 삭제 또는 다운로드)
+            if (cloudFile.size === stateFile.size && cloudFile.mtime === stateFile.cloud_mtime) {
+              // 클라우드데이터가 오래된 정보 클라우드 삭제 // DELETE CLOUD FILE
+              deleteCloudFolder(cloudTarget, localFile);
+            } else {
+              // 클라우드데이터가 최신임으로 다운로드 // DOWNLOAD TO LOCAL
+              fileDownload(cloudFile, localTarget);
             }
           }
         }
       });
 
+      // ##[3]##########################################################################################
       // 3. compare data with state data
       const stateFiles = stateDB.get('files').value();
       stateFiles.forEach((stateFile, i) => {
+
         const localFile = localDB.get('files').find({ pathHash: stateFile.pathHash }).value();
         const cloudFile = cloudDB.get('files').find({ pathHash: stateFile.pathHash }).value();
 
         if (localFile === null || localFile === undefined) {
+          // 로컬데이터에 없다
           if (cloudFile === null || cloudFile === undefined) {
-            // DELETE DATABASE RECORD
+            // 클라우드데이터에도 없다
+            // 작업데이터에서 삭제 // DELETE DATABASE RECORD
           }
         }
       });
+
+      // RE-Create state database 
+      stateDB.assign({ files: innerItems }).write();
+
     }
 
   //   let c = 0;
