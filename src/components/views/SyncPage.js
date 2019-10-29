@@ -4,6 +4,7 @@ import path from 'path';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
+//import log from 'electron-log';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -122,7 +123,7 @@ class SyncPage extends Component {
     };
 
     handleStartSyncFile = (no) => {
-
+        // log.info('[handleStartSyncFile] ============================== ', no);
         this.props.GlobalActions.showConfirm({
             confirmTitle: "동기화 실행",
             confirmMsg: "동기화를 실행 하시겠습니까?",
@@ -134,22 +135,27 @@ class SyncPage extends Component {
                         .find({ no: paramObject }).value();
 
                     // ## LOCAL FILEs SAVE
+                    // log.info('[handleStartSyncFile] =[1]=');
                     const localFiles = getLocalFiles(syncItems);
-                    // console.log('getLocalFiles ==>> localFiles >>>::: ', localFiles);
+                    // log.info('[handleStartSyncFile] =[2]=');
                     const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
+                    // log.info('[handleStartSyncFile] =[3]=');
                     const localDB = low(localAdapter);
-                    //dbLocal.defaults({ localFiles: [] }).write();
+                    // log.info('[handleStartSyncFile] =[4]=');
                     localDB.assign({ files: localFiles }).write();
+                    // log.info('[handleStartSyncFile] =[5]=');
 
                     // ## CLOUD FILEs SAVE
                     const cloudFiles = getCloudFiles(syncItems); /// ???????
-                    // console.log('getLocalFiles ==>> cloudFiles >>>::: ', cloudFiles);
+                    // log.info('[handleStartSyncFile] =[6]=');
                     const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
+                    // log.info('[handleStartSyncFile] =[7]=');
                     const cloudDB = low(cloudAdapter);
-                    //dbLocal.defaults({ cloudFiles: [] }).write();
+                    // log.info('[handleStartSyncFile] =[8]=');
                     cloudDB.assign({ files: cloudFiles }).write();
 
                     // // ## Compare Data
+                    // log.info('[handleStartSyncFile] =[9]=');
                     startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
                         .then((resolvedData) => {
                             // console.log('############### startCompareData.then ################');
