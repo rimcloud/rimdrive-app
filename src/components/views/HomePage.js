@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button';
 class HomePage extends Component {
 
     handleStartBtnClick = (e) => {
-        console.log('HomePage -> handleStartBtnClick...');
+        // console.log('HomePage -> handleStartBtnClick...');
     }
 
     render() {

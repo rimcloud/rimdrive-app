@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import path from 'path';
 
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import * as GlobalActions from 'modules/GlobalModule';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -40,14 +40,26 @@ class MainPage extends Component {
     }
 
     componentDidMount() {
+
         // console.log('getAppRoot() ----------------------------------- >> ', getAppRoot());
+
         const { GlobalActions } = this.props;
         // load and init rimdrive config
         const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
         const driveConfig = low(adapter);
 
-        if(driveConfig !== undefined && driveConfig.get('syncItems').value() === undefined) {
-            driveConfig.assign({syncItems: []}).write();
+        if (driveConfig !== undefined && driveConfig.get('syncItems').value() === undefined) {
+            // init sync item
+            driveConfig.assign({
+                syncItems: [{
+                    "no": 1,
+                    "local": "",
+                    "cloud": "",
+                    "type": "m",
+                    "status": "on",
+                    "files": []
+                }]
+            }).write();
         }
 
         GlobalActions.setDataStorage({
@@ -68,9 +80,9 @@ class MainPage extends Component {
 
         return (
             <React.Fragment>
-                <div className={classes.mainPage} > 
+                <div className={classes.mainPage} >
                     {/*<div>VAR => {getAppRoot()} ::: {process.platform}</div>*/}
-                    <AppBar position="relative" style={{backgroundColor:'#2c387b'}}>
+                    <AppBar position="relative" style={{ backgroundColor: '#2c387b' }}>
                         <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
                             <Tab label="정보" {...a11yProps(0)} />
                             <Tab label="공유" {...a11yProps(1)} />
@@ -78,10 +90,10 @@ class MainPage extends Component {
                             <Tab label="환경설정" {...a11yProps(3)} />
                         </Tabs>
                     </AppBar>
-                        {selectedTab === 0 && <InfoPage />}
-                        {selectedTab === 1 && <SharePage />}
-                        {selectedTab === 2 && <SyncPage />}
-                        {selectedTab === 3 && <SetupPage />}
+                    {selectedTab === 0 && <InfoPage />}
+                    {selectedTab === 1 && <SharePage />}
+                    {selectedTab === 2 && <SyncPage />}
+                    {selectedTab === 3 && <SetupPage />}
                 </div>
             </React.Fragment>
         );
