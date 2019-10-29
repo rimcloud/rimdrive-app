@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 
 const path = require('path');
 const { Buffer } = require('buffer');
-const { download } = require('../src/lib/electron-dl');
+const { download } = require('electron-dl');
 
 const isDev = require('electron-is-dev');
 
