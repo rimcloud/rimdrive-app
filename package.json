@@ -58,6 +58,7 @@
     "classnames": "^2.2.6",
     "electron-dl": "^1.14.0",
     "electron-is-dev": "^1.1.0",
+    "electron-log": "^3.0.8",
     "form-data": "^2.5.1",
     "immutable": "^4.0.0-rc.12",
     "lowdb": "^1.0.0",
