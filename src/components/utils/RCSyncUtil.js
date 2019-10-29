@@ -1,4 +1,3 @@
-import electron from 'electron';
 
 import { ipcRenderer } from 'electron';
 
@@ -7,11 +6,12 @@ import fs from 'fs';
 import axios from 'axios';
 import path from 'path';
 import crypto from 'crypto';
+// import log from 'electron-log';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 
-import { formatDateTime } from 'components/utils/RCCommonUtil';
+import { formatDateTime, getAppRoot } from 'components/utils/RCCommonUtil';
 
 const SECRET = 'rimdrivezzang';
 
@@ -109,15 +109,19 @@ export function getCloudFiles(syncItem) {
 
 
 const fileUpload = (localFile, cloudTarget) => {
+  // log.info('[fileUpload] ============================== localFile : ', localFile);
   const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
-// console.log('fileupload == filePath :: ', filePath);
+
+  // console.log('fileupload == filePath :: ', filePath);
+  
   const bbFile = new Blob([fs.readFileSync(filePath)]);
   const form_data = new FormData();
   form_data.append('rimUploadFile', bbFile, path.basename(filePath));
   form_data.append('method', 'UPLOAD');
   form_data.append('userid', 'test01');
   form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
+  // log.info('[fileUpload] ============================== serverUrl : ', serverUrl);
   return axios.post(serverUrl, form_data);
 }
 
@@ -206,6 +210,7 @@ const createStateItem = (file, localTarget, cloudTarget) => {
 }
 
 const syncLocalToCloud = (localFile, cloudTarget) => {
+  // log.info('[syncLocalToCloud] ============================== ', localFile);
   if (localFile.type === 'D') {
     // CREATE FOLDER TO CLOUD
     createCloudFolder(cloudTarget, localFile);
@@ -247,10 +252,10 @@ const syncCloudDelete = (cloudFile, cloudTarget) => {
 
 
 export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
-
+  // log.info('[startCompareData] =================START============= ');
   return new Promise(function (resolve, reject) {
 
-    const stateAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-state.json`);
+    const stateAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-state.json`);
     const stateDB = low(stateAdapter);
 
     // check First call : stateDB is empty
