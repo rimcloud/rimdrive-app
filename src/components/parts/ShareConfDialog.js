@@ -73,7 +73,7 @@ class ShareConfDialog extends Component {
       fid: FileProps.getIn(['selectedItem', 'id'])
     }).then((res) => {
 
-      console.log('handleShareStepNext res ::: ', res);
+      // console.log('handleShareStepNext res ::: ', res);
       if (res.status && res.status.result === 'SUCCESS') {
         if (res.data) {
           this.setState({ shareStep: 2, actType: 'UPDATE' });

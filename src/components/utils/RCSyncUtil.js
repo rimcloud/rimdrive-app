@@ -111,7 +111,7 @@ export function getCloudFiles(syncItem) {
 const fileUpload = (localFile, cloudTarget) => {
   const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
-console.log('fileupload == filePath :: ', filePath);
+// console.log('fileupload == filePath :: ', filePath);
   const bbFile = new Blob([fs.readFileSync(filePath)]);
   const form_data = new FormData();
   form_data.append('rimUploadFile', bbFile, path.basename(filePath));
@@ -134,8 +134,8 @@ const fileDownload = (cloudFile, localTarget) => {
 }
 
 ipcRenderer.on("download complete", (event, file) => {
-  console.log("download complete =========================================", event); // Full file path
-  console.log('file::: ', file); // Full file path
+  // console.log("download complete =========================================", event); // Full file path
+  // console.log('file::: ', file); // Full file path
 });
 
 const createCloudFolder = (cloudTarget, localFile) => {

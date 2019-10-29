@@ -59,7 +59,7 @@ class CloudFolderTreeDialog extends Component {
 
   handleSelectCloudFolder = (selectedItem) => {
 
-    console.log('CloudFolderTreeDialog handleSelectCloudFolder - selectedItem:::  ', selectedItem);
+    // console.log('CloudFolderTreeDialog handleSelectCloudFolder - selectedItem:::  ', selectedItem);
     this.setState({
       selectedItem: selectedItem
     });

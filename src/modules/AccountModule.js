@@ -75,7 +75,7 @@ export const reqLoginUserInfo = (userId) => dispatch => {
         url: 'demo-ni.cloudrim.co.kr:48080/vdrive/api/storageusage.ros',
         params: 'userid=test01'
     });
-    console.log('reqLoginUserInfo result ::-> ', ipcResult);
+    // console.log('reqLoginUserInfo result ::-> ', ipcResult);
     if(ipcResult && ipcResult.status && ipcResult.status.result) {
         if(ipcResult.status.result === 'SUCCESS') {
             return dispatch({

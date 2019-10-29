@@ -1,14 +1,14 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import electron, { ipcRenderer } from 'electron';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
 
-import {withStyles} from '@material-ui/core/styles';
-import {CommonStyle} from 'templates/styles/CommonStyles';
+import { withStyles } from '@material-ui/core/styles';
+import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -61,7 +61,7 @@ class SyncPage extends Component {
         this
             .props
             .AccountActions
-            .changeAccountParamData({name: name, value: event.target.value});
+            .changeAccountParamData({ name: name, value: event.target.value });
     }
 
     handleSaveClick = (e) => {
@@ -77,24 +77,25 @@ class SyncPage extends Component {
         const driveConfig = GlobalProps.get('driveConfig');
 
         let newNo = 1;
-        if(driveConfig.get('syncItems').value() === undefined) {
+        if (driveConfig.get('syncItems').value() === undefined) {
             driveConfig.assign('syncItems', []).write();
         }
-        
+
         const syncItems = driveConfig.get('syncItems').value();
-        if(syncItems.length > 0) {
+        if (syncItems.length > 0) {
             const getMax = (accumulator, currentValue) => accumulator.no < currentValue.no ? currentValue : accumulator;
             const latest = syncItems.reduce(getMax);
             newNo = Number(latest.no) + 1;
         }
 
         driveConfig.get('syncItems')
-        .push({ "no": newNo,
-        "local": "",
-        "cloud": "",
-        "type": "a",
-        "status": "on"
-        }).write();
+            .push({
+                "no": newNo,
+                "local": "",
+                "cloud": "",
+                "type": "a",
+                "status": "on"
+            }).write();
 
         this.setState({
             itemCount: this.state.itemCount + 1
@@ -106,12 +107,12 @@ class SyncPage extends Component {
             confirmTitle: "동기화 삭제",
             confirmMsg: "동기화 항목을 삭제 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
-                if(confirmValue) {
+                if (confirmValue) {
                     const { GlobalProps } = this.props;
                     const driveConfig = GlobalProps.get('driveConfig');
                     driveConfig.get('syncItems')
-                    .remove({ no: paramObject })
-                    .write();
+                        .remove({ no: paramObject })
+                        .write();
                 }
             },
             confirmObject: no
@@ -124,11 +125,11 @@ class SyncPage extends Component {
             confirmTitle: "동기화 실행",
             confirmMsg: "동기화를 실행 하시겠습니까?",
             handleConfirmResult: (confirmValue, paramObject) => {
-                if(confirmValue) {
+                if (confirmValue) {
                     const { GlobalProps } = this.props;
                     const driveConfig = GlobalProps.get('driveConfig');
                     const syncItems = driveConfig.get('syncItems')
-                    .find({ no: paramObject }).value();
+                        .find({ no: paramObject }).value();
 
                     // ## LOCAL FILEs SAVE
                     const localFiles = getLocalFiles(syncItems);
@@ -136,7 +137,7 @@ class SyncPage extends Component {
                     const localAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-local.json`);
                     const localDB = low(localAdapter);
                     //dbLocal.defaults({ localFiles: [] }).write();
-                    localDB.assign({files: localFiles}).write();
+                    localDB.assign({ files: localFiles }).write();
 
                     // ## CLOUD FILEs SAVE
                     const cloudFiles = getCloudFiles(syncItems); /// ???????
@@ -144,7 +145,7 @@ class SyncPage extends Component {
                     const cloudAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-cloud.json`);
                     const cloudDB = low(cloudAdapter);
                     //dbLocal.defaults({ cloudFiles: [] }).write();
-                    cloudDB.assign({files: cloudFiles}).write();
+                    cloudDB.assign({ files: cloudFiles }).write();
 
                     // // ## Compare Data
                     startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
@@ -160,23 +161,23 @@ class SyncPage extends Component {
 
     handleOpenFolderDialog = (syncNo, locType) => {
 
-        if(locType === 'local') {
+        if (locType === 'local') {
             const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
 
-            console.log('pathItems ::: ', pathItems);
+            // console.log('pathItems ::: ', pathItems);
 
-            if(pathItems && pathItems.length > 0) {
+            if (pathItems && pathItems.length > 0) {
                 const { GlobalProps } = this.props;
                 const driveConfig = GlobalProps.get('driveConfig');
                 driveConfig.get('syncItems')
-                .find({ no: syncNo })
-                .assign({ [locType]: pathItems[0]})
-                .write();
+                    .find({ no: syncNo })
+                    .assign({ [locType]: pathItems[0] })
+                    .write();
                 this.setState({
                     reload: true
                 });
             }
-        } else if(locType === 'cloud') {
+        } else if (locType === 'cloud') {
             this.setState({
                 openCloudFolderDialog: true
             });
@@ -191,17 +192,17 @@ class SyncPage extends Component {
     }
 
     handleSelectCloudFolder = (selectedItem) => {
-        console.log('SyncPage handleSelectCloudFolder - selectedItem :: ', selectedItem);
+        // console.log('SyncPage handleSelectCloudFolder - selectedItem :: ', selectedItem);
 
-                const { GlobalProps } = this.props;
-                const driveConfig = GlobalProps.get('driveConfig');
-                driveConfig.get('syncItems')
-                .find({ no: 1 })
-                .assign({ 'cloud': selectedItem.path})
-                .write();
-                this.setState({
-                    reload: true
-                });
+        const { GlobalProps } = this.props;
+        const driveConfig = GlobalProps.get('driveConfig');
+        driveConfig.get('syncItems')
+            .find({ no: 1 })
+            .assign({ 'cloud': selectedItem.path })
+            .write();
+        this.setState({
+            reload: true
+        });
 
         this.setState({
             openCloudFolderDialog: false
@@ -221,9 +222,9 @@ class SyncPage extends Component {
         const { GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
         driveConfig.get('syncItems')
-        .find({ no: syncNo })
-        .assign({ type: syncType})
-        .write();
+            .find({ no: syncNo })
+            .assign({ type: syncType })
+            .write();
         this.setState({
             openCloudFolderDialog: false
         });
@@ -236,13 +237,13 @@ class SyncPage extends Component {
         // console.log('driveConfig.syncItems ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
         const items = this.state.pathItems;
 
-        
+
         let currSyncDatas = null;
-        
-        if(driveConfig !== undefined && driveConfig.get('syncItems') !== undefined) {
+
+        if (driveConfig !== undefined && driveConfig.get('syncItems') !== undefined) {
             currSyncDatas = fromJS(driveConfig.get('syncItems').value());
         }
-        
+
         // if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
         //     const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
         //     if(syncs && syncs.size > 0) {
@@ -251,13 +252,13 @@ class SyncPage extends Component {
         // }
 
         // console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas);
-        
+
         // console.log('driveConfig :: ', driveConfig);
         // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
 
         return (
             <React.Fragment>
-                <Box style={{paddingTop:8, paddingBottom: 8, paddingRight: 18, textAlign:'right'}}>
+                <Box style={{ paddingTop: 8, paddingBottom: 8, paddingRight: 18, textAlign: 'right' }}>
                     {/* 
                     <Button onClick={this.handleAddSyncClick} className={classes.RCSmallButton} variant="contained" color="primary">
                         파일 동기화 추가
@@ -266,7 +267,7 @@ class SyncPage extends Component {
                 </Box>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
                     <SyncSingleItem item={s} index={i + 1}
-                        key={s.get('no')} isFirst={i === 0 ? true : false} 
+                        key={s.get('no')} isFirst={i === 0 ? true : false}
                         onShowFolderDialog={this.handleOpenFolderDialog}
                         onChangeSyncType={this.handleChangeSyncType}
                         onStartSyncFile={this.handleStartSyncFile}
@@ -274,7 +275,7 @@ class SyncPage extends Component {
                 ))
                 }
                 <RCDialogConfirm />
-                <CloudFolderTreeDialog open={this.state.openCloudFolderDialog} 
+                <CloudFolderTreeDialog open={this.state.openCloudFolderDialog}
                     onSelectCloudFolder={this.handleSelectCloudFolder}
                     onClose={this.handleCloseCloudFolderDialog}
                     pathItems={items}
