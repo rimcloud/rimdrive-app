@@ -1,7 +1,19 @@
 'use strict';
 const path = require('path');
 const {app, BrowserWindow, shell, dialog} = require('electron');
+const unusedFilename = require('unused-filename');
 const pupa = require('pupa');
+const extName = require('ext-name');
+
+function getFilenameFromMime(name, mime) {
+	const exts = extName.mime(mime);
+
+	if (exts.length !== 1) {
+		return name;
+	}
+
+	return `${name}.${exts[0].ext}`;
+}
 
 function registerListener(session, options, cb = () => {}) {
 	const downloadItems = new Set();
@@ -16,9 +28,6 @@ function registerListener(session, options, cb = () => {}) {
 	}, options);
 
 	const listener = (e, item, webContents) => {
-		const tempIndex = item.getURL().indexOf(encodeURI(options.targetPath));
-		let tempPath = item.getURL().substring(tempIndex + encodeURI(options.targetPath).length);
-		tempPath = tempPath.replace(/\//g, path.sep);
 		downloadItems.add(item);
 		totalBytes += item.getTotalBytes();
 
@@ -28,7 +37,17 @@ function registerListener(session, options, cb = () => {}) {
 		}
 
 		const win = BrowserWindow.fromWebContents(hostWebContents);
-		const filePath = decodeURI(path.normalize(options.localTarget + path.sep + tempPath));
+
+		const dir = options.directory || app.getPath('downloads');
+		let filePath;
+		if (options.filename) {
+			filePath = path.join(dir, options.filename);
+		} else {
+			const filename = item.getFilename();
+			const name = path.extname(filename) ? filename : getFilenameFromMime(filename, item.getMimeType());
+
+			filePath = unusedFilename.sync(path.join(dir, name));
+		}
 
 		const errorMessage = options.errorMessage || 'The download of {filename} was interrupted';
 		const errorTitle = options.errorTitle || 'Download Error';
@@ -93,7 +112,7 @@ function registerListener(session, options, cb = () => {}) {
 				}
 
 				if (options.openFolderWhenDone) {
-					shell.showItemInFolder(filePath);
+					shell.showItemInFolder(path.join(dir, item.getFilename()));
 				}
 
 				cb(null, item);
