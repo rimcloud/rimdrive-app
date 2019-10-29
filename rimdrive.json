@@ -2,12 +2,11 @@
   "syncItems": [
     {
       "no": 1,
-      "local": "D:\\test2",
-      "cloud": "/sync2",
+      "local": "D:\\test3",
+      "cloud": "/sync3",
       "type": "m",
       "status": "on",
       "files": []
     }
-  ],
-  "test": "4444"
+  ]
 }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import electron, { ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
+import path from 'path';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
@@ -14,6 +15,7 @@ import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 
 import { getLocalFiles, getCloudFiles, startCompareData } from 'components/utils/RCSyncUtil';
+import { getAppRoot } from 'components/utils/RCCommonUtil';
 
 import * as AccountActions from 'modules/AccountModule';
 import * as FileActions from 'modules/FileModule';
@@ -33,7 +35,7 @@ class SyncPage extends Component {
             itemCount: 0,
             selectedTab: 0,
             pathItems: '',
-
+            
             openCloudFolderDialog: false
         };
     }
@@ -134,7 +136,7 @@ class SyncPage extends Component {
                     // ## LOCAL FILEs SAVE
                     const localFiles = getLocalFiles(syncItems);
                     // console.log('getLocalFiles ==>> localFiles >>>::: ', localFiles);
-                    const localAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-local.json`);
+                    const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
                     const localDB = low(localAdapter);
                     //dbLocal.defaults({ localFiles: [] }).write();
                     localDB.assign({ files: localFiles }).write();
@@ -142,7 +144,7 @@ class SyncPage extends Component {
                     // ## CLOUD FILEs SAVE
                     const cloudFiles = getCloudFiles(syncItems); /// ???????
                     // console.log('getLocalFiles ==>> cloudFiles >>>::: ', cloudFiles);
-                    const cloudAdapter = new FileSync(`${electron.remote.app.getAppPath()}/rimdrive-cloud.json`);
+                    const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
                     const cloudDB = low(cloudAdapter);
                     //dbLocal.defaults({ cloudFiles: [] }).write();
                     cloudDB.assign({ files: cloudFiles }).write();
@@ -236,7 +238,6 @@ class SyncPage extends Component {
         // console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.value() : 'null');
         // console.log('driveConfig.syncItems ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
         const items = this.state.pathItems;
-
 
         let currSyncDatas = null;
 

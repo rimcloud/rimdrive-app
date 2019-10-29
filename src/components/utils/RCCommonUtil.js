@@ -9,7 +9,7 @@ export const getAppRoot = () => {
     return electron.remote.app.getAppPath();
   } else {
     if ( process.platform === 'win32' ) {
-      return path.join( electron.remote.app.getAppPath(), '/../../../' );
+      return path.join( electron.remote.app.getAppPath(), '/../../' );
     }  else {
       return path.join( electron.remote.app.getAppPath(), '/../../../../' );
     }

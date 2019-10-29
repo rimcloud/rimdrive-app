@@ -1,174 +1,34 @@
 {
   "files": [
     {
-      "name": "eula.1028.txt",
-      "type": "F",
-      "size": 17734,
-      "targetPath": "D:\\test2",
-      "relPath": "/eula.1028.txt",
-      "pathHash": "5a26794b48f3612657d40c671c342ee8667c3bd372e8ca72efa2f49f1a1f44e1",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "local01",
+      "name": "folder1",
       "type": "D",
       "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/local01",
-      "pathHash": "4f0320ce62f1868c4f2e9f0d5adbc50a42cafaa7373fa9778d12354d84535b89",
-      "ctime": "2019-10-29 1:24:49",
-      "mtime": "2019-10-29 1:24:49"
+      "targetPath": "D:\\test3",
+      "relPath": "/folder1",
+      "pathHash": "e42aba4fef02127d34f750bfccf4e91c1bbb1e62cfbb316a707df0b895ee8179",
+      "ctime": "2019-10-29 17:42:50",
+      "mtime": "2019-10-29 17:42:46"
     },
     {
-      "name": "%EB%A1%9C%EC%BB%AC%ED%8C%8C%EC%9D%BC001.txt",
-      "type": "F",
-      "size": 41,
-      "targetPath": "D:\\test2",
-      "relPath": "/local01/%EB%A1%9C%EC%BB%AC%ED%8C%8C%EC%9D%BC001.txt",
-      "pathHash": "5d53448f5c7826ba6d355949256bfc2eae6fa8c993112c7fc35454df6c06409f",
-      "ctime": "2019-10-29 1:24:49",
-      "mtime": "2019-10-29 1:24:49"
-    },
-    {
-      "name": "sub1",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1",
-      "pathHash": "8c9124bc689ad65d5d2922d1c0599a877597fa811f1d1fe4e0c8a78da624090f",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "eula.1042.txt",
-      "type": "F",
-      "size": 17734,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/eula.1042.txt",
-      "pathHash": "2c9d65c21a71742ee3100445b670a65936b1fec1e7a4e9ea47fc8cff9113ec47",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "eula.2052.txt",
-      "type": "F",
-      "size": 17734,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/eula.2052.txt",
-      "pathHash": "ed18468935b6ebabc2e1dcf03d4ca99b10b1fe9b381816c23c12cc6f27d26cc1",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "sub222",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/sub222",
-      "pathHash": "4a4d72aab3fbfe87a70f81e1cadf9c2e0df5ce93c417f40d77aec75204a1dc00",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "aaaa.jpg",
+      "name": "jpeg_43.jpg",
       "type": "F",
       "size": 145752,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/sub222/aaaa.jpg",
-      "pathHash": "057fddcd526328cdc7671b90ad6984969bc1de72971fab414f854f53c0b0a0f3",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
+      "targetPath": "D:\\test3",
+      "relPath": "/jpeg_43.jpg",
+      "pathHash": "870e874cf6927e33cbff0efb1e0dc75e1b63f0d71b75d31892b77a3d1bde4817",
+      "ctime": "2019-10-22 18:21:16",
+      "mtime": "2019-10-22 18:8:29"
     },
     {
-      "name": "SUB333",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333",
-      "pathHash": "7be80263e6d9f02e6b28c19148ec97fef042f0e0406862bf4f5def9dab9971f2",
-      "ctime": "2019-10-29 1:24:53",
-      "mtime": "2019-10-29 1:24:53"
-    },
-    {
-      "name": "install.res.1028.dll",
+      "name": "SqlLite 스키마.txt",
       "type": "F",
-      "size": 76304,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333/install.res.1028.dll",
-      "pathHash": "1e29b815464bb7fe39f49153105da8217b8fbd3c2fb916eb4a311a04b1e8f078",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "install.res.1031.dll",
-      "type": "F",
-      "size": 96272,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333/install.res.1031.dll",
-      "pathHash": "7ac93263bd90f0a5a2ce6cb5bba30df6279d128198fcd18c650563048bee2d9e",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "install.res.1033.dll",
-      "type": "F",
-      "size": 91152,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333/install.res.1033.dll",
-      "pathHash": "aab489e3abef5770c353e3ecc1fbb530cdf1acebfb50791e113278b9304ebf39",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "install.res.1036.dll",
-      "type": "F",
-      "size": 97296,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333/install.res.1036.dll",
-      "pathHash": "de1a9112b5bb7742c4d9b6f70dc0eeaf63f61001196a2024145fb1184e5ba8aa",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "install.res.1040.dll",
-      "type": "F",
-      "size": 95248,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333/install.res.1040.dll",
-      "pathHash": "9c07d2d677a769e8a298c020aa390b177ae375a5f46a4394028c4d5e8afbf2ed",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "install.res.1041.dll",
-      "type": "F",
-      "size": 81424,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/SUB333/install.res.1041.dll",
-      "pathHash": "e21e839980ff2c77cd2138a9bf46f455a95a1e3c187d41922a7e219eb29c2b31",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "test01.txt",
-      "type": "F",
-      "size": 9344,
-      "targetPath": "D:\\test2",
-      "relPath": "/sub1/test01.txt",
-      "pathHash": "c8e50108dddb44fd85d5e325c8a65436a6d4b1ad1e5cfd718fc8443fe68b6971",
-      "ctime": "2019-10-29 1:24:55",
-      "mtime": "2019-10-29 1:24:55"
-    },
-    {
-      "name": "SUB2",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test2",
-      "relPath": "/SUB2",
-      "pathHash": "9a0adfe5c3276e1777b6b34b4ebdf64b46412c84c45e1b0e5cfb825a2cbfced4",
-      "ctime": "2019-10-29 1:24:49",
-      "mtime": "2019-10-29 1:24:49"
+      "size": 788,
+      "targetPath": "D:\\test3",
+      "relPath": "/SqlLite 스키마.txt",
+      "pathHash": "8cc33294ba6ab71c2f64cc08f3880a7c9d1183a17d6f97c3f5222462a2a18b29",
+      "ctime": "2019-10-15 18:14:7",
+      "mtime": "2019-10-15 18:14:4"
     }
   ]
 }
