@@ -126,7 +126,9 @@ const fileUpload = (localFile, cloudTarget) => {
 }
 
 const fileDownload = (cloudFile, localTarget) => {
-  const filePath = `${localTarget}${(cloudFile.relPath).split('/').join('\\')}${'\\'}`
+
+  const filePath = path.normalize(localTarget + cloudFile.relPath);
+
   ipcRenderer.send("download-cloud", {
     url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
     properties: {
