@@ -20,10 +20,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import TreeView from '@material-ui/lab/TreeView';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-
 class CloudFolderTreeDialog extends Component {
 
   constructor(props) {
@@ -74,9 +70,7 @@ class CloudFolderTreeDialog extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { open = false, pathItems } = this.props;
-    const { FileProps } = this.props;
+    const { FileProps, open = false } = this.props;
 
     return (
       <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>

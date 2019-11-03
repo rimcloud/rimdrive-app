@@ -23,9 +23,6 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import Typography from "@material-ui/core/Typography";
 
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-
 class ShareListComp extends Component {
 
   handleSelectItem = (selectedItem) => {

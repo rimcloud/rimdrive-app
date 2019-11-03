@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Map } from 'immutable';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';

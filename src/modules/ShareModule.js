@@ -67,7 +67,7 @@ export const getShareInfo = (param) => dispatch => {
             try {
                 let shareDepts = List([]);
                 let shareUsers = List([]);
-                let shareInfo = null;
+                // let shareInfo = null;
                 if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
                     const share = response.data.data;
                     if(share && share.listShareTargetVO && share.shareVO) {

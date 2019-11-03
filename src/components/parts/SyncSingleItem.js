@@ -64,7 +64,7 @@ class SyncSingleItem extends Component {
     
     render() {
         const { classes } = this.props;
-        const { item, key, index } = this.props;
+        const { item, key } = this.props;
 
         // console.log('item ----------- ', (item) ? item.toJS(): 'none');
         return (

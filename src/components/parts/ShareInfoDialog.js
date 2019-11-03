@@ -158,7 +158,7 @@ class ShareInfoDialog extends Component {
 
   render() {
     const { classes, dialogOpen } = this.props;
-    const { DeptUserProps, FileProps, ShareProps } = this.props;
+    const { DeptUserProps, ShareProps } = this.props;
 
     let stepInfo = '수정작업후 저장버튼을 클릭하세요.';
 
