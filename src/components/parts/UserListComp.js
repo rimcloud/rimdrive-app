@@ -59,7 +59,7 @@ class UserListComp extends Component {
               })}
             </TableBody>
             }
-            {(userListData && userListData.size > 0) &&
+            {(userListData && userListData.size < 1) &&
               <TableBody>
               <TableRow hover className={classes.fileTableRow} >
                 <TableCell component="th" align="center" colSpan="4">사용자가 없습니다.</TableCell>

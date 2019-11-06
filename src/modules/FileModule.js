@@ -123,7 +123,7 @@ export const getDriveFolderList = (param) => dispatch => {
             if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
                 folderList = (fromJS(response.data.data.map(n => {n['children'] = []; return n;})).unshift(fromJS({
                     fileId: 10,
-                    name: '__ROOTFOLDER__',
+                    name: '개인저장소',
                     path: '/',
                     children: []
                 })));
