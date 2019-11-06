@@ -1,3 +1,12 @@
+# rimdrive-app
+
+cloudrim storage 에 접속하여 공유, 동기화 등의 작업을 수행하는 
+설치형 Application 입니다.
+
+개방형 OS 지원을 위하여 Electron Framework 를 사용합니다.
+https://electronjs.org/
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
