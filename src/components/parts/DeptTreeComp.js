@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
+import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+
 import SvgIcon from '@material-ui/core/SvgIcon';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -14,7 +16,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
-
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 import MailIcon from '@material-ui/icons/Mail';
 
@@ -121,15 +124,20 @@ class DeptTreeComp extends Component {
     return (
       <div>
         {(deptTree) &&
-          <TreeView
-            className={classes.shareFilesCard}
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            defaultEndIcon={<ItemCircle />}
-            onNodeToggle={this.handleNodeToggle}
-          >
-            {deptTree}
-          </TreeView>
+          <Card elevation={0} style={{backgroundColor:'#efefef'}}>
+            <RCContentCardHeader title="조직" subheader=""/>
+            <CardContent>
+              <TreeView
+                className={classes.shareFilesCard}
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+                defaultEndIcon={<ItemCircle />}
+                onNodeToggle={this.handleNodeToggle}
+              >
+                {deptTree}
+              </TreeView>
+            </CardContent>
+          </Card>
         }
       </div>
     );

@@ -144,6 +144,7 @@ class SharePage extends Component {
                 // get share info
                 if (res.status) {
                     if (res.status.result === 'SUCCESS') {
+                        ShareActions.getShareInfoList();
                         alert('공유정보가 생성되었습니다.');
                     } else if (res.status.result === 'FAIL') {
                         alert(res.status.message);
@@ -151,6 +152,8 @@ class SharePage extends Component {
                 } else {
                     alert('공유정보 생성중 오류가 발생하였습니다.');
                 }
+
+
             });
         } else if (actType === 'UPDATE') {
             // update share data

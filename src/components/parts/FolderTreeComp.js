@@ -7,11 +7,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as FileActions from 'modules/FileModule';
 
+import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+
 import SvgIcon from '@material-ui/core/SvgIcon';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 function ItemCircle(props) {
   return (
@@ -95,15 +100,20 @@ class FolderTreeComp extends Component {
     return (
       <div>
       {(folderTree) && 
-        <TreeView
-          className={classes.shareFilesCard}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          defaultEndIcon={<ItemCircle />}
-          onNodeToggle={this.handleNodeToggle}
-        >
-          {folderTree}
-        </TreeView>
+        <Card elevation={0} style={{backgroundColor:'#efefef'}}>
+          <RCContentCardHeader title="폴더" subheader=""/>
+          <CardContent>
+            <TreeView
+              className={classes.shareFilesCard}
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              defaultEndIcon={<ItemCircle />}
+              onNodeToggle={this.handleNodeToggle}
+            >
+              {folderTree}
+            </TreeView>
+          </CardContent>
+        </Card>
       }
       </div>
     );

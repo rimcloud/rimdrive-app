@@ -51,6 +51,13 @@ class ShareConfDialog extends Component {
   }
 
   handleClose = () => {
+    this.setState({
+      shareStep: 1
+    });
+    this.props.FileActions.setSelectedItem({
+      selectedItem: null
+    });
+    
     this.props.onDialogClose();
   }
 
@@ -242,14 +249,14 @@ class ShareConfDialog extends Component {
         {(this.state.shareStep === 1) &&
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FolderTreeComp folderList={FileProps.get('folderList')} 
                   onSelectFolder={this.handleSelectFolderFile} 
                 />
               </Box>
             </Grid>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <Box style={{ height: 300, margin: '10px 10px 10px 5px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FileListComp onSelectFile={this.handleSelectFolderFile} />
               </Box>
             </Grid>
@@ -273,7 +280,7 @@ class ShareConfDialog extends Component {
                 </Grid>
               </Grid>
               <Grid item xs={6} >
-                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                   <DeptTreeComp deptList={DeptUserProps.get('deptList')}
                     shareDepts={ShareProps.get('shareDepts')}
                     onSelectDept={this.handleSelectDept}
@@ -282,7 +289,7 @@ class ShareConfDialog extends Component {
                 </Box>
               </Grid>
               <Grid item xs={6} >
-                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <Box style={{ height: 300, margin: '10px 10px 10px 5px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                   <UserListComp
                     userListData={DeptUserProps.get('userListData')}
                     shareUsers={ShareProps.get('shareUsers')}
