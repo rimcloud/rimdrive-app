@@ -57,6 +57,8 @@ class ShareConfDialog extends Component {
     this.props.FileActions.setSelectedItem({
       selectedItem: null
     });
+    this.props.FileActions.setFileListEmpty();
+    this.props.DeptUserActions.setUserListEmpty();
     
     this.props.onDialogClose();
   }

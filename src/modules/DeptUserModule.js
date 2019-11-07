@@ -5,6 +5,7 @@ import { requestPostAPI } from 'components/utils/RCRequester';
 
 const GET_DEPTLIST_SUCCESS = 'user/GET_DEPTLIST_SUCCESS';
 const GET_USERLIST_SUCCESS = 'user/GET_USERLIST_SUCCESS';
+const SET_USERLISTEMPTY_SUCCESS = 'user/SET_USERLISTEMPTY_SUCCESS';
 
 const SET_DEPTINFO_SUCCESS = 'user/SET_DEPTINFO_SUCCESS';
 const SET_SELECTEDUSER_SUCCESS = 'user/SET_SELECTEDUSER_SUCCESS';
@@ -148,6 +149,12 @@ export const getUserList = (param) => dispatch => {
     });
 }
 
+export const setUserListEmpty = () => dispatch => {
+    return dispatch({
+        type: SET_USERLISTEMPTY_SUCCESS
+    });
+}
+
 export default handleActions({
 
     [GET_DEPTLIST_SUCCESS]: (state, action) => {
@@ -157,6 +164,9 @@ export default handleActions({
     [GET_USERLIST_SUCCESS]: (state, action) => {
         const data = action.response.data;
         return state.set('userListData', fromJS(data.data));
+    },
+    [SET_USERLISTEMPTY_SUCCESS]: (state, action) => {
+        return state.set('userListData', List([]));
     },
     [SET_DEPTINFO_SUCCESS]: (state, action) => {
         return state.set('selectedUser', null)

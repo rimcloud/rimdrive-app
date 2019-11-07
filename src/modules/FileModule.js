@@ -7,6 +7,7 @@ const GET_FOLDERLIST_SUCCESS = 'file/GET_FOLDERLIST_SUCCESS';
 const SET_SELECTEDITEM_SUCCESS = 'file/SET_SELECTEDITEM_SUCCESS';
 
 const GET_FILELIST_SUCCESS = 'file/GET_FILELIST_SUCCESS';
+const SET_FILELISTEMPTY_SUCCESS = 'file/SET_FILELISTEMPTY_SUCCESS';
 const SET_SELECTEDFILE_SUCCESS = 'file/SET_SELECTEDFILE_SUCCESS';
 
 const INIT_SYNCDATA_SUCCESS = 'global/INIT_SYNCDATA_SUCCESS';
@@ -47,6 +48,13 @@ export const showFilesInFolder = (param) => dispatch => {
         console.log('error : ', error);
     });
 };
+
+export const setFileListEmpty = () => dispatch => {
+    return dispatch({
+        type: SET_FILELISTEMPTY_SUCCESS
+    });
+}
+
 
 // const makeFolderListOLD = (data, folderList) => {
 //     if(data && data.length > 0) {
@@ -194,6 +202,9 @@ export default handleActions({
     },
     [GET_FILELIST_SUCCESS]: (state, action) => {
         return state.set('listData', action.listData);
+    },
+    [SET_FILELISTEMPTY_SUCCESS]: (state, action) => {
+        return state.set('listData', []);
     },
     [SET_SELECTEDITEM_SUCCESS]: (state, action) => {
         return state.set('selectedItem', action.selectedItem);

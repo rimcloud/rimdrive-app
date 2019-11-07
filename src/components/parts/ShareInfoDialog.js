@@ -51,7 +51,6 @@ class ShareInfoDialog extends Component {
 
     let isChanged = false;
     if (compareShareInfo(ShareProps.get('formerShareDepts'), ShareProps.get('shareDepts'))) {
-      isChanged = false;
       if (compareShareInfo(ShareProps.get('formerShareUsers'), ShareProps.get('shareUsers'))) {
         isChanged = false;
       } else {

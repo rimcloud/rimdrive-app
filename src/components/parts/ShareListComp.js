@@ -6,6 +6,8 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+
 import * as GlobalActions from 'modules/GlobalModule';
 import * as FileActions from 'modules/FileModule';
 import * as ShareActions from 'modules/ShareModule';
@@ -62,6 +64,7 @@ class ShareListComp extends Component {
 
     return (
         <Card className={classes.card}>
+          <RCContentCardHeader title="공유대상" subheader=""/>
           <CardContent>
             <Table className={classes.table} size="small" stickyHeader>
               <TableHead>

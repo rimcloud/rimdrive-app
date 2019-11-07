@@ -111,6 +111,7 @@ class SharePage extends Component {
                         // get share info
                         if (res.status) {
                             if (res.status.result === 'SUCCESS') {
+                                ShareActions.getShareInfoList();
                                 alert('공유정보가 삭제되었습니다.');
                             } else if (res.status.result === 'FAIL') {
                                 alert(res.status.message);

@@ -118,6 +118,12 @@ export const setShareInfoCreate = (param) => dispatch => {
         (response) => {
             try {
                 if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
+                    // success update                    
+                    dispatch({ 
+                        type: SET_SHAREINFO_SUCCESS, 
+                        shareDepts: param.shareDepts, 
+                        shareUsers: param.shareUsers 
+                    });
 
                 } else {
 
@@ -167,19 +173,18 @@ export const setShareInfoUpdate = (param) => dispatch => {
         modifyShareList = modifyShareList.concat(param.shareUsers.toJS());
     }
 
-    let deleteShareList = [];
-    if(param.formerShareDepts !== undefined && param.formerShareDepts.size > 0) {
-        deleteShareList = deleteShareList.concat(param.formerShareDepts.toJS());
-    }
-    if(param.formerShareUsers !== undefined && param.formerShareUsers.size > 0) {
-        deleteShareList = deleteShareList.concat(param.formerShareUsers.toJS());
-    }
+    // let deleteShareList = [];
+    // if(param.formerShareDepts !== undefined && param.formerShareDepts.size > 0) {
+    //     deleteShareList = deleteShareList.concat(param.formerShareDepts.toJS());
+    // }
+    // if(param.formerShareUsers !== undefined && param.formerShareUsers.size > 0) {
+    //     deleteShareList = deleteShareList.concat(param.formerShareUsers.toJS());
+    // }
 
     return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/update.ros', {
         uid: param.uid,
         shid: param.shid,
-        it: JSON.stringify(modifyShareList),
-        dt: JSON.stringify(deleteShareList)
+        it: JSON.stringify(modifyShareList)
     }).then(
         (response) => {
             try {
