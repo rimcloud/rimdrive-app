@@ -45,6 +45,7 @@ function StyledTreeItem(props) {
     <TreeItem
       label={
         <div className={classes.labelRoot} onClick={onItemClick}>
+          {props.nodeId !== '0' &&
           <Checkbox style={{ padding: 0 }}
             checked={isChecked}
             onChange={onItemChange}
@@ -53,6 +54,7 @@ function StyledTreeItem(props) {
               'aria-label': 'primary checkbox',
             }}
           />
+          }
           <Typography variant="body2">
             {labelText}
           </Typography>
