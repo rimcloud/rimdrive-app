@@ -113,6 +113,7 @@ class SharePage extends Component {
                             if (res.status.result === 'SUCCESS') {
                                 ShareActions.getShareInfoList();
                                 alert('공유정보가 삭제되었습니다.');
+                                this.handleShareInfoDialogClose();
                             } else if (res.status.result === 'FAIL') {
                                 alert(res.status.message);
                             }
@@ -169,6 +170,7 @@ class SharePage extends Component {
                 // get share info
                 if (res.status) {
                     if (res.status.result === 'SUCCESS') {
+                        ShareActions.getShareInfoList();
                         alert('공유정보가 수정되었습니다.');
                     } else if (res.status.result === 'FAIL') {
                         alert(res.status.message);
@@ -208,7 +210,7 @@ class SharePage extends Component {
                                         <TableCell className={classes.fileTableHeadCell} >수정</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
+                                <TableBody style={{ backgroundColor: '#ffffff' }}>
                                     {shareInfoList.map(sn => {
                                         return (
                                             <TableRow hover className={classes.fileTableRow} key={sn.get('fileId')}

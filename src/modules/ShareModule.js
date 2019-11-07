@@ -40,11 +40,14 @@ export const getShareInfoList = (param) => dispatch => {
                 if(response.data.data.files && response.data.data.files.length > 0) {
                     shareInfoList = response.data.data.files.map((n) => ({
                         fileId : n.fileId,
+                        type: n.fileType,
+                        size: n.size,
                         storageId: n.storageId,
                         name: n.name,
                         path: n.path,
                         shareWithCnt: n.shareWithCnt,
-                        shareWithAll: n.shareWithAll
+                        shareWithAll: n.shareWithAll,
+                        createDate: n.createDate
                     }));
                 }
             }
@@ -122,9 +125,8 @@ export const setShareInfoCreate = (param) => dispatch => {
                     dispatch({ 
                         type: SET_SHAREINFO_SUCCESS, 
                         shareDepts: param.shareDepts, 
-                        shareUsers: param.shareUsers 
+                        shareUsers: param.shareUsers
                     });
-
                 } else {
 
                 }
@@ -189,7 +191,12 @@ export const setShareInfoUpdate = (param) => dispatch => {
         (response) => {
             try {
                 if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-
+                    // success update                    
+                    dispatch({ 
+                        type: SET_SHAREINFO_SUCCESS, 
+                        shareDepts: param.shareDepts, 
+                        shareUsers: param.shareUsers
+                    });
                 } else {
 
                 }
@@ -334,7 +341,6 @@ export default handleActions({
             if(action.isChecked) {
                 shareUsers = shareUsers.push(action.selectedUser);
             } else {
-                console.log('>>>>>>>>>>> shareUsers : ', shareUsers.toJS());
                 const i = shareUsers.findIndex((n) => (n.get('shareWithUid') === action.selectedUser.get('shareWithUid')));
                 shareUsers = shareUsers.delete(i);
             }
@@ -354,7 +360,11 @@ export default handleActions({
         return state.set('shareUsers', shareUsers);
     },
     [SET_SHAREINFO_SUCCESS]: (state, action) => {
-        return state;
+        return state.set('shareDepts', action.shareDepts)
+                .set('formerShareDepts', action.shareDepts)
+                .set('shareUsers', action.shareUsers)
+                .set('formerShareUsers', action.shareUsers);
+                //.set('shareInfo', action.shareInfo);
     }
 
 }, initialState);

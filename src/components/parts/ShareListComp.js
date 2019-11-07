@@ -78,7 +78,7 @@ class ShareListComp extends Component {
                   }
                 </TableRow>
               </TableHead>
-              <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
+              <TableBody style={{ backgroundColor: '#ffffff' }}>
                 {shareDepts.map(dept => {
                   return (
                     <TableRow hover className={classes.fileTableRow} key={dept.get('shareWithUid')}>
