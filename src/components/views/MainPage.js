@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router';
 import path from 'path';
  
 import { bindActionCreators } from 'redux';
@@ -77,7 +78,12 @@ class MainPage extends Component {
 
     render() {
         const { classes } = this.props;
+        const { AccountProps } = this.props;
         const selectedTab = this.state.selectedTab;
+
+        if (AccountProps && AccountProps.get('userToken') === '') {
+            return <Redirect push to ='/Login' />;
+        }
 
         return (
             <React.Fragment>
@@ -102,7 +108,8 @@ class MainPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    GlobalProps: state.GlobalModule
+    GlobalProps: state.GlobalModule,
+    AccountProps: state.AccountModule
 });
 
 const mapDispatchToProps = (dispatch) => ({

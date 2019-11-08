@@ -6,7 +6,8 @@ import { ipcRenderer } from 'electron';
 const COMMON_PENDING = 'account/COMMON_PENDING';
 const COMMON_FAILURE = 'account/COMMON_FAILURE';
 const CHG_ACCOUNTPARAM_DATA = 'account/CHG_ACCOUNTPARAM_DATA';
-const REQ_LOGIN_PROCESS = 'account/REQ_LOGIN_PROCESS';
+const SET_LOGIN_SUCCESS = 'account/SET_LOGIN_SUCCESS';
+const SET_LOGIN_FAIL = 'account/SET_LOGIN_FAIL';
 
 const REQ_LOGINUSER_INFO = 'account/REQ_LOGINUSER_INFO';
 
@@ -32,40 +33,21 @@ export const reqLoginProcess = (userId, password) => dispatch => {
     // console.log('reqLoginProcess result ::-> ', ipcResult);
     if(ipcResult && ipcResult.result === 'SUCCESS') {
         return dispatch({
-            type: REQ_LOGIN_PROCESS,
+            type: SET_LOGIN_SUCCESS,
+            userToken: '',
+
+
+
             name: 'userToken',
             value: 'userToken'
         });
     } else {
         return dispatch({
-            type: REQ_LOGIN_PROCESS,
-            name: 'userToken',
-            value: ''
+            type: SET_LOGIN_FAIL,
+            message: ipcResult.message,
+            resultCode: ipcResult.resultCode
         });
     }
-
-    // return requestPostAPI('vdrive/api/login.rim', {
-    //     userid: userId,
-    //     passwd: password
-    // }).then(
-    //     (response) => {
-    //         dispatch({
-    //             type: REQ_LOGIN_PROCESS,
-    //             response: response
-    //         });
-    //     }
-    // ).catch(error => {
-    //     console.log('error :::: ', error);
-    //     // 404
-    //     // Test CODE
-    //     dispatch({
-    //         type: REQ_LOGIN_PROCESS,
-    //         name: 'userToken',
-    //         value: 'ttt'
-    //     });
-
-    //     // dispatch({ type: COMMON_FAILURE, error: error });
-    // });
 };
 
 export const reqLoginUserInfo = (userId) => dispatch => {
@@ -91,21 +73,6 @@ export const reqLoginUserInfo = (userId) => dispatch => {
             padata: null
         });
     }
-
-    // if(ipcResult && ipcResult.result === 'SUCCESS') {
-    //     return dispatch({
-    //         type: REQ_LOGIN_PROCESS,
-    //         name: 'userToken',
-    //         value: 'userToken'
-    //     });
-    // } else {
-    //     return dispatch({
-    //         type: REQ_LOGIN_PROCESS,
-    //         name: 'userToken',
-    //         value: ''
-    //     });
-    // }
-
 };
 
 export default handleActions({
@@ -127,8 +94,11 @@ export default handleActions({
         const newState = state.set('gadata', action.gadata).set('padata', action.padata);
         return newState;
     },
-    [REQ_LOGIN_PROCESS]: (state, action) => {
+    [SET_LOGIN_SUCCESS]: (state, action) => {
         return state.merge({[action.name]: action.value});
+    },
+    [SET_LOGIN_FAIL]: (state, action) => {
+        return state.set('message', action.message).set('resultCode', action.resultCode).set('loginResult', 'FAIL');
     }
 
 }, initialState);

@@ -11,7 +11,7 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
+        width: 680,
         height: 600,
         webPreferences: {
             nodeIntegration: true,
@@ -101,7 +101,7 @@ function createWindow() {
         // const qs = require('qs');
         const request = net.request({
             method: 'GET',
-            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=${arg.userId}&passwd=${arg.password}`
+            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=${encodeURI(arg.userId)}&passwd=${encodeURI(arg.password)}`
         });
         request.on('response', (response) => {
             // console.log(`STATUS: ${response.statusCode}`);
@@ -113,7 +113,7 @@ function createWindow() {
                     if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
                         event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
                     } else {
-                        event.returnValue = {'result': 'FAIL', 'message': responseObj.status.message};
+                        event.returnValue = responseObj.status;
                     }
                 })
             } else {
@@ -123,10 +123,6 @@ function createWindow() {
                 console.log('No more data in response.')
             })
         });
-        // request.write(qs.stringify({
-        //     'userid': arg.userId,
-        //     'passwd': arg.password
-        // }));
         request.end();
     });
 
@@ -138,7 +134,6 @@ function createWindow() {
             .catch(e => {
                 console.log('[[download]]  catch e =>>>> ', e);
             });
-
     });
 }
 
