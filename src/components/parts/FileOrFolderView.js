@@ -48,7 +48,7 @@ class FileOrFolderView extends Component {
       <div>
         {(selectedFile) &&
           <Card elevation={0} style={{backgroundColor:'#efefef'}}>
-          <RCContentCardHeader title="공유 폴더" subheader=""/>
+          <RCContentCardHeader title="공유 파일" subheader=""/>
           <CardContent>          
           <Grid container spacing={3}>
             <Grid item xs={8}>
@@ -69,7 +69,7 @@ class FileOrFolderView extends Component {
         }
         {(selectedFolder) &&
           <Card elevation={0} style={{backgroundColor:'#efefef'}}>
-          <RCContentCardHeader title="공유 파일" subheader=""/>
+          <RCContentCardHeader title="공유 폴더" subheader=""/>
           <CardContent>          
           <Grid container spacing={3}>
             <Grid item xs={8}>

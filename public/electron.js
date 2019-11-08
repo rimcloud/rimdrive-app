@@ -125,6 +125,34 @@ function createWindow() {
         });
         request.end();
     });
+    ipcMain.on('logout-to-server', (event, arg) => {
+        const { net } = require('electron');
+        const request = net.request({
+            method: 'GET',
+            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/logout.ros?userid=${encodeURI(arg.userId)}`
+        });
+        request.on('response', (response) => {
+            console.log(`STATUS: ${response.statusCode}`);
+            console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            if(response.statusCode === 200) {
+                response.on('data', (chunk) => {
+                    const responseObj = JSON.parse(chunk.toString());
+                    console.log('responseObj (BODY) : ', responseObj);
+                    if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
+                        event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
+                    } else {
+                        event.returnValue = responseObj.status;
+                    }
+                })
+            } else {
+                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+            }
+            response.on('end', () => {
+                console.log('No more data in response.')
+            })
+        });
+        request.end();
+    });
 
     ipcMain.on('download-cloud', async (event, arg) => {
         await download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)

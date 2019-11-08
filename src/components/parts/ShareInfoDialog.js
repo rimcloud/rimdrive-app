@@ -174,8 +174,7 @@ class ShareInfoDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
-
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
           <Grid item xs={6} style={{ paddingTop: 20 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
@@ -208,9 +207,10 @@ class ShareInfoDialog extends Component {
               />
             </Box>
           </Grid>
+          <Grid item xs={12}>
+            <ShareListComp isEdit={true} />
+          </Grid>
         </Grid>
-
-        <ShareListComp isEdit={true} />
       </Dialog>
     );
   }

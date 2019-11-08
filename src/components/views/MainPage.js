@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 
 
 import * as GlobalActions from 'modules/GlobalModule';
+import * as AccountActions from 'modules/AccountModule';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -19,6 +20,7 @@ import FileSync from 'lowdb/adapters/FileSync';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Button from '@material-ui/core/Button';
 
 import InfoPage from 'components/views/InfoPage';
 import SharePage from 'components/views/SharePage';
@@ -75,6 +77,10 @@ class MainPage extends Component {
         });
     };
 
+    handleLogout = () => {
+        const { AccountProps, AccountActions } = this.props;
+        AccountActions.reqLogoutProcess(AccountProps.get('userId'));
+    }
 
     render() {
         const { classes } = this.props;
@@ -94,13 +100,14 @@ class MainPage extends Component {
                             <Tab label="정보" {...a11yProps(0)} />
                             <Tab label="공유" {...a11yProps(1)} />
                             <Tab label="동기화" {...a11yProps(2)} />
-                            <Tab label="환경설정" {...a11yProps(3)} />
                         </Tabs>
+                        <Button style={{position:'absolute',right:'0',marginTop:'6px',color:'lightgray'}} 
+                            onClick={this.handleLogout}
+                        >로그아웃</Button>
                     </AppBar>
                     {selectedTab === 0 && <InfoPage />}
                     {selectedTab === 1 && <SharePage />}
                     {selectedTab === 2 && <SyncPage />}
-                    {selectedTab === 3 && <SetupPage />}
                 </div>
             </React.Fragment>
         );
@@ -113,7 +120,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    GlobalActions: bindActionCreators(GlobalActions, dispatch)
+    GlobalActions: bindActionCreators(GlobalActions, dispatch),
+    AccountActions: bindActionCreators(AccountActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(MainPage));

@@ -6,8 +6,11 @@ import { ipcRenderer } from 'electron';
 const COMMON_PENDING = 'account/COMMON_PENDING';
 const COMMON_FAILURE = 'account/COMMON_FAILURE';
 const CHG_ACCOUNTPARAM_DATA = 'account/CHG_ACCOUNTPARAM_DATA';
+
 const SET_LOGIN_SUCCESS = 'account/SET_LOGIN_SUCCESS';
 const SET_LOGIN_FAIL = 'account/SET_LOGIN_FAIL';
+const SET_LOGOUT_SUCCESS = 'account/SET_LOGOUT_SUCCESS';
+const SET_LOGOUT_FAIL = 'account/SET_LOGOUT_FAIL';
 
 const REQ_LOGINUSER_INFO = 'account/REQ_LOGINUSER_INFO';
 
@@ -34,16 +37,29 @@ export const reqLoginProcess = (userId, password) => dispatch => {
     if(ipcResult && ipcResult.result === 'SUCCESS') {
         return dispatch({
             type: SET_LOGIN_SUCCESS,
-            userToken: '',
-
-
-
-            name: 'userToken',
-            value: 'userToken'
+            userToken: '__rimdrive__token__'
         });
     } else {
         return dispatch({
             type: SET_LOGIN_FAIL,
+            message: ipcResult.message,
+            resultCode: ipcResult.resultCode
+        });
+    }
+};
+
+export const reqLogoutProcess = (userId) => dispatch => {
+    dispatch({type: COMMON_PENDING});
+    const ipcResult = ipcRenderer.sendSync('logout-to-server', {'userId': userId});
+    // console.log('reqLoginProcess result ::-> ', ipcResult);
+    if(ipcResult && ipcResult.result === 'SUCCESS') {
+        return dispatch({
+            type: SET_LOGOUT_SUCCESS,
+            userToken: ''
+        });
+    } else {
+        return dispatch({
+            type: SET_LOGOUT_FAIL,
             message: ipcResult.message,
             resultCode: ipcResult.resultCode
         });
@@ -95,10 +111,16 @@ export default handleActions({
         return newState;
     },
     [SET_LOGIN_SUCCESS]: (state, action) => {
-        return state.merge({[action.name]: action.value});
+        return state.set('userToken', action.userToken).set('message', action.message);
     },
     [SET_LOGIN_FAIL]: (state, action) => {
         return state.set('message', action.message).set('resultCode', action.resultCode).set('loginResult', 'FAIL');
+    },
+    [SET_LOGOUT_SUCCESS]: (state, action) => {
+        return state.set('userToken', action.userToken);
+    },
+    [SET_LOGOUT_FAIL]: (state, action) => {
+        return state.set('message', action.message).set('resultCode', action.resultCode).set('logoutResult', 'FAIL');
     }
 
 }, initialState);

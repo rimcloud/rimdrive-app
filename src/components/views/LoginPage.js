@@ -48,7 +48,13 @@ class LoginPage extends Component {
             return <Redirect push to ='/Main' />;
         }
 
-        const msg = (AccountProps && AccountProps.get('loginResult') === 'FAIL') ? AccountProps.get('message') : 'ID, Password를 입력하세요.';
+        let msg = 'ID, Password를 입력하세요.';
+        if(AccountProps) {
+            console.log('AccountProps -->>> ', AccountProps.toJS());
+            if(AccountProps.get('loginResult') === 'FAIL') {
+                msg = AccountProps.get('message');
+            }
+        }
 
         return (
             <div className={classes.homePage}>

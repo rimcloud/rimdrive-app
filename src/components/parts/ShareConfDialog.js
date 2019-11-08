@@ -236,7 +236,7 @@ class ShareConfDialog extends Component {
         </AppBar>
         <Divider />
 
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
           <Grid item xs={10} style={{ paddingTop: 20 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
@@ -253,7 +253,8 @@ class ShareConfDialog extends Component {
             <Grid item xs={6}>
               <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FolderTreeComp folderList={FileProps.get('folderList')} 
-                  onSelectFolder={this.handleSelectFolderFile} 
+                  onSelectFolder={this.handleSelectFolderFile}
+                  hasTitle={true}
                 />
               </Box>
             </Grid>
@@ -272,37 +273,37 @@ class ShareConfDialog extends Component {
           </Grid>
         }
         {(this.state.shareStep === 2) &&
-          <div>
-            <Grid container style={{ margin: 0 }}>
-              <Grid item xs={12} style={{ padding: 10 }}>
-                <Grid container style={{ margin: 0 }}>
-                  <Grid item xs={12}>
-                    <FileOrFolderView selectedItem={FileProps.get('selectedItem')} onShareStepBack={this.handleShareStepBack} />
-                  </Grid>
+          <Grid container style={{ margin: 0 }}>
+            <Grid item xs={12} style={{ padding: 10 }}>
+              <Grid container style={{ margin: 0 }}>
+                <Grid item xs={12}>
+                  <FileOrFolderView selectedItem={FileProps.get('selectedItem')} onShareStepBack={this.handleShareStepBack} />
                 </Grid>
               </Grid>
-              <Grid item xs={6} >
-                <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
-                  <DeptTreeComp deptList={DeptUserProps.get('deptList')}
-                    shareDepts={ShareProps.get('shareDepts')}
-                    onSelectDept={this.handleSelectDept}
-                    onChangeDeptCheck={this.handleChangeDeptCheck}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={6} >
-                <Box style={{ height: 300, margin: '10px 10px 10px 5px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
-                  <UserListComp
-                    userListData={DeptUserProps.get('userListData')}
-                    shareUsers={ShareProps.get('shareUsers')}
-                    onSelectUser={this.handleSelectUser}
-                    onChangeUserCheck={this.handleChangeUserCheck}
-                  />
-                </Box>
-              </Grid>
             </Grid>
-            <ShareListComp isEdit={true} />
-          </div>
+            <Grid item xs={6} >
+              <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <DeptTreeComp deptList={DeptUserProps.get('deptList')}
+                  shareDepts={ShareProps.get('shareDepts')}
+                  onSelectDept={this.handleSelectDept}
+                  onChangeDeptCheck={this.handleChangeDeptCheck}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={6} >
+              <Box style={{ height: 300, margin: '10px 10px 10px 5px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <UserListComp
+                  userListData={DeptUserProps.get('userListData')}
+                  shareUsers={ShareProps.get('shareUsers')}
+                  onSelectUser={this.handleSelectUser}
+                  onChangeUserCheck={this.handleChangeUserCheck}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} >
+              <ShareListComp isEdit={true} />
+            </Grid>
+          </Grid>
         }
       </Dialog>
     );

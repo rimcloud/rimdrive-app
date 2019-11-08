@@ -89,7 +89,7 @@ class FolderTreeComp extends Component {
   }
 
   render() {
-    const { classes, folderList } = this.props;
+    const { classes, folderList, hasTitle } = this.props;
     // console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
 
     let folderTree = null;
@@ -99,7 +99,7 @@ class FolderTreeComp extends Component {
 
     return (
       <div>
-      {(folderTree) && 
+      {(folderTree && hasTitle) && 
         <Card elevation={0} style={{backgroundColor:'#efefef'}}>
           <RCContentCardHeader title="폴더" subheader=""/>
           <CardContent>
@@ -114,6 +114,17 @@ class FolderTreeComp extends Component {
             </TreeView>
           </CardContent>
         </Card>
+      }
+      {(folderTree && !hasTitle) && 
+        <TreeView
+          className={classes.shareFilesCard}
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          defaultEndIcon={<ItemCircle />}
+          onNodeToggle={this.handleNodeToggle}
+        >
+          {folderTree}
+        </TreeView>
       }
       </div>
     );

@@ -3,8 +3,8 @@
     {
       "no": 1,
       "local": "D:\\test3",
-      "cloud": "/sync3",
-      "type": "m",
+      "cloud": "/test1/bbb",
+      "type": "a",
       "status": "on",
       "files": []
     }

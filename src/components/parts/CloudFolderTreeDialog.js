@@ -79,8 +79,9 @@ class CloudFolderTreeDialog extends Component {
         >폴더선택</DialogTitle>
         <DialogContent>
         <FolderTreeComp folderList={FileProps.get('folderList')} 
-                  onSelectFolder={this.handleSelectCloudFolder} 
-                />
+          onSelectFolder={this.handleSelectCloudFolder} 
+          hasTitle={false}
+        />
         </DialogContent>
         <DialogActions>
           <Grid container spacing={3}>
