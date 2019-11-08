@@ -36,7 +36,6 @@ export function grRequestPromise(url, param) {
   });
 };
 
-
 export function requestPostAPI(url, param, headers) {
   return axios({
     method: "post",
@@ -75,17 +74,13 @@ export function requestMultipartFormAPI(url, param, headers) {
       headers: { "Content-Type": "multipart/form-data" },
       transformRequest: [
         function(data, headers) {
-
           // const formData = new FormData();
           // formData.append('wallpaperFile','file');
           // formData.append('wallpaperNm', 'FILENAME_777');
-
           let formData = new FormData();
           for( let key in data ) {
             formData.append(key, data[key]);
           }
-
-
           return formData;
         }
       ],
