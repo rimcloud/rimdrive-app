@@ -1,34 +1,3 @@
 {
-  "files": [
-    {
-      "name": "folder1",
-      "type": "D",
-      "size": 0,
-      "targetPath": "D:\\test3",
-      "relPath": "/folder1",
-      "pathHash": "e42aba4fef02127d34f750bfccf4e91c1bbb1e62cfbb316a707df0b895ee8179",
-      "ctime": "2019-10-29 17:42:50",
-      "mtime": "2019-10-29 17:42:46"
-    },
-    {
-      "name": "jpeg_43.jpg",
-      "type": "F",
-      "size": 145752,
-      "targetPath": "D:\\test3",
-      "relPath": "/jpeg_43.jpg",
-      "pathHash": "870e874cf6927e33cbff0efb1e0dc75e1b63f0d71b75d31892b77a3d1bde4817",
-      "ctime": "2019-10-22 18:21:16",
-      "mtime": "2019-10-22 18:8:29"
-    },
-    {
-      "name": "SqlLite 스키마.txt",
-      "type": "F",
-      "size": 788,
-      "targetPath": "D:\\test3",
-      "relPath": "/SqlLite 스키마.txt",
-      "pathHash": "8cc33294ba6ab71c2f64cc08f3880a7c9d1183a17d6f97c3f5222462a2a18b29",
-      "ctime": "2019-10-15 18:14:7",
-      "mtime": "2019-10-15 18:14:4"
-    }
-  ]
+  "files": []
 }

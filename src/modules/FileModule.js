@@ -27,7 +27,7 @@ export const showFilesInFolder = (param) => dispatch => {
             params: {
                 'userid': encodeURI(param.userId), 
                 'method': 'FINDFILES',
-                'path': encodeURI(`/개인저장소/모든파일${param.path}`)
+                'path': `/개인저장소/모든파일${param.path}`
             }
         });
         if(ipcResult) {
@@ -87,7 +87,7 @@ export const getDriveFolderList = (param) => dispatch => {
             params: {
                 'userid': encodeURI(param.userId), 
                 'method': 'FOLDERLISTALL',
-                'path': encodeURI(`/개인저장소/모든파일`)
+                'path': `/개인저장소/모든파일`
             }
         });
         if(ipcResult) {

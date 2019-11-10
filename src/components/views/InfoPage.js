@@ -8,11 +8,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
 
-import FormData from 'form-data';
-import fs from 'fs';
-import axios from 'axios';
-import path from 'path';
-
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -41,15 +36,11 @@ class InfoPage extends Component {
     componentDidMount() {
         const { AccountProps, AccountActions } = this.props;
         // load and init rimdrive config
-console.log('reqLoginUserInfo ########################################');
         AccountActions.reqLoginUserInfo(AccountProps.get('userId'));
     }
 
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
-        console.log('AccountProps ::: ', (AccountProps)
-            ? AccountProps.toJS()
-            : '--');
         AccountActions.reqLoginProcess(AccountProps.get('id'), AccountProps.get('password'));
     }
 

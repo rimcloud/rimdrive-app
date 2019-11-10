@@ -81,8 +81,8 @@ class ShareConfDialog extends Component {
     ShareActions.getShareInfo({
       shareId: this.props.AccountProps.get('userId'),
       fileId: FileProps.getIn(['selectedItem', 'id'])
-    }).then((data) => {
-      if (data !== undefined) {
+    }).then((res) => {
+      if (res.data !== undefined) {
         this.setState({ shareStep: 2, actType: 'UPDATE' });
       } else {
         this.setState({ shareStep: 2, actType: 'CREATE' });
@@ -162,53 +162,6 @@ class ShareConfDialog extends Component {
       id: id,
       value: value
     });
-  }
-
-  handleShareInfoSave = () => {
-    const { FileProps } = this.props;
-    const { ShareProps, ShareActions } = this.props;
-
-    if (this.state.actType === 'CREATE') {
-      // create share data
-      ShareActions.setShareInfoCreate({
-        userId: this.props.AccountProps.get('userId'),
-        fileId: FileProps.getIn(['selectedItem', 'id']),
-        shareDepts: ShareProps.get('shareDepts'),
-        shareUsers: ShareProps.get('shareUsers')
-      }).then((res) => {
-        // get share info
-        if (res.status) {
-          if (res.status.result === 'SUCCESS') {
-            alert('공유정보가 생성되었습니다.');
-          } else if (res.status.result === 'FAIL') {
-            alert(res.status.message);
-          }
-        } else {
-          alert('공유정보 생성중 오류가 발생하였습니다.');
-        }
-      });
-    } else if (this.state.actType === 'UPDATE') {
-      // update share data
-      ShareActions.setShareInfoUpdate({
-        userId: this.props.AccountProps.get('userId'),
-        shareId: ShareProps.getIn(['shareInfo', 'shareId']),
-        shareDepts: ShareProps.get('shareDepts'),
-        shareUsers: ShareProps.get('shareUsers'),
-        formerShareDepts: ShareProps.get('formerShareDepts'),
-        formerShareUsers: ShareProps.get('formerShareUsers'),
-      }).then((res) => {
-        // get share info
-        if (res.status) {
-          if (res.status.result === 'SUCCESS') {
-            alert('공유정보가 수정되었습니다.');
-          } else if (res.status.result === 'FAIL') {
-            alert(res.status.message);
-          }
-        } else {
-          alert('공유정보 수정중 오류가 발생하였습니다.');
-        }
-      });
-    }
   }
 
   render() {

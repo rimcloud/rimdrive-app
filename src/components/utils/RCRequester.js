@@ -1,70 +1,7 @@
 import axios from "axios";
-import qs from "qs";
 
-//export const SERVER_URL = '/gpms/';
 export const SERVER_URL = '/';
 
-export function grRequestPromise(url, param) {
-
-  return new Promise((resolve, reject) => {
-    axios({
-      method: (param.method) ? param.method : "post",
-      url: SERVER_URL + url,
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      transformRequest: [
-        function(data, headers) {
-          return qs.stringify(data, {arrayFormat:'brackets'});
-        }
-      ],
-      data: param,
-      withCredentials: false
-    }).then(function(response) {
-
-      if (response.data) {
-        if (response.data.status && response.data.status.result === 'SUCCESS' && response.data.data && response.data.data.length > 0) {
-            resolve(response.data);
-        } else {
-          resolve(response.data);
-        }
-      } else {
-          reject(response);
-      }
-
-    }).catch(function(error) {
-
-    });
-  });
-};
-
-export function requestPostAPI(url, param, headers) {
-  return axios({
-    method: "post",
-    url: url,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    transformRequest: [
-      function(data, headers) {
-        return qs.stringify(data, {arrayFormat:'brackets'});
-      }
-    ],
-    data: param,
-    withCredentials: false
-  });
-};
-
-export function requestGetAPI(url, param, headers) {
-  return axios({
-    method: "get",
-    url: url,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    transformRequest: [
-      function(data, headers) {
-        return qs.stringify(data, {arrayFormat:'brackets'});
-      }
-    ],
-    data: param,
-    withCredentials: false
-  });
-};
 
 // multipartform
 export function requestMultipartFormAPI(url, param, headers) {

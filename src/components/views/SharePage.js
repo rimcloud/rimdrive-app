@@ -113,15 +113,15 @@ class SharePage extends Component {
                     // delete share data
                     ShareActions.setShareInfoDelete(paramObject).then((res) => {
                         // get share info
-                        if (res.status) {
-                            if (res.status.result === 'SUCCESS') {
+                        if (res) {
+                            if (res.result === 'SUCCESS') {
                                 ShareActions.getShareInfoList({
                                     userId: this.props.AccountProps.get('userId')
                                 });
                                 alert('공유정보가 삭제되었습니다.');
                                 this.handleShareInfoDialogClose();
-                            } else if (res.status.result === 'FAIL') {
-                                alert(res.status.message);
+                            } else if (res.result === 'FAIL') {
+                                alert(res.message);
                             }
                         } else {
                             alert('공유정보 삭제중 오류가 발생하였습니다.');
@@ -150,40 +150,38 @@ class SharePage extends Component {
                 shareUsers: ShareProps.get('shareUsers')
             }).then((res) => {
                 // get share info
-                if (res.status) {
-                    if (res.status.result === 'SUCCESS') {
+                if (res) {
+                    if (res.result === 'SUCCESS') {
                         ShareActions.getShareInfoList({
                             userId: this.props.AccountProps.get('userId')
                         });
                         alert('공유정보가 생성되었습니다.');
-                    } else if (res.status.result === 'FAIL') {
-                        alert(res.status.message);
+                    } else if (res.result === 'FAIL') {
+                        alert(res.message);
                     }
                 } else {
                     alert('공유정보 생성중 오류가 발생하였습니다.');
                 }
-
-
             });
         } else if (actType === 'UPDATE') {
             // update share data
             ShareActions.setShareInfoUpdate({
                 userId: this.props.AccountProps.get('userId'),
-                shareid: ShareProps.getIn(['shareInfo', 'shareId']),
+                shareId: ShareProps.getIn(['shareInfo', 'shareId']),
                 shareDepts: ShareProps.get('shareDepts'),
                 shareUsers: ShareProps.get('shareUsers'),
                 formerShareDepts: ShareProps.get('formerShareDepts'),
                 formerShareUsers: ShareProps.get('formerShareUsers'),
             }).then((res) => {
                 // get share info
-                if (res.status) {
-                    if (res.status.result === 'SUCCESS') {
+                if (res) {
+                    if (res.result === 'SUCCESS') {
                         ShareActions.getShareInfoList({
                             userId: this.props.AccountProps.get('userId')
                         });
                         alert('공유정보가 수정되었습니다.');
-                    } else if (res.status.result === 'FAIL') {
-                        alert(res.status.message);
+                    } else if (res.result === 'FAIL') {
+                        alert(res.message);
                     }
                 } else {
                     alert('공유정보 수정중 오류가 발생하였습니다.');

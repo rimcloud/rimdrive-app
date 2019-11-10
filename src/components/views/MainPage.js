@@ -25,7 +25,6 @@ import Button from '@material-ui/core/Button';
 import InfoPage from 'components/views/InfoPage';
 import SharePage from 'components/views/SharePage';
 import SyncPage from 'components/views/SyncPage';
-import SetupPage from 'components/views/SetupPage';
 
 
 function a11yProps(index) {

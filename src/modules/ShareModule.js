@@ -97,7 +97,7 @@ export const getShareInfo = (param) => dispatch => {
                     shareInfo: shareInfo
                 });
             }
-            resolve(ipcResult.data);
+            resolve(ipcResult);
         } else {
             reject('error');
         }
@@ -143,7 +143,7 @@ export const setShareInfoDelete = (param) => dispatch => {
             url: '/vdrive/so/api/delete.ros',
             params: {
                 uid: param.userId,
-                shid: param.shareid
+                shid: param.shareId
             }
         });
         if (ipcResult) {
