@@ -1,4 +1,4 @@
-
+const qs = require('qs');
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 
 const path = require('path');
@@ -6,6 +6,16 @@ const { Buffer } = require('buffer');
 const { download } = require('electron-dl');
 
 const isDev = require('electron-is-dev');
+
+const STORAGEPROTOCOL = 'http:';
+const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
+const STORAGEPORT = '48080';
+
+const STORAGEOPTION = {
+    protocol: 'http:',
+    hostname: 'demo-ni.cloudrim.co.kr',
+    port: '48080'
+}
 
 let mainWindow;
 
@@ -65,15 +75,15 @@ function createWindow() {
     });
 
     ipcMain.on('get-data-from-server', (event, arg) => {
-        // console.log('arg ::: ', arg);
+        console.log('arg ::: ', arg);
         const { net } = require('electron');
         const request = net.request({
             method: 'GET',
             url: `http://${arg.url}?${arg.params}`
         });
         request.on('response', (response) => {
-            // console.log(`STATUS: ${response.statusCode}`);
-            // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            console.log(`STATUS: ${response.statusCode}`);
+            console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
             let chunks = new Buffer([]);
             if(response.statusCode === 200) {
                 response.on('data', (chunk) => {
@@ -95,64 +105,108 @@ function createWindow() {
         request.end();
     });
 
-    ipcMain.on('login-to-server', (event, arg) => {
+    ipcMain.on('post-req-to-server', (event, arg) => {
         // console.log('arg ::: ', arg);
         const { net } = require('electron');
-        // const qs = require('qs');
-        const request = net.request({
-            method: 'GET',
-            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=${encodeURI(arg.userId)}&passwd=${encodeURI(arg.password)}`
-        });
-        request.on('response', (response) => {
-            // console.log(`STATUS: ${response.statusCode}`);
-            // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-            if(response.statusCode === 200) {
-                response.on('data', (chunk) => {
-                    const responseObj = JSON.parse(chunk.toString());
-                    // console.log('responseObj (BODY) : ', responseObj);
-                    if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
-                        event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
-                    } else {
-                        event.returnValue = responseObj.status;
+        let params = STORAGEOPTION;
+        params['method'] = 'POST';
+        params['path'] = `${arg.url}?${qs.stringify(arg.params)}`;
+
+        try {
+            console.log('params ::: ', params);
+            const request = net.request(params);
+            request.on('response', (response) => {
+                // console.log(`STATUS: ${response.statusCode}`);
+                // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+                let chunks =  Buffer.alloc(0);
+                if(response.statusCode === 200) {
+                    response.on('data', (chunk) => {
+                        chunks = Buffer.concat([chunks, chunk]);
+                    });
+                } else {
+                    event.returnValue = {"status": { "result": "FAIL", "resultCode": response.statusCode, "message": "server return fail"}};
+                }
+                response.on('end', () => {
+                    try {
+                        const responseObj = JSON.parse(chunks.toString());
+                        console.log('responseObj: >>> ', responseObj);
+                        event.returnValue = responseObj;
+                    } catch (e) {
+                        console.log('Exception e :: ', e);
                     }
+    
                 })
-            } else {
-                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
-            }
-            response.on('end', () => {
-                console.log('No more data in response.')
-            })
-        });
-        request.end();
+            });
+            request.on('error', (error) => {
+                // console.log('[ ERROR ] :: ', error);
+                event.returnValue = {"status": { "result": "FAIL", "resultCode": error, "message": "server error"}};
+            });
+            request.end();
+        } catch(ex) {
+            // console.log('Exception eeeeeeexxxxxxx :: ', ex);
+            event.returnValue = {"status": { "result": "FAIL", "resultCode": ex, "message": "request exception"}};
+        }
     });
-    ipcMain.on('logout-to-server', (event, arg) => {
-        const { net } = require('electron');
-        const request = net.request({
-            method: 'GET',
-            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/logout.ros?userid=${encodeURI(arg.userId)}`
-        });
-        request.on('response', (response) => {
-            console.log(`STATUS: ${response.statusCode}`);
-            console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-            if(response.statusCode === 200) {
-                response.on('data', (chunk) => {
-                    const responseObj = JSON.parse(chunk.toString());
-                    console.log('responseObj (BODY) : ', responseObj);
-                    if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
-                        event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
-                    } else {
-                        event.returnValue = responseObj.status;
-                    }
-                })
-            } else {
-                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
-            }
-            response.on('end', () => {
-                console.log('No more data in response.')
-            })
-        });
-        request.end();
-    });
+
+    // ipcMain.on('login-to-server', (event, arg) => {
+    //     // console.log('arg ::: ', arg);
+    //     const { net } = require('electron');
+    //     // const qs = require('qs');
+    //     const request = net.request({
+    //         method: 'GET',
+    //         url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=${encodeURI(arg.userId)}&passwd=${encodeURI(arg.password)}`
+    //     });
+    //     request.on('response', (response) => {
+    //         // console.log(`STATUS: ${response.statusCode}`);
+    //         // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+    //         if(response.statusCode === 200) {
+    //             response.on('data', (chunk) => {
+    //                 const responseObj = JSON.parse(chunk.toString());
+    //                 // console.log('responseObj (BODY) : ', responseObj);
+    //                 if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
+    //                     event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
+    //                 } else {
+    //                     event.returnValue = responseObj.status;
+    //                 }
+    //             })
+    //         } else {
+    //             event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+    //         }
+    //         response.on('end', () => {
+    //             console.log('No more data in response.')
+    //         })
+    //     });
+    //     request.end();
+    // });
+    
+    // ipcMain.on('logout-to-server', (event, arg) => {
+    //     const { net } = require('electron');
+    //     const request = net.request({
+    //         method: 'GET',
+    //         url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/logout.ros?userid=${encodeURI(arg.userId)}`
+    //     });
+    //     request.on('response', (response) => {
+    //         console.log(`STATUS: ${response.statusCode}`);
+    //         console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+    //         if(response.statusCode === 200) {
+    //             response.on('data', (chunk) => {
+    //                 const responseObj = JSON.parse(chunk.toString());
+    //                 console.log('responseObj (BODY) : ', responseObj);
+    //                 if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
+    //                     event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
+    //                 } else {
+    //                     event.returnValue = responseObj.status;
+    //                 }
+    //             })
+    //         } else {
+    //             event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+    //         }
+    //         response.on('end', () => {
+    //             console.log('No more data in response.')
+    //         })
+    //     });
+    //     request.end();
+    // });
 
     ipcMain.on('download-cloud', async (event, arg) => {
         await download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)

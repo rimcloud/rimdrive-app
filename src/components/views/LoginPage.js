@@ -22,7 +22,9 @@ class LoginPage extends Component {
 
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
-        AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password'));
+        AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password')).then(data => {
+            console.log('handleLoginBtnClick resolve data :::: ', data);
+        });
     }
 
     handleChangeValue = name => event => {
@@ -50,8 +52,7 @@ class LoginPage extends Component {
 
         let msg = 'ID, Password를 입력하세요.';
         if(AccountProps) {
-            console.log('AccountProps -->>> ', AccountProps.toJS());
-            if(AccountProps.get('loginResult') === 'FAIL') {
+            if(AccountProps.get('message') !== undefined && AccountProps.get('message') !== '') {
                 msg = AccountProps.get('message');
             }
         }

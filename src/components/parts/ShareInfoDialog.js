@@ -84,6 +84,7 @@ class ShareInfoDialog extends Component {
   handleSelectItem = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
+        userId: this.props.AccountProps.get('userId'),
         path: selectedItem.path
       });
     }
@@ -97,8 +98,8 @@ class ShareInfoDialog extends Component {
     const { ShareProps, ShareActions } = this.props;
     // create share data
     ShareActions.setShareInfoCreate({
-      uid: 'test01',
-      fid: FileProps.getIn(['selectedItem', 'id']),
+      userId: this.props.AccountProps.get('userId'),
+      fileId: FileProps.getIn(['selectedItem', 'id']),
       shareDepts: ShareProps.get('shareDepts'),
       shareUsers: ShareProps.get('shareUsers')
     });
@@ -218,6 +219,7 @@ class ShareInfoDialog extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
+  AccountProps: state.AccountModule,
   ShareProps: state.ShareModule,
   DeptUserProps: state.DeptUserModule,
   FileProps: state.FileModule

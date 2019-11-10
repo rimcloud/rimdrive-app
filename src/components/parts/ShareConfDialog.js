@@ -66,6 +66,7 @@ class ShareConfDialog extends Component {
   handleSelectFolderFile = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
+        userId: this.props.AccountProps.get('userId'),
         path: selectedItem.path
       });
     }
@@ -78,18 +79,16 @@ class ShareConfDialog extends Component {
     // get before share info by selected folder or file
     const { ShareActions, FileProps } = this.props;
     ShareActions.getShareInfo({
-      sid: 'test01',
-      fid: FileProps.getIn(['selectedItem', 'id'])
-    }).then((res) => {
-
-      // console.log('handleShareStepNext res ::: ', res);
-      if (res.status && res.status.result === 'SUCCESS') {
-        if (res.data) {
-          this.setState({ shareStep: 2, actType: 'UPDATE' });
-        } else {
-          this.setState({ shareStep: 2, actType: 'CREATE' });
-        }
+      shareId: this.props.AccountProps.get('userId'),
+      fileId: FileProps.getIn(['selectedItem', 'id'])
+    }).then((data) => {
+      if (data !== undefined) {
+        this.setState({ shareStep: 2, actType: 'UPDATE' });
+      } else {
+        this.setState({ shareStep: 2, actType: 'CREATE' });
       }
+    }).catch(err => {
+      console.log('ShareConfDialog err : ', err);
     });
   }
 
@@ -172,8 +171,8 @@ class ShareConfDialog extends Component {
     if (this.state.actType === 'CREATE') {
       // create share data
       ShareActions.setShareInfoCreate({
-        uid: 'test01',
-        fid: FileProps.getIn(['selectedItem', 'id']),
+        userId: this.props.AccountProps.get('userId'),
+        fileId: FileProps.getIn(['selectedItem', 'id']),
         shareDepts: ShareProps.get('shareDepts'),
         shareUsers: ShareProps.get('shareUsers')
       }).then((res) => {
@@ -191,8 +190,8 @@ class ShareConfDialog extends Component {
     } else if (this.state.actType === 'UPDATE') {
       // update share data
       ShareActions.setShareInfoUpdate({
-        uid: 'test01',
-        shid: ShareProps.getIn(['shareInfo', 'shareId']),
+        userId: this.props.AccountProps.get('userId'),
+        shareId: ShareProps.getIn(['shareInfo', 'shareId']),
         shareDepts: ShareProps.get('shareDepts'),
         shareUsers: ShareProps.get('shareUsers'),
         formerShareDepts: ShareProps.get('formerShareDepts'),
@@ -312,6 +311,7 @@ class ShareConfDialog extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
+  AccountProps: state.AccountModule,
   DeptUserProps: state.DeptUserModule,
   ShareProps: state.ShareModule,
   FileProps: state.FileModule

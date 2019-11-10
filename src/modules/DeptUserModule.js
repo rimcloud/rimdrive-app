@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { Map, List, fromJS } from 'immutable';
 
-import { requestPostAPI } from 'components/utils/RCRequester';
+import { ipcRenderer } from 'electron';
 
 const GET_DEPTLIST_SUCCESS = 'user/GET_DEPTLIST_SUCCESS';
 const GET_USERLIST_SUCCESS = 'user/GET_USERLIST_SUCCESS';
@@ -23,15 +23,15 @@ export const showDeptInfo = (param) => dispatch => {
 };
 
 const makeDeptList = (data, deptList) => {
-    if(data && data.length > 0) {
+    if (data && data.length > 0) {
         data.forEach((n, i) => {
-            if(n.deptCd !== '0') {
+            if (n.deptCd !== '0') {
                 const parentIndex = deptList.findIndex(e => (e.get('deptCd') === n.uprDeptCd));
-                if(parentIndex > -1) {
+                if (parentIndex > -1) {
                     // 부모가 이미 들어있음, 칠드런에 추가
                     let parent = deptList.get(parentIndex);
                     let children = parent.get('children');
-                    if(!children.includes(n.deptCd)) {
+                    if (!children.includes(n.deptCd)) {
                         children = children.push(n.deptCd);
                         parent = parent.set('children', children);
                         deptList = deptList.set(parentIndex, parent);
@@ -44,22 +44,25 @@ const makeDeptList = (data, deptList) => {
 }
 
 export const getDeptList = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/org/api/deptlist.ros', {
-        param: 'param'
-    }).then(
-        (response) => {
-            let deptList = List([]);
-            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                deptList = fromJS(response.data.data.map(n => {n['children'] = []; return n;}));
-                deptList = makeDeptList(response.data.data, deptList);
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/org/api/deptlist.ros',
+            params: {}
+        });
+        if (ipcResult) {
+            if (ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                let deptList = fromJS(ipcResult.data.map(n => { n['children'] = []; return n; }));
+                deptList = makeDeptList(ipcResult.data, deptList);
+
+                dispatch({
+                    type: GET_DEPTLIST_SUCCESS,
+                    deptList: deptList
+                });
             }
-            dispatch({
-                type: GET_DEPTLIST_SUCCESS,
-                deptList: deptList
-            });
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
     });
 }
 
@@ -71,17 +74,26 @@ export const showUserDetail = (param) => dispatch => {
 };
 
 export const getUserList = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/org/api/emplist.ros', {
-        deptCd: param.selectedDeptCd
-    }).then(
-        (response) => {
-            dispatch({
-                type: GET_USERLIST_SUCCESS,
-                response: response
-            });
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/org/api/emplist.ros',
+            params: {
+                deptCd: param.selectedDeptCd
+            }
+        });
+        if (ipcResult) {
+            if (ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                let userList = ipcResult.data;
+
+                dispatch({
+                    type: GET_USERLIST_SUCCESS,
+                    userList: userList
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
     });
 }
 
@@ -98,19 +110,19 @@ export default handleActions({
         return state.set('deptList', deptList);
     },
     [GET_USERLIST_SUCCESS]: (state, action) => {
-        const data = action.response.data;
-        return state.set('userListData', fromJS(data.data));
+        const userList = action.userList;
+        return state.set('userListData', fromJS(userList));
     },
     [SET_USERLISTEMPTY_SUCCESS]: (state, action) => {
         return state.set('userListData', List([]));
     },
     [SET_DEPTINFO_SUCCESS]: (state, action) => {
         return state.set('selectedUser', null)
-                .set('selectedDept', action.selectedDept);
+            .set('selectedDept', action.selectedDept);
     },
     [SET_SELECTEDUSER_SUCCESS]: (state, action) => {
         return state.set('selectedDept', null)
-                .set('selectedUser', action.selectedUser);
+            .set('selectedUser', action.selectedUser);
     },
 
 }, initialState);

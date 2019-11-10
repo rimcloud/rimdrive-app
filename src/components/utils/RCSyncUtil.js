@@ -58,11 +58,10 @@ const selectLocalFiles = (targetPath, relativePath, innerItems) => {
   return innerItems;
 }
 
-const selectCloudFiles = (targetPath, relativePath, innerItems) => {
-
+const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
     url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=FINDFILES&userid=test01&path=${targetPath}${relativePath}`
+    params: `method=FINDFILES&userid=${userId}&path=${targetPath}${relativePath}`
   });
 
   if (ipcResult.data && ipcResult.data.length > 0) {
@@ -102,35 +101,35 @@ export function getLocalFiles(syncItem) {
   return files;
 };
 
-export function getCloudFiles(syncItem) {
-  const files = selectCloudFiles(`/개인저장소/모든파일${syncItem.cloud}`, '', []);
+export function getCloudFiles(userId, syncItem) {
+  const files = selectCloudFiles(userId, `/개인저장소/모든파일${syncItem.cloud}`, '', []);
   return files;
 };
 
 
-const fileUpload = (localFile, cloudTarget) => {
+const fileUpload = (userId, localFile, cloudTarget) => {
   // log.info('[fileUpload] ============================== localFile : ', localFile);
   const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
 
   // console.log('fileupload == filePath :: ', filePath);
-  
+
   const bbFile = new Blob([fs.readFileSync(filePath)]);
   const form_data = new FormData();
   form_data.append('rimUploadFile', bbFile, path.basename(filePath));
   form_data.append('method', 'UPLOAD');
-  form_data.append('userid', 'test01');
+  form_data.append('userid', userId);
   form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
   // log.info('[fileUpload] ============================== serverUrl : ', serverUrl);
   return axios.post(serverUrl, form_data);
 }
 
-const fileDownload = (cloudFile, localTarget) => {
+const fileDownload = (userId, cloudFile, localTarget) => {
 
   const filePath = path.normalize(localTarget + cloudFile.relPath);
 
   ipcRenderer.send("download-cloud", {
-    url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=test01&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
+    url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=${userId}&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
     properties: {
       directory: filePath,
       targetPath: cloudFile.targetPath,
@@ -144,10 +143,10 @@ ipcRenderer.on("download complete", (event, file) => {
   // console.log('file::: ', file); // Full file path
 });
 
-const createCloudFolder = (cloudTarget, localFile) => {
+const createCloudFolder = (userId, cloudTarget, localFile) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
     url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=MKDIR&userid=test01&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
+    params: `method=MKDIR&userid=${userId}&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
   });
   if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
     // uploadResult = 'SUCCESS';
@@ -156,10 +155,10 @@ const createCloudFolder = (cloudTarget, localFile) => {
   }
 }
 
-const deleteCloudFolder = (cloudTarget, cloudFile) => {
+const deleteCloudFolder = (userId, cloudTarget, cloudFile) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
     url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=DELDIR&userid=test01&path=/개인저장소/모든파일/${cloudTarget + cloudFile.relPath}`
+    params: `method=DELDIR&userid=${userId}&path=/개인저장소/모든파일/${cloudTarget + cloudFile.relPath}`
   });
   if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
     // uploadResult = 'SUCCESS';
@@ -168,10 +167,10 @@ const deleteCloudFolder = (cloudTarget, cloudFile) => {
   }
 }
 
-const deleteCloudFile = (cloudTarget, cloudFile) => {
+const deleteCloudFile = (userId, cloudTarget, cloudFile) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
     url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=DELFILE&userid=test01&path=/개인저장소/모든파일/${cloudTarget + cloudFile.relPath}`
+    params: `method=DELFILE&userid=${userId}&path=/개인저장소/모든파일/${cloudTarget + cloudFile.relPath}`
   });
   if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
     // uploadResult = 'SUCCESS';
@@ -181,10 +180,10 @@ const deleteCloudFile = (cloudTarget, cloudFile) => {
 }
 
 const deleteFolderRecursive = (path) => {
-  if( fs.existsSync(path) ) {
-    fs.readdirSync(path).forEach(function(file,index){
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function (file, index) {
       var curPath = path + "/" + file;
-      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+      if (fs.lstatSync(curPath).isDirectory()) { // recurse
         deleteFolderRecursive(curPath);
       } else { // delete file
         fs.unlinkSync(curPath);
@@ -211,14 +210,14 @@ const createStateItem = (file, localTarget, cloudTarget) => {
   }
 }
 
-const syncLocalToCloud = (localFile, cloudTarget) => {
+const syncLocalToCloud = (userId, localFile, cloudTarget) => {
   // log.info('[syncLocalToCloud] ============================== ', localFile);
   if (localFile.type === 'D') {
     // CREATE FOLDER TO CLOUD
-    createCloudFolder(cloudTarget, localFile);
+    createCloudFolder(userId, cloudTarget, localFile);
   } else {
     // UPLOAD FILE TO CLOUD
-    fileUpload(localFile, cloudTarget);
+    fileUpload(userId, localFile, cloudTarget);
   }
 }
 
@@ -229,31 +228,31 @@ const syncLocalDelete = (localFile) => {
   } else {
     // DELETE LOCAL FILE
     fs.unlinkSync(path.normalize(localFile.targetPath + localFile.relPath));
-  }              
+  }
 }
 
-const syncCloudToLocal = (cloudFile, localTarget) => {
+const syncCloudToLocal = (userId, cloudFile, localTarget) => {
   if (cloudFile.type === 'D') {
     // CREATE FOLDER TO LOCAL
     fs.mkdirSync(`${localTarget}${cloudFile.relPath}/${cloudFile.name}`);
   } else {
     // DOWNLOAD FILE TO CLOUD
-    fileDownload(cloudFile, localTarget);
+    fileDownload(userId, cloudFile, localTarget);
   }
 }
 
-const syncCloudDelete = (cloudFile, cloudTarget) => {
+const syncCloudDelete = (userId, cloudFile, cloudTarget) => {
   if (cloudFile.type === 'D') {
     // DELETE CLOUD FOLDER
-    deleteCloudFolder(cloudTarget, cloudFile);
+    deleteCloudFolder(userId, cloudTarget, cloudFile);
   } else {
     // DELETE CLOUD FILE
-    deleteCloudFile(cloudTarget, cloudFile);
-  }              
+    deleteCloudFile(userId, cloudTarget, cloudFile);
+  }
 }
 
 
-export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
+export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTarget) {
   // log.info('[startCompareData] =================START============= ');
   return new Promise(function (resolve, reject) {
 
@@ -262,7 +261,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
 
     // check First call : stateDB is empty
     if (stateDB.get('files').size().value() < 1) {
-      
+
       let innerItems = [];
       // compare data by two times.
 
@@ -273,7 +272,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
         const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
         if (cloudFile === null || cloudFile === undefined) {
           // LOCAL => CLOUD    // 클라우드데이터에는 없음. 클라우드에 폴더 생성 또는 파일업로드
-          syncLocalToCloud(localFile, cloudTarget);
+          syncLocalToCloud(userId, localFile, cloudTarget);
           innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
         }
       });
@@ -287,7 +286,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
         if (localFile === null || localFile === undefined) {
           if (cloudFile.type === 'D') {
             // CLOUD => LOCAL
-            syncCloudToLocal(cloudFile, localTarget);
+            syncCloudToLocal(userId, cloudFile, localTarget);
             innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
           }
         }
@@ -298,7 +297,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
         if (localFile === null || localFile === undefined) {
           if (cloudFile.type === 'F') {
             // CLOUD => LOCAL
-            syncCloudToLocal(cloudFile, localTarget);
+            syncCloudToLocal(userId, cloudFile, localTarget);
             innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
           }
         }
@@ -324,7 +323,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
         // console.log(' :: localFile :: ', localFile);
         // console.log(' :: localFile path :: ', path.normalize(localFile.targetPath + localFile.relPath));
         // console.log('======================================================');
-        
+
         const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
         const stateFile = stateDB.get('files').find({ pathHash: localFile.pathHash }).value();
 
@@ -333,7 +332,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
           if (stateFile === null || stateFile === undefined) {
             // 작업데이터에 없다 - 로컬에 신규로 생긴 데이터
             // LOCAL => CLOUD
-            syncLocalToCloud(localFile, cloudTarget);
+            syncLocalToCloud(userId, localFile, cloudTarget);
             innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
           } else {
             // 작업데이터에는 있다 - 삭제 또는 클라우드에 생성
@@ -343,7 +342,7 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
               syncLocalDelete(localFile);
             } else {
               // LOCAL => CLOUD
-              syncLocalToCloud(localFile, cloudTarget);
+              syncLocalToCloud(userId, localFile, cloudTarget);
               innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
             }
           }
@@ -354,12 +353,12 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
             if (localFile.mtime > cloudFile.mtime) {
               // 로컬데이터가 최신이므로 클라우드에 폴더 생성 또는 파일 업로드
               // LOCAL => CLOUD
-              syncLocalToCloud(localFile, cloudTarget);
+              syncLocalToCloud(userId, localFile, cloudTarget);
               innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
             } else {
               // 클라우드데이터가 최신이므로 로컬에 폴더 생성 또는 파일 다운로드
               // CLOUD => LOCAL
-              syncCloudToLocal(cloudFile, localTarget);
+              syncCloudToLocal(userId, cloudFile, localTarget);
               innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
             }
           } else {
@@ -367,14 +366,14 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
             if (localFile.size === stateFile.size && localFile.mtime === stateFile.local_mtime) {
               // 동기화 되어 있는 상태, 작업 필요 없음
             } else if (localFile.mtime > cloudFile.mtime) {
-               // 로컬데이터가 최신이므로 클라우드에 폴더 생성 또는 파일 업로드
+              // 로컬데이터가 최신이므로 클라우드에 폴더 생성 또는 파일 업로드
               // LOCAL => CLOUD
-              syncLocalToCloud(localFile, cloudTarget);
+              syncLocalToCloud(userId, localFile, cloudTarget);
               innerItems.push(createStateItem(localFile, localTarget, cloudTarget));
             } else {
               // 클라우드데이터가 최신이므로 로컬에 폴더 생성 또는 파일 다운로드
               // CLOUD => LOCAL
-              syncCloudToLocal(cloudFile, localTarget);
+              syncCloudToLocal(userId, cloudFile, localTarget);
               innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
             }
           }
@@ -393,18 +392,18 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
           // 로컬데이터에 없다
           if (stateFile === null || stateFile === undefined) {
             // 작업데이터에도 없다 (클라우드에 새로생긴 정보, 폴더생성, 파일 다운로드 필요)
-              // CLOUD => LOCAL
-              syncCloudToLocal(cloudFile, localTarget);
-              innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
+            // CLOUD => LOCAL
+            syncCloudToLocal(userId, cloudFile, localTarget);
+            innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
           } else {
             // 작업데이터에는 있다. (클라우드에만 있음, 비교후 클라우드 삭제 또는 다운로드)
             if (cloudFile.size === stateFile.size && cloudFile.mtime === stateFile.cloud_mtime) {
               // 클라우드데이터가 오래된 정보 클라우드 삭제 // DELETE CLOUD FILE
-              syncCloudDelete(cloudFile, cloudTarget);
+              syncCloudDelete(userId, cloudFile, cloudTarget);
             } else {
               // 클라우드데이터가 최신임으로 다운로드 // DOWNLOAD TO LOCAL
               // CLOUD => LOCAL
-              syncCloudToLocal(cloudFile, localTarget);
+              syncCloudToLocal(userId, cloudFile, localTarget);
               innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
             }
           }
@@ -429,15 +428,15 @@ export function startCompareData(localDB, cloudDB, localTarget, cloudTarget) {
       });
 
       // RE-Create state database 
-      stateDB.set({ files: []}).assign({ files: innerItems }).write();
+      stateDB.set({ files: [] }).assign({ files: innerItems }).write();
     }
 
-  //   let c = 0;
-  //   for (let i = 0; i < 99999999; i++) {
-  //     c++;
-  //   }
+    //   let c = 0;
+    //   for (let i = 0; i < 99999999; i++) {
+    //     c++;
+    //   }
 
-  //   resolve(c);
+    //   resolve(c);
   });
 }
 

@@ -57,7 +57,9 @@ class SyncPage extends Component {
         // }
 
         // get cloud folders
-        FileActions.getDriveFolderList();
+        FileActions.getDriveFolderList({
+            userId: this.props.AccountProps.get('userId')
+        });
     }
 
     handleChangeValue = name => event => {
@@ -146,7 +148,7 @@ class SyncPage extends Component {
                     // log.info('[handleStartSyncFile] =[5]=');
 
                     // ## CLOUD FILEs SAVE
-                    const cloudFiles = getCloudFiles(syncItems); /// ???????
+                    const cloudFiles = getCloudFiles(this.props.AccountProps.get('userId'), syncItems); /// ???????
                     // log.info('[handleStartSyncFile] =[6]=');
                     const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
                     // log.info('[handleStartSyncFile] =[7]=');
@@ -156,7 +158,7 @@ class SyncPage extends Component {
 
                     // // ## Compare Data
                     // log.info('[handleStartSyncFile] =[9]=');
-                    startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
+                    startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud)
                         .then((resolvedData) => {
                             // console.log('############### startCompareData.then ################');
                             // console.log('resolvedData :::::::: ', resolvedData);

@@ -30,6 +30,7 @@ class ShareListComp extends Component {
   handleSelectItem = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
+        userId: this.props.AccountProps.get('userId'),
         path: selectedItem.path
       });
     }
@@ -147,6 +148,7 @@ class ShareListComp extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
+  AccountProps: state.AccountModule,
   ShareProps: state.ShareModule,
   FileProps: state.FileModule
 });
