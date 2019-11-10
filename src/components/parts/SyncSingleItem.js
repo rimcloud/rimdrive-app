@@ -56,10 +56,10 @@ class SyncSingleItem extends Component {
     }
 
     handleDblClick = () => {
-        console.log('handleDblClick >>>>>>>>>>>>>>>>>>>>>> ');
+        // console.log('handleDblClick >>>>>>>>>>>>>>>>>>>>>> ');
     }
     handleSingleClick = () => {
-        console.log('handleSingleClick >>>>>>>>>>>>>>>>>>>>>> ');
+        // console.log('handleSingleClick >>>>>>>>>>>>>>>>>>>>>> ');
     }
     
     render() {

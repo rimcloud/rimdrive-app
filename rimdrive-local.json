@@ -1,3 +1,84 @@
 {
-  "files": []
+  "files": [
+    {
+      "name": "eula.1028.txt",
+      "type": "F",
+      "size": 17734,
+      "targetPath": "D:\\test1",
+      "relPath": "/eula.1028.txt",
+      "pathHash": "5a26794b48f3612657d40c671c342ee8667c3bd372e8ca72efa2f49f1a1f44e1",
+      "ctime": "2019-11-10 22:49:9",
+      "mtime": "2019-11-10 22:49:9"
+    },
+    {
+      "name": "eula.1031.txt",
+      "type": "F",
+      "size": 17734,
+      "targetPath": "D:\\test1",
+      "relPath": "/eula.1031.txt",
+      "pathHash": "6ed85d5403e8b8153ff09c0ceaa6b0fd3ab2c7ecfa8c2a061131600f3a849375",
+      "ctime": "2019-11-10 22:49:9",
+      "mtime": "2019-11-10 22:49:9"
+    },
+    {
+      "name": "eula.1033.txt",
+      "type": "F",
+      "size": 10134,
+      "targetPath": "D:\\test1",
+      "relPath": "/eula.1033.txt",
+      "pathHash": "64cbf12992b2205c53a0b4bb6cffa1280bc1da79ae53214814d7c7997b7c4f79",
+      "ctime": "2019-11-10 22:49:9",
+      "mtime": "2019-11-10 22:49:9"
+    },
+    {
+      "name": "folder1",
+      "type": "D",
+      "size": 0,
+      "targetPath": "D:\\test1",
+      "relPath": "/folder1",
+      "pathHash": "e42aba4fef02127d34f750bfccf4e91c1bbb1e62cfbb316a707df0b895ee8179",
+      "ctime": "2019-11-10 22:51:14",
+      "mtime": "2019-11-10 22:51:14"
+    },
+    {
+      "name": "install.res.1028.dll",
+      "type": "F",
+      "size": 76304,
+      "targetPath": "D:\\test1",
+      "relPath": "/folder1/install.res.1028.dll",
+      "pathHash": "53fcbde869b47e91cae6dd30eeafd16ce4260929ada3c94d98102c01a8503166",
+      "ctime": "2019-11-10 22:49:9",
+      "mtime": "2019-11-10 22:49:9"
+    },
+    {
+      "name": "install.res.1031.dll",
+      "type": "F",
+      "size": 96272,
+      "targetPath": "D:\\test1",
+      "relPath": "/folder1/install.res.1031.dll",
+      "pathHash": "16b6a1a628218a57348c50332aa012f58c2185341d8cd33d07fb65f6136e0738",
+      "ctime": "2019-11-10 22:49:9",
+      "mtime": "2019-11-10 22:49:9"
+    },
+    {
+      "name": "testfile.txt",
+      "type": "F",
+      "size": 48,
+      "targetPath": "D:\\test1",
+      "relPath": "/folder1/testfile.txt",
+      "pathHash": "0a3104b0ebabc4796f9b67cb37390c3f7fb66b5a3d37b0d787f66563600e3553",
+      "ctime": "2019-10-03 3:41:41",
+      "mtime": "2019-10-03 3:41:41"
+    },
+    {
+      "name": "install.ini",
+      "type": "F",
+      "size": 843,
+      "targetPath": "D:\\test1",
+      "relPath": "/install.ini",
+      "pathHash": "34c11bcf94c2201672bddc2c1622a209976b631cfea85e1330f12b22f245495b",
+      "ctime": "2018-11-20 23:2:51",
+      "mtime": "2007-11-07 8:0:40"
+    }
+  ]
 }

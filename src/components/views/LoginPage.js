@@ -23,7 +23,7 @@ class LoginPage extends Component {
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
         AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password')).then(data => {
-            console.log('handleLoginBtnClick resolve data :::: ', data);
+            // console.log('handleLoginBtnClick resolve data :::: ', data);
         });
     }
 

@@ -11,7 +11,6 @@ class SetupPage extends Component {
 
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
-        console.log('AccountProps ::: ', (AccountProps) ? AccountProps.toJS() : '--');
         AccountActions.reqLoginProcess(AccountProps.get('id'), AccountProps.get('password'));
     }
 

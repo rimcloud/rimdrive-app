@@ -78,7 +78,7 @@ const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
           mtime: formatDateTime(cf.modifyDate)
         });
         // recursive
-        selectCloudFiles(targetPath, `${relativePath}/${cf.name}`, innerItems);
+        selectCloudFiles(userId, targetPath, `${relativePath}/${cf.name}`, innerItems);
       } else {
         innerItems.push({
           name: cf.name,
