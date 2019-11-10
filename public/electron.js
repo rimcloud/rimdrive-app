@@ -84,7 +84,7 @@ function createWindow() {
         request.on('response', (response) => {
             // console.log(`STATUS: ${response.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-            let chunks = new Buffer([]);
+            let chunks =  Buffer.alloc(0);
             if(response.statusCode === 200) {
                 response.on('data', (chunk) => {
                     chunks = Buffer.concat([chunks, chunk]);
