@@ -47,17 +47,18 @@ function createWindow() {
     // });
 
     ipcMain.on('sync-msg-select-folder', (event, arg) => {
-        dialog.showOpenDialog({
+        const selectedDirectory = dialog.showOpenDialogSync(mainWindow, {
             title: '폴더 선택',
             properties: ['openDirectory'],
             message: '폴더를 선택하세요'
-        }).then(result => {
-            if (result.canceled) {
-                event.returnValue = null;
-            } else {
-                event.returnValue = result.filePaths;
-            }
         });
+
+        if(selectedDirectory != undefined && selectedDirectory.length > 0) {
+            console.log('selectedDirectory[0] ----->>> ', selectedDirectory[0]);
+            event.returnValue = selectedDirectory[0];
+        } else {
+            event.returnValue = null;
+        }
     });
 
     ipcMain.on('sync-msg-select-file', (event, arg) => {
