@@ -10,7 +10,9 @@ export const getAppRoot = () => {
   } else {
     if ( process.platform === 'win32' ) {
       return path.join( electron.remote.app.getAppPath(), '/../../' );
-    }  else {
+    } else if ( process.platform === 'linux' ) {
+      return electron.remote.app.getPath('userData');
+    } else {
       return path.join( electron.remote.app.getAppPath(), '/../../../../' );
     }
   }

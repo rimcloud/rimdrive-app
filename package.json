@@ -18,7 +18,8 @@
       "category": "public.app-category.utilities"
     },
     "linux": {
-      "target": "deb"
+      "target": ["deb"],
+      "category": "Utility"
     },
     "files": [
       "build/**/*",
