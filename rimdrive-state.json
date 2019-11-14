@@ -1,32 +1,3 @@
 {
-  "files": [
-    {
-      "name": "folder1",
-      "type": "D",
-      "size": 0,
-      "pathHash": "e42aba4fef02127d34f750bfccf4e91c1bbb1e62cfbb316a707df0b895ee8179",
-      "local_targetPath": "D:\\test1",
-      "local_relPath": "/folder1/folder1",
-      "local_ctime": "2019-11-10 22:51:14",
-      "local_mtime": "2019-11-10 22:51:14",
-      "cloud_targetPath": "/sync1",
-      "cloud_relPath": "/folder1/folder1",
-      "cloud_ctime": "2019-11-10 22:51:14",
-      "cloud_mtime": "2019-11-10 22:51:14"
-    },
-    {
-      "name": "testfile.txt",
-      "type": "F",
-      "size": 48,
-      "pathHash": "0a3104b0ebabc4796f9b67cb37390c3f7fb66b5a3d37b0d787f66563600e3553",
-      "local_targetPath": "D:\\test1",
-      "local_relPath": "/folder1/testfile.txt/testfile.txt",
-      "local_ctime": "2019-10-03 3:41:41",
-      "local_mtime": "2019-10-03 3:41:41",
-      "cloud_targetPath": "/sync1",
-      "cloud_relPath": "/folder1/testfile.txt/testfile.txt",
-      "cloud_ctime": "2019-10-03 3:41:41",
-      "cloud_mtime": "2019-10-03 3:41:41"
-    }
-  ]
+  "files": []
 }
