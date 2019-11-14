@@ -34,7 +34,7 @@
     "build": "cross-env NODE_PATH=src rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-dev": "concurrently \"cross-env NODE_PATH=src BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron . \"",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "yarn build",
     "electron-pack": "electron-builder -l"
