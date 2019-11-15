@@ -187,7 +187,7 @@ class SyncPage extends Component {
             const driveConfig = GlobalProps.get('driveConfig');
             driveConfig.get('syncItems')
                 .find({ no: syncNo })
-                .assign({ [locType]: pathItems[0] })
+                .assign({ [locType]: selectedPath })
                 .write();
             this.setState({
                 reload: true
