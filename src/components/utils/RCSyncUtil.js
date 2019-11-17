@@ -6,7 +6,7 @@ import fs from 'fs';
 import axios from 'axios';
 import path from 'path';
 import crypto from 'crypto';
-// import log from 'electron-log';
+import log from 'electron-log';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -15,11 +15,22 @@ import { formatDateTime, getAppRoot } from 'components/utils/RCCommonUtil';
 
 const SECRET = 'rimdrivezzang';
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const selectLocalFiles = (targetPath, relativePath, innerItems) => {
+
+
+  // log.info(`targetPath ---------------------> ${targetPath}`);
+
 
   let dirents = fs.readdirSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}`, { withFileTypes: true });
 
   dirents.forEach((path, i) => {
+    
+    // log.info(`dirents path  :: ${path}`);
+
     if (path.isDirectory()) {
       const folderInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}/${path.name}`);
       innerItems.push({
@@ -98,17 +109,19 @@ const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
 
 export function getLocalFiles(syncItem) {
   const files = selectLocalFiles(syncItem.local, '', []);
+  // log.info(`getLocalFiles --> files :: ${files}`);
   return files;
 };
 
 export function getCloudFiles(userId, syncItem) {
   const files = selectCloudFiles(userId, `/개인저장소/모든파일${syncItem.cloud}`, '', []);
+  // log.info(`getCloudFiles --> files :: ${files}`);
   return files;
 };
 
 
 const fileUpload = (userId, localFile, cloudTarget) => {
-  // log.info('[fileUpload] ============================== localFile : ', localFile);
+  // // log.info('[fileUpload] ============================== localFile : ', localFile);
   const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
 
@@ -120,7 +133,7 @@ const fileUpload = (userId, localFile, cloudTarget) => {
   form_data.append('method', 'UPLOAD');
   form_data.append('userid', userId);
   form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
-  // log.info('[fileUpload] ============================== serverUrl : ', serverUrl);
+  // // log.info('[fileUpload] ============================== serverUrl : ', serverUrl);
   return axios.post(serverUrl, form_data);
 }
 
@@ -128,10 +141,13 @@ const fileDownload = (userId, cloudFile, localTarget) => {
 
   const filePath = path.normalize(localTarget + cloudFile.relPath);
 
+  // log.info('fileDownload --> cloudFile ::', cloudFile);
+  log.info('#######[FILE DOWNLOAD]##########################################');
   ipcRenderer.send("download-cloud", {
     url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=${userId}&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
     properties: {
       directory: filePath,
+      filename: cloudFile.name,
       targetPath: cloudFile.targetPath,
       localTarget: localTarget
     }
@@ -211,7 +227,7 @@ const createStateItem = (file, localTarget, cloudTarget) => {
 }
 
 const syncLocalToCloud = (userId, localFile, cloudTarget) => {
-  // log.info('[syncLocalToCloud] ============================== ', localFile);
+  // // log.info('[syncLocalToCloud] ============================== ', localFile);
   if (localFile.type === 'D') {
     // CREATE FOLDER TO CLOUD
     createCloudFolder(userId, cloudTarget, localFile);
@@ -254,12 +270,13 @@ const syncCloudDelete = (userId, cloudFile, cloudTarget) => {
 
 export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTarget) {
   // log.info('[startCompareData] =================START============= ');
-  return new Promise(function (resolve, reject) {
+  //return new Promise(function (resolve, reject) {
 
     const stateAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-state.json`);
     const stateDB = low(stateAdapter);
 
     // check First call : stateDB is empty
+    // log.info(`[startCompareData] ========== state files size ::: ${stateDB.get('files').size().value()} `)
     if (stateDB.get('files').size().value() < 1) {
 
       let innerItems = [];
@@ -297,6 +314,11 @@ export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTar
         if (localFile === null || localFile === undefined) {
           if (cloudFile.type === 'F') {
             // CLOUD => LOCAL
+            // sleep(3000 * (i + 1)).then(() => {
+            //   log.info('syncCloudToLocal========================================');
+            //   syncCloudToLocal(userId, cloudFile, localTarget);
+            //   innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
+            // });
             syncCloudToLocal(userId, cloudFile, localTarget);
             innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
           }
@@ -437,6 +459,6 @@ export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTar
     //   }
 
     //   resolve(c);
-  });
+  //});
 }
 

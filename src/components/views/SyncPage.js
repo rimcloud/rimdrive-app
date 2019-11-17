@@ -4,7 +4,7 @@ import path from 'path';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
-//import log from 'electron-log';
+import log from 'electron-log';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -139,7 +139,7 @@ class SyncPage extends Component {
                     // ## LOCAL FILEs SAVE
                     // log.info('[handleStartSyncFile] =[1]=');
                     const localFiles = getLocalFiles(syncItems);
-                    // log.info('[handleStartSyncFile] =[2]=');
+                    // log.info(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
                     const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
                     // log.info('[handleStartSyncFile] =[3]=');
                     const localDB = low(localAdapter);
@@ -158,11 +158,11 @@ class SyncPage extends Component {
 
                     // // ## Compare Data
                     // log.info('[handleStartSyncFile] =[9]=');
-                    startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud)
-                        .then((resolvedData) => {
+                    startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud);
+                        //.then((resolvedData) => {
                             // console.log('############### startCompareData.then ################');
                             // console.log('resolvedData :::::::: ', resolvedData);
-                        });
+                        //});
                 }
             },
             confirmObject: no

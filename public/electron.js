@@ -6,6 +6,7 @@ const { Buffer } = require('buffer');
 const { download } = require('electron-dl');
 
 const isDev = require('electron-is-dev');
+const log = require('electron-log');
 
 const STORAGEPROTOCOL = 'http:';
 const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
@@ -150,14 +151,52 @@ function createWindow() {
         }
     });
 
-    ipcMain.on('download-cloud', async (event, arg) => {
-        await download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
-            .then(dl => {
-                mainWindow.webContents.send('download complete', dl.getSavePath())
+    ipcMain.on('download-cloud-old', async (event, arg) => {
+
+        // log.info('###########################################################');
+        // log.info('###########################################################');
+        // log.info('download -------------------------------------------');
+
+        const dir = arg.properties.directory;
+        // log.info(`download ::: dir : ${dir},   filename: ${arg.properties.filename}`);
+        
+        await download(mainWindow, arg.url, {
+                directory: dir, 
+                filename: arg.properties.filename,
+                showBadge: false,
+                saveAs: false
+            }).then(dl => {
+                // log.info('dl ---> ', dl);
+
+                // log.info ('[DL]  FileName : ', dl.getFilename());
+                log.info ('[DL]  savePath : ', dl.getSavePath());
+                // mainWindow.webContents.send('download complete', dl.getSavePath())
             })
             .catch(e => {
-                console.log('[[download]]  catch e =>>>> ', e);
+                log.error('[[download]]  catch e =>>>> ', e);
             });
+
+            // log.info('======================================================');
+            // log.info('======================================================');
+        
+    });
+    
+    ipcMain.on('download-cloud', (event, arg) => {
+
+        myDownload(arg.url, arg.properties);
+
+        // const dir = arg.properties.directory;
+        // await download(mainWindow, arg.url, {
+        //         directory: dir, 
+        //         filename: arg.properties.filename,
+        //         showBadge: false,
+        //         saveAs: false
+        //     }).then(dl => {
+        //         mainWindow.webContents.send('download complete', dl.getSavePath())
+        //     })
+        //     .catch(e => {
+        //         log.error('[[download]]  catch e =>>>> ', e);
+        //     });
     });
 }
 
@@ -174,5 +213,18 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+function myDownload(url, options) {
+    log.info ('call myDonwload with options ::: option  => ', options);
+
+           download(mainWindow, url, options).then(dl => {
+                mainWindow.webContents.send('download complete', dl.getSavePath())
+            })
+            .catch(e => {
+                log.error('[[download]]  catch e =>>>> ', e);
+            });
+
+}
+
 
 
