@@ -15,9 +15,9 @@ import { formatDateTime, getAppRoot } from 'components/utils/RCCommonUtil';
 
 const SECRET = 'rimdrivezzang';
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
 const selectLocalFiles = (targetPath, relativePath, innerItems) => {
 
@@ -250,7 +250,9 @@ const syncLocalDelete = (localFile) => {
 const syncCloudToLocal = (userId, cloudFile, localTarget) => {
   if (cloudFile.type === 'D') {
     // CREATE FOLDER TO LOCAL
-    fs.mkdirSync(`${localTarget}${cloudFile.relPath}/${cloudFile.name}`);
+    if (!fs.existsSync(`${localTarget}${cloudFile.relPath}${path.sep}${cloudFile.name}`)){
+      fs.mkdirSync(`${localTarget}${cloudFile.relPath}${path.sep}${cloudFile.name}`);
+    }
   } else {
     // DOWNLOAD FILE TO CLOUD
     fileDownload(userId, cloudFile, localTarget);

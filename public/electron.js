@@ -3,7 +3,6 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 
 const path = require('path');
 const { Buffer } = require('buffer');
-const { download } = require('electron-dl');
 
 const isDev = require('electron-is-dev');
 const log = require('electron-log');
@@ -19,6 +18,9 @@ const STORAGEOPTION = {
 }
 
 let mainWindow;
+
+let syncLocalTarget = '';
+let syncCloudTarget = '';
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -41,6 +43,34 @@ function createWindow() {
 
     mainWindow.on('closed', () => mainWindow = null);
 
+    mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
+        // Set the save path, making Electron not to prompt a save dialog.
+        // item.setSavePath('/tmp/save.pdf')
+        const cpath = item.getURL().split('&path=')[1];
+        const lastPath = `${syncLocalTarget}${(cpath.substring(cpath.indexOf(syncCloudTarget) + syncCloudTarget.length)).replace(/\//g, path.sep)}`;
+        log.info('GET lastPath ::: ', lastPath);
+        item.savePath = lastPath;
+
+        item.on('updated', (event, state) => {
+            if (state === 'interrupted') {
+                // console.log('Download is interrupted but can be resumed')
+            } else if (state === 'progressing') {
+                if (item.isPaused()) {
+                    // console.log('Download is paused')
+                } else {
+                    // console.log(`Received bytes: ${item.getReceivedBytes()}`)
+                }
+            }
+        })
+        item.once('done', (event, state) => {
+            if (state === 'completed') {
+                // console.log('Download successfully')
+            } else {
+                // console.log(`Download failed: ${state}`)
+            }
+        })
+    });
+
     // TEST electron.dialog.showOpenDialog({ properties: ['openFile', 'openDirectory', 'multiSelections'] });
 
     // ipcMain.on('asynchronous-message', (event, arg) => {
@@ -55,7 +85,7 @@ function createWindow() {
             message: '폴더를 선택하세요'
         });
 
-        if(selectedDirectory != undefined && selectedDirectory.length > 0) {
+        if (selectedDirectory != undefined && selectedDirectory.length > 0) {
             console.log('selectedDirectory[0] ----->>> ', selectedDirectory[0]);
             event.returnValue = selectedDirectory[0];
         } else {
@@ -87,13 +117,13 @@ function createWindow() {
         request.on('response', (response) => {
             // console.log(`STATUS: ${response.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-            let chunks =  Buffer.alloc(0);
-            if(response.statusCode === 200) {
+            let chunks = Buffer.alloc(0);
+            if (response.statusCode === 200) {
                 response.on('data', (chunk) => {
                     chunks = Buffer.concat([chunks, chunk]);
                 });
             } else {
-                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+                event.returnValue = { 'result': 'FAIL', 'message': 'server error', 'code': response.statusCode };
             }
             response.on('end', () => {
                 try {
@@ -121,13 +151,13 @@ function createWindow() {
             request.on('response', (response) => {
                 // console.log(`STATUS: ${response.statusCode}`);
                 // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-                let chunks =  Buffer.alloc(0);
-                if(response.statusCode === 200) {
+                let chunks = Buffer.alloc(0);
+                if (response.statusCode === 200) {
                     response.on('data', (chunk) => {
                         chunks = Buffer.concat([chunks, chunk]);
                     });
                 } else {
-                    event.returnValue = {"status": { "result": "FAIL", "resultCode": response.statusCode, "message": "server return fail"}};
+                    event.returnValue = { "status": { "result": "FAIL", "resultCode": response.statusCode, "message": "server return fail" } };
                 }
                 response.on('end', () => {
                     try {
@@ -137,66 +167,29 @@ function createWindow() {
                     } catch (e) {
                         console.log('Exception e :: ', e);
                     }
-    
+
                 })
             });
             request.on('error', (error) => {
                 // console.log('[ ERROR ] :: ', error);
-                event.returnValue = {"status": { "result": "FAIL", "resultCode": error, "message": "server error"}};
+                event.returnValue = { "status": { "result": "FAIL", "resultCode": error, "message": "server error" } };
             });
             request.end();
-        } catch(ex) {
+        } catch (ex) {
             // console.log('Exception eeeeeeexxxxxxx :: ', ex);
-            event.returnValue = {"status": { "result": "FAIL", "resultCode": ex, "message": "request exception"}};
+            event.returnValue = { "status": { "result": "FAIL", "resultCode": ex, "message": "request exception" } };
         }
     });
 
-    ipcMain.on('download-cloud-old', async (event, arg) => {
-
-        // log.info('###########################################################');
-        // log.info('###########################################################');
-        // log.info('download -------------------------------------------');
-
-        const dir = arg.properties.directory;
-        // log.info(`download ::: dir : ${dir},   filename: ${arg.properties.filename}`);
-        
-        await download(mainWindow, arg.url, {
-                directory: dir, 
-                filename: arg.properties.filename,
-                showBadge: false,
-                saveAs: false
-            }).then(dl => {
-                // log.info('dl ---> ', dl);
-
-                // log.info ('[DL]  FileName : ', dl.getFilename());
-                log.info ('[DL]  savePath : ', dl.getSavePath());
-                // mainWindow.webContents.send('download complete', dl.getSavePath())
-            })
-            .catch(e => {
-                log.error('[[download]]  catch e =>>>> ', e);
-            });
-
-            // log.info('======================================================');
-            // log.info('======================================================');
-        
-    });
-    
     ipcMain.on('download-cloud', (event, arg) => {
+        mainWindow.webContents.downloadURL(arg.url);
+    });
 
-        myDownload(arg.url, arg.properties);
+    ipcMain.on('set_sync_valiable', (event, arg) => {
+        syncLocalTarget = arg.localTarget;
+        syncCloudTarget = arg.cloudTarget;
 
-        // const dir = arg.properties.directory;
-        // await download(mainWindow, arg.url, {
-        //         directory: dir, 
-        //         filename: arg.properties.filename,
-        //         showBadge: false,
-        //         saveAs: false
-        //     }).then(dl => {
-        //         mainWindow.webContents.send('download complete', dl.getSavePath())
-        //     })
-        //     .catch(e => {
-        //         log.error('[[download]]  catch e =>>>> ', e);
-        //     });
+        event.returnValue = '1';
     });
 }
 
@@ -213,18 +206,3 @@ app.on('activate', () => {
         createWindow();
     }
 });
-
-function myDownload(url, options) {
-    log.info ('call myDonwload with options ::: option  => ', options);
-
-           download(mainWindow, url, options).then(dl => {
-                mainWindow.webContents.send('download complete', dl.getSavePath())
-            })
-            .catch(e => {
-                log.error('[[download]]  catch e =>>>> ', e);
-            });
-
-}
-
-
-

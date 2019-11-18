@@ -4,7 +4,7 @@ import path from 'path';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
-import log from 'electron-log';
+// import log from 'electron-log';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -155,6 +155,11 @@ class SyncPage extends Component {
                     const cloudDB = low(cloudAdapter);
                     // log.info('[handleStartSyncFile] =[8]=');
                     cloudDB.assign({ files: cloudFiles }).write();
+
+                    ipcRenderer.sendSync('set_sync_valiable', {
+                        localTarget: syncItems.local,
+                        cloudTarget: syncItems.cloud
+                    });
 
                     // // ## Compare Data
                     // log.info('[handleStartSyncFile] =[9]=');
