@@ -20,7 +20,7 @@ export const CommonStyle = theme => ({
         justifyContent: "center",
         // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0,
         // #ffa500)"
-        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        // backgroundImage: "linear-gradient(#517cff, #ffa500)"
         // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
     },
 
@@ -48,6 +48,8 @@ export const CommonStyle = theme => ({
         margin: "16px"
     },
 
+
+    // MAIN
     mainPage: {
         minHeight: "100vh",
         //        display: "flex",
@@ -58,6 +60,11 @@ export const CommonStyle = theme => ({
         // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0,
         // #ffa500)" backgroundImage: "linear-gradient(#517cff, #ffa500)",
         backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+    },
+
+    mainTab: {
+        backgroundColor: "#fefefe",
+        color: "#121212"
     },
 
     //

@@ -92,7 +92,7 @@ class MainPage extends Component {
             <React.Fragment>
                 <div className={classes.mainPage} >
                     {/*<div>VAR => {getAppRoot()} ::: {process.platform}</div>*/}
-                    <AppBar position="relative" style={{ backgroundColor: '#2c387b' }}>
+                    <AppBar position="relative" className={classes.mainTab}>
                         <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
                             <Tab label="정보" {...a11yProps(0)} />
                             <Tab label="공유" {...a11yProps(1)} />

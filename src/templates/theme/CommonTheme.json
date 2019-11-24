@@ -252,12 +252,6 @@
         "hint": "rgba(0, 0, 0, 0.38)"
       },
       "divider": "rgba(0, 0, 0, 0.12)",
-      "secondary": {
-        "main": "#FBC02D",
-        "light": "rgb(251, 204, 87)",
-        "dark": "rgb(175, 134, 31)",
-        "contrastText": "rgba(0, 0, 0, 0.87)"
-      },
       "common": { "black": "#000", "white": "#fff" },
       "error": {
         "light": "#e57373",
@@ -275,10 +269,16 @@
         "active": "rgba(0, 0, 0, 0.54)"
       },
       "primary": {
-        "main": "#455A64",
-        "light": "rgb(106, 123, 131)",
-        "dark": "rgb(48, 62, 70)",
-        "contrastText": "#fff"
+        "main": "#ffe0b2",
+        "light": "#ffffe4",
+        "dark": "#cbae82",
+        "contrastText": "#000000"
+      },
+      "secondary": {
+        "main": "#bbdefb",
+        "light": "#eeffff",
+        "dark": "#8aacc8",
+        "contrastText": "#000000"
       }
     },
     "themeName": "Fiord Lightning Yellow Mouse"
