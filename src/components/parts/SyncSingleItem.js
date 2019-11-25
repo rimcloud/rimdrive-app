@@ -71,7 +71,7 @@ class SyncSingleItem extends Component {
             <React.Fragment>
             {item && 
             <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key} square={true}>
-                <RCContentCardHeader title="동기설정정보" subheader=""/>
+                <RCContentCardHeader title="동기화 설정정보" subheader=""/>
                 <CardContent style={{padding: 20}}>
 
                     <Grid container spacing={3} style={{marginBottom: 20}}>

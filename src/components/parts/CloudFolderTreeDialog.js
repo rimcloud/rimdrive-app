@@ -70,12 +70,11 @@ class CloudFolderTreeDialog extends Component {
   }
 
   render() {
-    const { FileProps, open = false } = this.props;
+    const { classes, FileProps, open = false } = this.props;
 
     return (
-      <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
-        <DialogTitle id="form-dialog-title" disableTypography={true}
-          style={{ padding: 4, fontSize: '12px', color: 'black', background: 'linear-gradient(45deg, #A3A3A2 30%, #2c387b 90%)', fontWeight: 'bolder' }}
+      <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true} PaperProps={{square:true}}>
+        <DialogTitle id="form-dialog-title" disableTypography={true} style={{background: '#5a5a5a', color: '#ffffff', height: '20px', padding: 4}}
         >폴더선택</DialogTitle>
         <DialogContent>
         <FolderTreeComp folderList={FileProps.get('folderList')} 
@@ -88,9 +87,13 @@ class CloudFolderTreeDialog extends Component {
             <Grid item xs={6} style={{ paddingTop: '25px' }}>
               <Typography variant="caption" component="p">폴더를 선택후 '선택' 버튼을 누르세요.</Typography>
             </Grid>
-            <Grid item xs={6} style={{ textAlign: 'right' }}>
-              <Button onClick={this.handleSaveData} color="primary">선택</Button>
-              <Button onClick={this.handleClose} color="primary">닫기</Button>
+            <Grid item xs={6} style={{ paddingTop: '25px', textAlign: 'right' }}>
+              <Button onClick={this.handleSaveData} className={classes.RCSmallButton} style={{marginRight: 20}}
+              variant="contained" color="primary"
+              >선택</Button>
+              <Button onClick={this.handleClose} className={classes.RCSmallButton}
+              variant="contained" color="secondary"
+              >닫기</Button>
             </Grid>
           </Grid>
         </DialogActions>

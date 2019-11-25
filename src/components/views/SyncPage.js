@@ -168,22 +168,23 @@ class SyncPage extends Component {
             let selectedPath = '';
 
             // console.log('pathItems ::: ', pathItems);
-            if (pathItems !== undefined) {
+            if (pathItems !== undefined && pathItems !== null) {
                 if(pathItems.isArray && pathItems.length > 0) {
                     selectedPath = pathItems[0]
                 } else {
                     selectedPath = pathItems;
                 }
+            
+                const { GlobalProps } = this.props;
+                const driveConfig = GlobalProps.get('driveConfig');
+                driveConfig.get('syncItems')
+                    .find({ no: syncNo })
+                    .assign({ [locType]: selectedPath })
+                    .write();
+                this.setState({
+                    reload: true
+                });
             }
-            const { GlobalProps } = this.props;
-            const driveConfig = GlobalProps.get('driveConfig');
-            driveConfig.get('syncItems')
-                .find({ no: syncNo })
-                .assign({ [locType]: selectedPath })
-                .write();
-            this.setState({
-                reload: true
-            });
         } else if (locType === 'cloud') {
             this.setState({
                 openCloudFolderDialog: true

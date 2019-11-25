@@ -55,7 +55,7 @@ class RCDialogConfirm extends Component {
   };
 
   render() {
-    const { GlobalProps } = this.props;
+    const { classes, GlobalProps } = this.props;
     const showOk = this.state.showOk;
 
     return (
@@ -72,8 +72,8 @@ class RCDialogConfirm extends Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            {showOk && <Button onClick={this.handleOk} color="primary">예</Button>}
-            <Button onClick={this.handleCancel} color="primary" autoFocus>아니오</Button>
+            {showOk && <Button onClick={this.handleOk} color="primary" className={classes.RCSmallButton} variant="contained" style={{marginRight: 20}}>예</Button>}
+            <Button onClick={this.handleCancel} color="primary" className={classes.RCSmallButton} variant="contained" autoFocus>아니오</Button>
           </DialogActions>
         </Dialog>
     );

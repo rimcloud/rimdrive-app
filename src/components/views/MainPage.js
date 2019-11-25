@@ -34,12 +34,22 @@ function a11yProps(index) {
     };
 }
 
+function intervalFunc() {
+    return setInterval(() => {
+        console.log('interviewing the interval');
+    }, 3000);
+}
+
 class MainPage extends Component {
 
     constructor(props) {
         super(props);
+
+        console.log('props ::: ', props);
+
         this.state = {
-            selectedTab: 0
+            selectedTab: 0,
+            syncIntervaler: null
         };
     }
 
