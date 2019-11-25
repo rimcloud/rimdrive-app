@@ -18,9 +18,12 @@ export const CommonStyle = theme => ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0,
-        // #ffa500)"
-        backgroundImage: "linear-gradient(#517cff, #ffa500)"
+        
+        background: "radial-gradient(#efefef, #b8b8b8)"
+
+        // linear-gradient(#a0a0a0, #ffffff)
+        // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0, #ffa500)"
+        // backgroundImage: "linear-gradient(#517cff, #ffa500)"
         // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
     },
 
@@ -48,6 +51,8 @@ export const CommonStyle = theme => ({
         margin: "16px"
     },
 
+
+    // MAIN
     mainPage: {
         minHeight: "100vh",
         //        display: "flex",
@@ -57,7 +62,13 @@ export const CommonStyle = theme => ({
         // paddingBottom: "0px",
         // backgroundColor: "#efefef", backgroundImage: "linear-gradient(#f9f0e0,
         // #ffa500)" backgroundImage: "linear-gradient(#517cff, #ffa500)",
-        backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+        // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
+        background: "radial-gradient(#efefef, #b8b8b8)"
+    },
+
+    mainTab: {
+        backgroundColor: "#fefefe",
+        color: "#121212"
     },
 
     //

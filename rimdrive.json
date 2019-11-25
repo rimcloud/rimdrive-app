@@ -1,0 +1,12 @@
+{
+  "syncItems": [
+    {
+      "no": 1,
+      "local": "D:\\test1",
+      "cloud": "/sync1",
+      "type": "m",
+      "status": "on",
+      "files": []
+    }
+  ]
+}

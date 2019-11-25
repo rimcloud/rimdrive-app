@@ -60,7 +60,7 @@ class LoginPage extends Component {
         return (
             <div className={classes.homePage}>
                 <div>
-                    <TextField label="ID" margin="normal" className={classes.textField} autoFocus 
+                    <TextField label="ID" margin="normal" autoFocus 
                         value={AccountProps.get('userId')}
                         onChange={this.handleChangeValue('userId')}
                         onKeyPress={(ev) => {
@@ -72,7 +72,7 @@ class LoginPage extends Component {
                     />
                 </div>
                 <div>
-                    <TextField label="Password" margin="normal" className={classes.textField}
+                    <TextField label="Password" margin="normal"
                         value={AccountProps.get('password')}
                         onChange={this.handleChangeValue('password')}
                         type="password"
