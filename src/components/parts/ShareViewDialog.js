@@ -53,7 +53,7 @@ class ShareViewDialog extends Component {
         </AppBar>
         <Divider />
         <Grid container spacing={0}>
-          <Grid item xs={10} style={{ paddingTop: 20 }}>
+          <Grid item xs={10} style={{ paddingTop: 4 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
           <Grid item xs={2} style={{ textAlign: 'right' }}>

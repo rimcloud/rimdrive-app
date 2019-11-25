@@ -67,8 +67,8 @@ export const CommonStyle = theme => ({
     },
 
     mainTab: {
-        backgroundColor: "#fefefe",
-        color: "#121212"
+        backgroundColor: "#5a5a5a",
+        color: "#ffffff"
     },
 
     //

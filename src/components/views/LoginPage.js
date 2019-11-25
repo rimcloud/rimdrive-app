@@ -12,13 +12,29 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
+const CustomCssTextField = withStyles({
+    root: {
+        "& .MuiFormLabel-root.Mui-focused ": {
+            color: "red"
+        },
+        "& .MuiInput-underline:before ": {
+            color: "gray",
+            borderBottom: "2px solid gray"
+        },
+        "& .MuiInput-underline:after ": {
+            color: "red",
+            borderBottom: "2px solid red"
+        }
+    }
+})(TextField);
+
 class LoginPage extends Component {
 
     constructor(props) {
         super(props);
         this.passwordInput = React.createRef();
         this.focusTextInput = this.focusTextInput.bind(this);
-      }
+    }
 
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
@@ -29,8 +45,8 @@ class LoginPage extends Component {
 
     handleChangeValue = name => event => {
         this.props.AccountActions.changeAccountParamData({
-          name: name, 
-          value: event.target.value
+            name: name,
+            value: event.target.value
         });
     }
 
@@ -47,12 +63,12 @@ class LoginPage extends Component {
         const { AccountProps } = this.props;
 
         if (AccountProps && AccountProps.get('userToken') !== '') {
-            return <Redirect push to ='/Main' />;
+            return <Redirect push to='/Main' />;
         }
 
         let msg = 'ID, Password를 입력하세요.';
-        if(AccountProps) {
-            if(AccountProps.get('message') !== undefined && AccountProps.get('message') !== '') {
+        if (AccountProps) {
+            if (AccountProps.get('message') !== undefined && AccountProps.get('message') !== '') {
                 msg = AccountProps.get('message');
             }
         }
@@ -60,19 +76,19 @@ class LoginPage extends Component {
         return (
             <div className={classes.homePage}>
                 <div>
-                    <TextField label="ID" margin="normal" autoFocus 
+                    <CustomCssTextField label="ID" margin="normal" autoFocus
                         value={AccountProps.get('userId')}
                         onChange={this.handleChangeValue('userId')}
                         onKeyPress={(ev) => {
                             if (ev.key === 'Enter') {
-                              this.focusTextInput();
-                              ev.preventDefault();
+                                this.focusTextInput();
+                                ev.preventDefault();
                             }
                         }}
                     />
                 </div>
                 <div>
-                    <TextField label="Password" margin="normal"
+                    <CustomCssTextField label="Password" margin="normal"
                         value={AccountProps.get('password')}
                         onChange={this.handleChangeValue('password')}
                         type="password"
@@ -80,8 +96,8 @@ class LoginPage extends Component {
                         inputRef={this.passwordInput}
                         onKeyPress={(ev) => {
                             if (ev.key === 'Enter') {
-                              this.handleLoginBtnClick();
-                              ev.preventDefault();
+                                this.handleLoginBtnClick();
+                                ev.preventDefault();
                             }
                         }}
                     />

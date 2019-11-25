@@ -176,7 +176,7 @@ class ShareConfDialog extends Component {
     }    
 
     return (
-      <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
+      <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition} style={{margin: 20}}>
         <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
             <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 추가</Typography>
@@ -189,7 +189,7 @@ class ShareConfDialog extends Component {
         <Divider />
 
         <Grid container spacing={0}>
-          <Grid item xs={10} style={{ paddingTop: 20 }}>
+          <Grid item xs={10} style={{ paddingTop: 4 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
           <Grid item xs={2} style={{ textAlign: 'right' }}>
