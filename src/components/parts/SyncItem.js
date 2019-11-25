@@ -76,7 +76,7 @@ class SyncItem extends Component {
         return (
             <React.Fragment>
             {item && 
-            <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key}>
+            <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key} square={true}>
                 <RCContentCardHeader title={`#. ${index}`} subheader=""/>
                 <CardContent>
                     <Grid container spacing={3}>

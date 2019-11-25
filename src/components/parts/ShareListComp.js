@@ -64,7 +64,7 @@ class ShareListComp extends Component {
     const shareUsers = ShareProps.get('shareUsers') ? ShareProps.get('shareUsers') : [];
 
     return (
-        <Card className={classes.card}>
+        <Card className={classes.card} square={true}>
           <RCContentCardHeader title="공유대상" subheader=""/>
           <CardContent>
             <Table className={classes.table} size="small" stickyHeader>

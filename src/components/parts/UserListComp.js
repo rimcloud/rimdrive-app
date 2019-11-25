@@ -33,7 +33,7 @@ class UserListComp extends Component {
 
     return (
       <div>
-        <Card elevation={0} style={{backgroundColor:'#efefef'}}>
+        <Card elevation={0} square={true}>
           <RCContentCardHeader title="사용자" subheader=""/>
           <CardContent>
             <Table className={classes.table} size="small" stickyHeader>

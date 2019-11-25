@@ -71,7 +71,7 @@ class SyncPage_DIALOG extends Component {
                     </Button>
                 </Box>
                 {currSyncData && currSyncData.map(s => (
-                    <Card className={classes.card} key={s.no}>
+                    <Card className={classes.card} key={s.no} square={true}>
                         <RCContentCardHeader title={`NO.${s.no}`} subheader=""/>
                         <CardContent>
                             <Typography variant="body2" component="p">

@@ -100,7 +100,7 @@ class FolderTreeComp extends Component {
     return (
       <div>
       {(folderTree && hasTitle) && 
-        <Card elevation={0} style={{backgroundColor:'#efefef'}}>
+        <Card elevation={0} square={true}>
           <RCContentCardHeader title="폴더" subheader=""/>
           <CardContent>
             <TreeView

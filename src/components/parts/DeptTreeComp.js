@@ -126,7 +126,7 @@ class DeptTreeComp extends Component {
     return (
       <div>
         {(deptTree) &&
-          <Card elevation={0} style={{backgroundColor:'#efefef'}}>
+          <Card elevation={0} square={true} >
             <RCContentCardHeader title="조직" subheader=""/>
             <CardContent>
               <TreeView

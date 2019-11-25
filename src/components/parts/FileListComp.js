@@ -35,7 +35,7 @@ class FileListComp extends Component {
 
     return (
       <div>
-        <Card elevation={0} style={{backgroundColor:'#efefef'}}>
+        <Card elevation={0} square={true}>
           <RCContentCardHeader title="파일" subheader=""/>
           <CardContent>
             <Table className={classes.table} size="small" stickyHeader>

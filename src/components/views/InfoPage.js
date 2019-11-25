@@ -91,7 +91,7 @@ class InfoPage extends Component {
 
         return (
             <React.Fragment>
-                <Card className={classes.card}>
+                <Card className={classes.card} square={true}>
                     <RCContentCardHeader title="사용자 정보" subheader="" />
                     <CardContent>
                         <Typography variant="body2" component="p">
@@ -105,7 +105,7 @@ class InfoPage extends Component {
                         </Typography>
                     </CardContent>
                 </Card>
-                <Card className={classes.card}>
+                <Card className={classes.card} square={true}>
                     <RCContentCardHeader
                         action={
                             <IconButton aria-label="settings">

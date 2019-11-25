@@ -20,10 +20,10 @@ export const styles = theme => ({
   /* Styles applied to the card category name. */
   category: {
     margin: 0,
-    fontSize: 12,
+    fontSize: '0.7rem',
     fontWeight:'bolder',
-    background: 'linear-gradient(45deg, #A3A3A2 30%, #2c387b 90%)',
-    color: '#2c387b',
+    background: '#5a5a5a',
+    color: '#ffffff',
     padding: '0px 5px 0px 5px'
   },
   /* Styles applied to the avatar element. */

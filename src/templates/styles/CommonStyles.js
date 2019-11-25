@@ -76,14 +76,14 @@ export const CommonStyle = theme => ({
     syncItemCardFirst: {
         minWidth: 275,
         marginTop: 0,
-        marginLeft: 18,
-        marginRight: 18
+        marginLeft: 0,
+        marginRight: 0
     },
     syncItemCard: {
         minWidth: 275,
         marginTop: 18,
-        marginLeft: 18,
-        marginRight: 18
+        marginLeft: 0,
+        marginRight: 0
     },
 
     card: {
@@ -99,7 +99,7 @@ export const CommonStyle = theme => ({
         fontSize: '16px'
     },
     title: {
-        fontSize: 14
+        fontSize: '0.7rem'
     },
     pos: {
         marginBottom: 12

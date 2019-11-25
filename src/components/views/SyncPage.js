@@ -43,19 +43,6 @@ class SyncPage extends Component {
 
     componentDidMount() {
         const { FileActions } = this.props;
-        // const { GlobalProps, FileActions } = this.props;
-        // // driveConfig
-        // if(GlobalProps.get('driveConfig') !== undefined) {
-        //     const driveConfig = GlobalProps.get('driveConfig');
-        //     // let itemCount = 0;
-        //     // if(driveConfig.get('syncItems') && driveConfig.get('syncItems').value().length > 0) {
-        //     //     itemCount = driveConfig.get('syncItems').value().length;
-        //     // }
-        //     // this.setState({
-        //     //     itemCount: itemCount
-        //     // });
-        // }
-
         // get cloud folders
         FileActions.getDriveFolderList({
             userId: this.props.AccountProps.get('userId')
@@ -251,7 +238,7 @@ class SyncPage extends Component {
     }
 
     render() {
-        const { GlobalProps } = this.props;
+        const { classes, GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
         // console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.value() : 'null');
         // console.log('driveConfig.syncItems ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
@@ -263,27 +250,12 @@ class SyncPage extends Component {
             currSyncDatas = fromJS(driveConfig.get('syncItems').value());
         }
 
-        // if(GlobalProps && GlobalProps.getIn(['syncData', 'rimdrive', 'sync'])) {
-        //     const syncs = GlobalProps.getIn(['syncData', 'rimdrive', 'sync']);
-        //     if(syncs && syncs.size > 0) {
-        //         currSyncDatas = syncs;
-        //     }
-        // }
-
         // console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas);
-
         // console.log('driveConfig :: ', driveConfig);
         // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
 
         return (
-            <React.Fragment>
-                <Box style={{ paddingTop: 8, paddingBottom: 8, paddingRight: 18, textAlign: 'right' }}>
-                    {/* 
-                    <Button onClick={this.handleAddSyncClick} className={classes.RCSmallButton} variant="contained" color="primary">
-                        파일 동기화 추가
-                    </Button>
-                    */}
-                </Box>
+            <div className={classes.card}>
                 {currSyncDatas && currSyncDatas.map((s, i) => (
                     <SyncSingleItem item={s} index={i + 1}
                         key={s.get('no')} isFirst={i === 0 ? true : false}
@@ -299,7 +271,7 @@ class SyncPage extends Component {
                     onClose={this.handleCloseCloudFolderDialog}
                     pathItems={items}
                 />
-            </React.Fragment>
+            </div>
         );
     }
 }

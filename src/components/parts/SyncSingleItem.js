@@ -70,10 +70,11 @@ class SyncSingleItem extends Component {
         return (
             <React.Fragment>
             {item && 
-            <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key}>
+            <Card className={this.props.isFirst ? classes.syncItemCardFirst : classes.syncItemCard} key={key} square={true}>
                 <RCContentCardHeader title="동기설정정보" subheader=""/>
-                <CardContent>
-                    <Grid container spacing={3}>
+                <CardContent style={{padding: 20}}>
+
+                    <Grid container spacing={3} style={{marginBottom: 20}}>
                         <Grid item xs={2}><Typography variant="body2" component="p">PC폴더</Typography></Grid>
                         <Grid item xs={8}><TextField
                                 id="pcloc"
@@ -92,7 +93,7 @@ class SyncSingleItem extends Component {
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} style={{marginBottom: 20}}>
                         <Grid item xs={2}><Typography variant="body2" component="p">저장소폴더</Typography></Grid>
                         <Grid item xs={8}><TextField
                                 id="cloudloc"
@@ -122,9 +123,8 @@ class SyncSingleItem extends Component {
                             />
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
-                        variant="contained" color="primary"
-                        onClick={() => this.props.onStartSyncFile(item.get('no'))} >
-                        바로실행
+                            variant="contained" color="primary"
+                            onClick={() => this.props.onStartSyncFile(item.get('no'))} >바로실행
                         </Button></Grid>
                     </Grid>
 

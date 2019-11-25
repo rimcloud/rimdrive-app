@@ -22,6 +22,7 @@ import ShareListComp from 'components/parts/ShareListComp';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
@@ -198,8 +199,8 @@ class ShareConfDialog extends Component {
             }
           </Grid>
         </Grid>
-
         <Divider />
+        <Paper style={{overflow: 'auto'}}>
         {(this.state.shareStep === 1) &&
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
@@ -257,6 +258,7 @@ class ShareConfDialog extends Component {
             </Grid>
           </Grid>
         }
+        </Paper>
       </Dialog>
     );
   }

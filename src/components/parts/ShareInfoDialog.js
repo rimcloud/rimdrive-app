@@ -24,6 +24,7 @@ import Dialog from '@material-ui/core/Dialog';
 import Box from '@material-ui/core/Box';
 
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
@@ -159,13 +160,10 @@ class ShareInfoDialog extends Component {
     const { DeptUserProps, ShareProps } = this.props;
 
     const selectedItem = (ShareProps.get('shareInfoList') && ShareProps.get('shareInfoList').size > 0) ? ShareProps.getIn(['shareInfoList', 0]).toJS() : null;
-    
-    let stepInfo = '수정작업후 저장버튼을 클릭하세요.';
-
-    // console.log('[ShareInfoDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
+    const stepInfo = '수정 또는 삭제 하실 수 있습니다.';
 
     return (
-      <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
+      <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition} style={{margin: 20}}>
         <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
             <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 정보</Typography>
@@ -185,33 +183,35 @@ class ShareInfoDialog extends Component {
           </Grid>
         </Grid>
         <Divider />
-        <Grid container style={{ margin: 0 }}>
-          <Grid item xs={12} style={{ margin: 4, padding: 4 }}>
-            <FileOrFolderView selectedItem={selectedItem} />
+        <Paper style={{overflow: 'auto'}}>
+          <Grid container style={{ margin: 0 }}>
+            <Grid item xs={12} style={{ margin: 4, padding: 4 }}>
+              <FileOrFolderView selectedItem={selectedItem} />
+            </Grid>
+            <Grid item xs={6} >
+              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
+                <DeptTreeComp deptList={DeptUserProps.get('deptList')}
+                  shareDepts={ShareProps.get('shareDepts')}
+                  onSelectDept={this.handleSelectDept}
+                  onChangeDeptCheck={this.handleChangeDeptCheck}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={6} >
+              <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <UserListComp
+                  userListData={DeptUserProps.get('userListData')}
+                  shareUsers={ShareProps.get('shareUsers')}
+                  onSelectUser={this.handleSelectUser}
+                  onChangeUserCheck={this.handleChangeUserCheck}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <ShareListComp isEdit={true} />
+            </Grid>
           </Grid>
-          <Grid item xs={6} >
-            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
-              <DeptTreeComp deptList={DeptUserProps.get('deptList')}
-                shareDepts={ShareProps.get('shareDepts')}
-                onSelectDept={this.handleSelectDept}
-                onChangeDeptCheck={this.handleChangeDeptCheck}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={6} >
-            <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef', overflow: 'auto' }}>
-              <UserListComp
-                userListData={DeptUserProps.get('userListData')}
-                shareUsers={ShareProps.get('shareUsers')}
-                onSelectUser={this.handleSelectUser}
-                onChangeUserCheck={this.handleChangeUserCheck}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <ShareListComp isEdit={true} />
-          </Grid>
-        </Grid>
+        </Paper>
       </Dialog>
     );
   }

@@ -199,7 +199,7 @@ class SharePage extends Component {
 
         return (
             <div>
-                <Card className={classes.card}>
+                <Card className={classes.card} square={true}>
                     <RCContentCardHeader
                         title="공유 정보"
                         action={

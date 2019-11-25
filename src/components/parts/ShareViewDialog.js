@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -41,7 +42,7 @@ class ShareViewDialog extends Component {
     // console.log('[ShareViewDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
 
     return (
-      <Dialog fullScreen open={dialogOpen} onClose={this.props.onDialogClose} TransitionComponent={Transition}>
+      <Dialog fullScreen open={dialogOpen} onClose={this.props.onDialogClose} TransitionComponent={Transition} style={{margin: 20}}>
         <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
             <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 정보</Typography>
@@ -52,6 +53,7 @@ class ShareViewDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
+        <Paper style={{overflow: 'auto'}}>
         <Grid container spacing={0}>
           <Grid item xs={10} style={{ paddingTop: 4 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
@@ -69,6 +71,7 @@ class ShareViewDialog extends Component {
             <ShareListComp isEdit={false} />
           </Grid>
         </Grid>
+        </Paper>
       </Dialog>
     );
   }
