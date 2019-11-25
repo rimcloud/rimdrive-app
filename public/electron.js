@@ -1,5 +1,5 @@
 const qs = require('qs');
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 
 const path = require('path');
 const { Buffer } = require('buffer');
@@ -22,6 +22,14 @@ let mainWindow;
 let syncLocalTarget = '';
 let syncCloudTarget = '';
 
+
+const isMac = process.platform === 'darwin'
+
+const template = [];
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu);
+
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 680,
@@ -32,7 +40,7 @@ function createWindow() {
         }
     });
     mainWindow.setMenu(null);
-    mainWindow.setMenuBarVisibility(false);
+    // mainWindow.setMenuBarVisibility(false);
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
 
     if (isDev) {
@@ -139,7 +147,11 @@ function createWindow() {
     });
 
     ipcMain.on('post-req-to-server', (event, arg) => {
-        // console.log('arg ::: ', arg);
+        
+        
+        console.log('arg ::: ', arg);
+
+
         const { net } = require('electron');
         let params = STORAGEOPTION;
         params['method'] = 'POST';
@@ -149,8 +161,12 @@ function createWindow() {
             // console.log('params ::: ', params);
             const request = net.request(params);
             request.on('response', (response) => {
-                // console.log(`STATUS: ${response.statusCode}`);
-                // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+
+
+                console.log(`STATUS: ${response.statusCode}`);
+                console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+                
+                
                 let chunks = Buffer.alloc(0);
                 if (response.statusCode === 200) {
                     response.on('data', (chunk) => {
@@ -162,7 +178,11 @@ function createWindow() {
                 response.on('end', () => {
                     try {
                         const responseObj = JSON.parse(chunks.toString());
-                        // console.log('responseObj: >>> ', responseObj);
+
+
+                        console.log('responseObj: >>> ', responseObj);
+                        
+                        
                         event.returnValue = responseObj;
                     } catch (e) {
                         console.log('Exception e :: ', e);
@@ -196,7 +216,7 @@ function createWindow() {
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
+    if (isMac) {
         app.quit();
     }
 });
