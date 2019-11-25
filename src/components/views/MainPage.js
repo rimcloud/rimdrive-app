@@ -13,6 +13,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { getAppRoot } from 'components/utils/RCCommonUtil';
+import { handleSyncTimer } from 'components/utils/RCSyncUtil';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -34,12 +35,6 @@ function a11yProps(index) {
     };
 }
 
-function intervalFunc() {
-    return setInterval(() => {
-        console.log('interviewing the interval');
-    }, 3000);
-}
-
 class MainPage extends Component {
 
     constructor(props) {
@@ -59,18 +54,26 @@ class MainPage extends Component {
         const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
         const driveConfig = low(adapter);
 
-        if (driveConfig !== undefined && driveConfig.get('syncItems').value() === undefined) {
-            // init sync item
-            driveConfig.assign({
-                syncItems: [{
-                    "no": 1,
-                    "local": "",
-                    "cloud": "",
-                    "type": "m",
-                    "status": "on",
-                    "files": []
-                }]
-            }).write();
+        if (driveConfig !== undefined) {
+            if (driveConfig.get('syncItems').value() === undefined || driveConfig.get('syncItems').value().length < 1) {
+                // init sync item
+                driveConfig.assign({
+                    syncItems: [{
+                        "no": 1,
+                        "local": "",
+                        "cloud": "",
+                        "type": "m",
+                        "status": "on",
+                        "files": []
+                    }]
+                }).write();
+            } else {
+                // only use one sync-item for this version
+                if(driveConfig.get('syncItems').value()[0].type === 'a') {
+                    // start sync interval
+                    handleSyncTimer('start');
+                }
+            }
         }
 
         GlobalActions.setDataStorage({
@@ -83,6 +86,7 @@ class MainPage extends Component {
             selectedTab: newValue
         });
     };
+    //aaa;
 
     handleLogout = () => {
         const { AccountProps, AccountActions } = this.props;

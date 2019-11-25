@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 
-import { getLocalFiles, getCloudFiles, startCompareData } from 'components/utils/RCSyncUtil';
+import { getLocalFiles, getCloudFiles, startCompareData, handleSyncTimer } from 'components/utils/RCSyncUtil';
 import { getAppRoot } from 'components/utils/RCCommonUtil';
 
 import * as AccountActions from 'modules/AccountModule';
@@ -229,10 +229,16 @@ class SyncPage extends Component {
     handleChangeSyncType = (syncNo, syncType) => {
         const { GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
-        driveConfig.get('syncItems')
+        const newType = driveConfig.get('syncItems')
             .find({ no: syncNo })
             .assign({ type: syncType })
             .write();
+            
+        if(newType.type === 'm') {
+            handleSyncTimer('kill');
+        } else {
+            handleSyncTimer('start');
+        }
         this.setState({
             openCloudFolderDialog: false
         });
@@ -251,7 +257,7 @@ class SyncPage extends Component {
             currSyncDatas = fromJS(driveConfig.get('syncItems').value());
         }
 
-        // console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas);
+        console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas.toJS());
         // console.log('driveConfig :: ', driveConfig);
         // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
 

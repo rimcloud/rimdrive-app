@@ -19,6 +19,23 @@ const SECRET = 'rimdrivezzang';
 //   return new Promise(resolve => setTimeout(resolve, ms));
 // }
 
+let syncIntervalTimer = null;
+export function handleSyncTimer(actType) {
+  if(actType === 'start') {
+
+    if(syncIntervalTimer !== null) {
+      clearInterval(syncIntervalTimer);
+    }
+
+    syncIntervalTimer = setInterval(() => {
+      console.log('>>>>>>>>>> START SYNC DATA ......... CALL >>>>>>>>>>>>>>', new Date());
+      startSyncData();
+    }, 15000);
+  } else {
+    clearInterval(syncIntervalTimer);
+  }
+}
+
 const selectLocalFiles = (targetPath, relativePath, innerItems) => {
 
 
@@ -267,6 +284,44 @@ const syncCloudDelete = (userId, cloudFile, cloudTarget) => {
     // DELETE CLOUD FILE
     deleteCloudFile(userId, cloudTarget, cloudFile);
   }
+}
+
+export function startSyncData() {
+  syncData(1);
+}
+
+const syncData = (no) => {
+  const { GlobalProps } = this.props;
+  const driveConfig = GlobalProps.get('driveConfig');
+  const syncItems = driveConfig.get('syncItems').find({ no: no }).value();
+
+  // ## LOCAL FILEs SAVE
+  // log.info('[handleStartSyncFile] =[1]=');
+  const localFiles = getLocalFiles(syncItems);
+  // log.info(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
+  const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
+  // log.info('[handleStartSyncFile] =[3]=');
+  const localDB = low(localAdapter);
+  // log.info('[handleStartSyncFile] =[4]=');
+  localDB.assign({ files: localFiles }).write();
+  // log.info('[handleStartSyncFile] =[5]=');
+
+  // ## CLOUD FILEs SAVE
+  const cloudFiles = getCloudFiles(this.props.AccountProps.get('userId'), syncItems); /// ???????
+  // log.info('[handleStartSyncFile] =[6]=');
+  const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
+  // log.info('[handleStartSyncFile] =[7]=');
+  const cloudDB = low(cloudAdapter);
+  // log.info('[handleStartSyncFile] =[8]=');
+  cloudDB.assign({ files: cloudFiles }).write();
+
+  ipcRenderer.sendSync('set_sync_valiable', {
+      localTarget: syncItems.local,
+      cloudTarget: syncItems.cloud
+  });
+
+  // // ## Compare Data
+  startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud);
 }
 
 
