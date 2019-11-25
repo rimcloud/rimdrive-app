@@ -66,7 +66,6 @@
     "electron-dl": "^1.14.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "3.0.9",
-    "electron-prebuilt-compile": "^4.0.0",
     "form-data": "3.0.0",
     "immutable": "^4.0.0-rc.12",
     "lowdb": "^1.0.0",
