@@ -1,11 +1,15 @@
 
 import { handleActions } from 'redux-actions';
 import { Map } from 'immutable';
+import { ipcRenderer } from 'electron';
 
 const SHOW_ELEMENT_MESSAGE = 'global/SHOW_ELEMENT_MESSAGE';
 const CLOSE_ELEMENT_MESSAGE = 'global/CLOSE_ELEMENT_MESSAGE';
 
 const SET_DATASTORAGE_SUCCESS = 'global/SET_DATASTORAGE_SUCCESS';
+
+const SET_SERVERCONFIG_SUCCESS = 'global/SET_SERVERCONFIG_SUCCESS';
+const SET_SERVERCONFIG_FAIL = 'global/SET_SERVERCONFIG_FAIL';
 
 const CHG_STORE_DATA = 'global/CHG_STORE_DATA';
 
@@ -36,7 +40,32 @@ export const setDataStorage = (param) => dispatch => {
     return new Promise(function (resolve, reject) {
         resolve('result test');
     });
+};
 
+export const setServerConfig = (param) => dispatch => {
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('set-env-config', {
+            protocol: param.protocol,
+            hostname: param.hostname,
+            port: param.port
+        });
+        if(ipcResult) {
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                dispatch({
+                    type: SET_SERVERCONFIG_SUCCESS
+                });
+            } else {
+                dispatch({
+                    type: SET_SERVERCONFIG_FAIL,
+                    message: ipcResult.status.message,
+                    resultCode: ipcResult.status.resultCode
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
+        }
+    });
 };
 
 export const showConfirm = (param) => dispatch => {
@@ -83,6 +112,13 @@ export default handleActions({
         return state.merge({
             'driveConfig': action.driveConfig
         });
+    },
+
+    [SET_SERVERCONFIG_SUCCESS]: (state, action) => {
+        return state;
+    },
+    [SET_SERVERCONFIG_FAIL]: (state, action) => {
+        return state;
     },
 
     [SHOW_CONFIRM]: (state, action) => {

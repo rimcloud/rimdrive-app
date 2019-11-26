@@ -11,7 +11,7 @@ const log = require('electron-log');
 // const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
 // const STORAGEPORT = '48080';
 
-const STORAGEOPTION = {
+let STORAGEOPTION = {
     protocol: 'http:',
     hostname: 'demo-ni.cloudrim.co.kr',
     port: '48080'
@@ -83,6 +83,26 @@ function createWindow() {
                 // log.debug(`Download failed: ${state}`)
             }
         })
+    });
+
+    ipcMain.on('set-env-config', (event, arg) => {
+        log.debug('set-env-config - arg ::: ', arg);
+
+        if(arg.protocol) {
+            if(arg.protocol.slice(-1) === ':') {
+                STORAGEOPTION.protocol = arg.protocol;
+            }
+        }
+
+        if(arg.hostname) {
+            STORAGEOPTION.hostname = arg.hostname;
+        }
+
+        if(arg.port) {
+            STORAGEOPTION.port = arg.port;
+        }
+
+        event.returnValue = 'SUCCESS';
     });
 
     ipcMain.on('sync-msg-select-folder', (event, arg) => {

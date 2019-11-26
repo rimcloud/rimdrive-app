@@ -48,37 +48,18 @@ class MainPage extends Component {
     }
 
     componentDidMount() {
-        const { GlobalActions, AccountProps } = this.props;
-        // load and init rimdrive config
-        const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
-        const driveConfig = low(adapter);
+        const { GlobalProps, AccountProps } = this.props;
+        const driveConfig = GlobalProps.get('driveConfig');
 
         if (driveConfig !== undefined) {
-            if (driveConfig.get('syncItems').value() === undefined || driveConfig.get('syncItems').value().length < 1) {
-                // init sync item
-                driveConfig.assign({
-                    syncItems: [{
-                        "no": 1,
-                        "local": "",
-                        "cloud": "",
-                        "type": "m",
-                        "status": "on",
-                        "files": []
-                    }]
-                }).write();
-            } else {
-                // only use one sync-item for this version
-                if(driveConfig.get('syncItems').value()[0].type === 'a') {
-                    // start sync interval
-                    handleSyncTimer('start');
-                }
+            // only use one sync-item for this version
+            if(driveConfig.get('syncItems').value()[0].type === 'a') {
+                // start sync interval
+                handleSyncTimer('start');
             }
         }
 
         setInitConfigData(driveConfig, AccountProps.get('userId'));
-        GlobalActions.setDataStorage({
-            driveConfig: driveConfig
-        });
     }
 
     handleChange = (event, newValue) => {

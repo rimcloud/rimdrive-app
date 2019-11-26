@@ -1,17 +1,32 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
+import path from 'path';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
-// import log from 'electron-log';
+import log from 'electron-log';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+
+import * as GlobalActions from 'modules/GlobalModule';
 import * as AccountActions from 'modules/AccountModule';
+
+import { getAppRoot } from 'components/utils/RCCommonUtil';
+
+import SettingDialog from 'components/parts/SettingDialog';
 
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import SettingIcon from '@material-ui/icons/SettingsApplicationsOutlined';
 
 const CustomCssTextField = withStyles({
     root: {
@@ -35,7 +50,53 @@ class LoginPage extends Component {
         super(props);
         this.passwordInput = React.createRef();
         this.focusTextInput = this.focusTextInput.bind(this);
+
+        this.state = {
+            openSettingDialog: false
+        };
     }
+
+
+    // componentDidMount() {
+
+    //     // load and init rimdrive config
+    //     const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
+    //     const driveConfig = low(adapter);
+
+    //     if (driveConfig !== undefined) {
+    //         if (driveConfig.get('syncItems').value() === undefined || driveConfig.get('syncItems').value().length < 1) {
+    //             // init sync item
+    //             driveConfig.assign({
+    //                 syncItems: [{
+    //                     "no": 1,
+    //                     "local": "",
+    //                     "cloud": "",
+    //                     "type": "m",
+    //                     "status": "on",
+    //                     "files": []
+    //                 }]
+    //             }).write();
+    //         }
+
+    //         if (driveConfig.get('serverConfig').value() === undefined) {
+    //             // init sync item
+    //             driveConfig.assign({
+    //                 serverConfig: {
+    //                     "protocol": "11",
+    //                     "hostname": "22",
+    //                     "port": "33"
+    //                 }
+    //             }).write();
+    //         }
+    //     }
+
+    //     this.props.GlobalActions.setDataStorage({
+    //         driveConfig: driveConfig
+    //     });
+    // }
+
+
+
 
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
@@ -49,6 +110,26 @@ class LoginPage extends Component {
             name: name,
             value: event.target.value
         });
+    }
+
+    handleOpenSetting = () => {
+        this.setState({
+            openSettingDialog: true
+        });
+    }
+
+    handleCloseSetting = () => {
+        this.setState({
+            openSettingDialog: false
+        });
+    }
+
+    handleSaveServerConfig = (param) => {
+        const { GlobalProps, GlobalActions } = this.props;
+        const driveConfig = GlobalProps.get('driveConfig');
+        driveConfig.get('serverConfig')
+        .assign(param).write();
+        GlobalActions.setServerConfig(param);
     }
 
     focusTextInput() {
@@ -75,55 +156,72 @@ class LoginPage extends Component {
         }
 
         return (
-            <div className={classes.homePage}>
-                <div>
-                    <CustomCssTextField label="ID" margin="normal" autoFocus
-                        value={AccountProps.get('userId')}
-                        onChange={this.handleChangeValue('userId')}
-                        onKeyPress={(ev) => {
-                            if (ev.key === 'Enter') {
-                                this.focusTextInput();
-                                ev.preventDefault();
-                            }
-                        }}
-                    />
+            <div>
+                <AppBar className={classes.loginHeader} elevation={0} square={true}>
+                    <Toolbar>
+                        <Typography variant="h6" style={{flexGrow: 1}}></Typography>
+                            <IconButton color="inherit" onClick={this.handleOpenSetting} aria-label="setting">
+                                <SettingIcon style={{height:34,width:34,color:'gray'}} />
+                            </IconButton>
+                    </Toolbar>
+                </AppBar>
+
+                <div className={classes.homePage}>
+                    <div>
+                        <CustomCssTextField label="ID" margin="normal" autoFocus
+                            value={AccountProps.get('userId')}
+                            onChange={this.handleChangeValue('userId')}
+                            onKeyPress={(ev) => {
+                                if (ev.key === 'Enter') {
+                                    this.focusTextInput();
+                                    ev.preventDefault();
+                                }
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <CustomCssTextField label="Password" margin="normal"
+                            value={AccountProps.get('password')}
+                            onChange={this.handleChangeValue('password')}
+                            type="password"
+                            autoComplete="current-password"
+                            inputRef={this.passwordInput}
+                            onKeyPress={(ev) => {
+                                if (ev.key === 'Enter') {
+                                    this.handleLoginBtnClick();
+                                    ev.preventDefault();
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className={classes.rcMainTitle}>
+                        <Button className={classes.RCSmallButton}
+                            variant="contained" color="primary"
+                            onClick={this.handleLoginBtnClick} >
+                            login
+                        </Button>
+                    </div>
+                    <Typography>{msg}</Typography>
                 </div>
-                <div>
-                    <CustomCssTextField label="Password" margin="normal"
-                        value={AccountProps.get('password')}
-                        onChange={this.handleChangeValue('password')}
-                        type="password"
-                        autoComplete="current-password"
-                        inputRef={this.passwordInput}
-                        onKeyPress={(ev) => {
-                            if (ev.key === 'Enter') {
-                                this.handleLoginBtnClick();
-                                ev.preventDefault();
-                            }
-                        }}
-                    />
-                </div>
-                <div className={classes.rcMainTitle}>
-                    <Button className={classes.RCSmallButton}
-                        variant="contained" color="primary"
-                        onClick={this.handleLoginBtnClick} >
-                        login
-                    </Button>
-                </div>
-                <Typography>{msg}</Typography>
                 <div className={classes.footer}>
                     <Typography variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
                 </div>
+                <SettingDialog open={this.state.openSettingDialog}
+                    onClose={this.handleCloseSetting}
+                    onSaveServerConfig={this.handleSaveServerConfig}
+                />
             </div>
         );
     }
 }
 
 const mapStateToProps = (state) => ({
+    GlobalProps: state.GlobalModule,
     AccountProps: state.AccountModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
+    GlobalActions: bindActionCreators(GlobalActions, dispatch),
     AccountActions: bindActionCreators(AccountActions, dispatch)
 });
 

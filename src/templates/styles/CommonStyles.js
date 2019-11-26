@@ -21,13 +21,17 @@ export const CommonStyle = theme => ({
         paddingTop: 10
     },
 
+    loginHeader: {
+        background: '#f5f5f500',
+        paddingTop: 20
+    },
+
     homePage: {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        
         background: "radial-gradient(#efefef, #b8b8b8)"
 
         // linear-gradient(#a0a0a0, #ffffff)
