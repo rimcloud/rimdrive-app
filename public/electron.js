@@ -116,15 +116,15 @@ function createWindow() {
     });
 
     ipcMain.on('get-data-from-server', (event, arg) => {
-        // console.log('arg ::: ', arg);
+        console.log('arg ::: ', arg);
         const { net } = require('electron');
         const request = net.request({
             method: 'GET',
             url: `http://${arg.url}?${arg.params}`
         });
         request.on('response', (response) => {
-            // console.log(`STATUS: ${response.statusCode}`);
-            // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            console.log(`STATUS: ${response.statusCode}`);
+            console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
             let chunks = Buffer.alloc(0);
             if (response.statusCode === 200) {
                 response.on('data', (chunk) => {
