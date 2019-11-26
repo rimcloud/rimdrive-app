@@ -3,7 +3,7 @@ import { Redirect } from 'react-router';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
-import log from 'electron-log';
+// import log from 'electron-log';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -111,6 +111,9 @@ class LoginPage extends Component {
                     </Button>
                 </div>
                 <Typography>{msg}</Typography>
+                <div className={classes.footer}>
+                    <Typography variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
+                </div>
             </div>
         );
     }

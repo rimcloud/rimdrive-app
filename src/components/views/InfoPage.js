@@ -105,11 +105,6 @@ class InfoPage extends Component {
                 </Card>
                 <Card className={classes.card} square={true}>
                     <RCContentCardHeader
-                        action={
-                            <IconButton aria-label="settings">
-                                <MoreVertIcon style={{ height: "0.6em", color: "#ffffff" }} />
-                            </IconButton>
-                        }
                         title="저장소 정보"
                         subheader="" />
                     <CardContent>

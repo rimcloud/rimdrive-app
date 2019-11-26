@@ -12,6 +12,15 @@ export const CommonStyle = theme => ({
         // backgroundImage: "linear-gradient(#aec1fb, #fbdeaa)"
     },
 
+    footer: {
+        position: 'fixed',
+        bottom: 0,
+        width: '100%',
+        color: 'black',
+        textAlign: 'center',
+        paddingTop: 10
+    },
+
     homePage: {
         minHeight: "100vh",
         display: "flex",

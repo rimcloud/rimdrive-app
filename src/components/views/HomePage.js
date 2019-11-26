@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 
 class HomePage extends Component {
@@ -30,6 +31,7 @@ class HomePage extends Component {
                         START
                     </Button>
                 </div>
+                <Typography className={classes.footer} variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
             </Paper>
         );
     }

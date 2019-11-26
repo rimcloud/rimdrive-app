@@ -4,7 +4,7 @@ import path from 'path';
  
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import log from 'electron-log';
+// import log from 'electron-log';
 
 import * as GlobalActions from 'modules/GlobalModule';
 import * as AccountActions from 'modules/AccountModule';
@@ -27,6 +27,7 @@ import InfoPage from 'components/views/InfoPage';
 import SharePage from 'components/views/SharePage';
 import SyncPage from 'components/views/SyncPage';
 import RCDialogConfirm from 'components/utils/RCDialogConfirm';
+import Typography from '@material-ui/core/Typography';
 
 function a11yProps(index) {
     return {
@@ -128,6 +129,7 @@ class MainPage extends Component {
                     {selectedTab === 1 && <SharePage />}
                     {selectedTab === 2 && <SyncPage />}
                 </div>
+                <Typography className={classes.footer} variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
                 <RCDialogConfirm />
             </React.Fragment>
         );
