@@ -7,9 +7,9 @@ const { Buffer } = require('buffer');
 const isDev = require('electron-is-dev');
 const log = require('electron-log');
 
-const STORAGEPROTOCOL = 'http:';
-const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
-const STORAGEPORT = '48080';
+// const STORAGEPROTOCOL = 'http:';
+// const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
+// const STORAGEPORT = '48080';
 
 const STORAGEOPTION = {
     protocol: 'http:',
@@ -79,13 +79,6 @@ function createWindow() {
         })
     });
 
-    // TEST electron.dialog.showOpenDialog({ properties: ['openFile', 'openDirectory', 'multiSelections'] });
-
-    // ipcMain.on('asynchronous-message', (event, arg) => {
-    //     console.log(arg)  // "ping" 출력
-    //     event.sender.send('asynchronous-reply', 'pong')
-    // });
-
     ipcMain.on('sync-msg-select-folder', (event, arg) => {
         const selectedDirectory = dialog.showOpenDialogSync(mainWindow, {
             title: '폴더 선택',
@@ -93,7 +86,7 @@ function createWindow() {
             message: '폴더를 선택하세요'
         });
 
-        if (selectedDirectory != undefined && selectedDirectory.length > 0) {
+        if (selectedDirectory !== undefined && selectedDirectory.length > 0) {
             console.log('selectedDirectory[0] ----->>> ', selectedDirectory[0]);
             event.returnValue = selectedDirectory[0];
         } else {
