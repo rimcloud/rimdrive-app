@@ -110,7 +110,6 @@ class SyncPage extends Component {
     };
 
     handleStartSyncFile = (no) => {
-        // log.info('[handleStartSyncFile] ============================== ', no);
         this.props.GlobalActions.showConfirm({
             confirmTitle: "동기화 실행",
             confirmMsg: "동기화를 실행 하시겠습니까?",
@@ -160,35 +159,44 @@ class SyncPage extends Component {
     }
 
     handleOpenFolderDialog = (syncNo, locType) => {
+        const locStr = (locType === 'local') ? '컴퓨터 파일 경로' : '클라우드 저장소 폴더';
+        this.props.GlobalActions.showConfirm({
+            confirmTitle: "동기화 위치 수정",
+            confirmMsg: `동기화를 위한 ${locStr}를 변경하시겠습니까?
+            qqqqq`,
+            handleConfirmResult: (confirmValue, paramObject) => {
+                if (confirmValue) {
+                    if (locType === 'local') {
+                        const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
+                        let selectedPath = '';
 
-        if (locType === 'local') {
-            const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
-            let selectedPath = '';
-
-            // console.log('pathItems ::: ', pathItems);
-            if (pathItems !== undefined && pathItems !== null) {
-                if(pathItems.isArray && pathItems.length > 0) {
-                    selectedPath = pathItems[0]
-                } else {
-                    selectedPath = pathItems;
+                        // console.log('pathItems ::: ', pathItems);
+                        if (pathItems !== undefined && pathItems !== null) {
+                            if(pathItems.isArray && pathItems.length > 0) {
+                                selectedPath = pathItems[0]
+                            } else {
+                                selectedPath = pathItems;
+                            }
+                        
+                            const { GlobalProps } = this.props;
+                            const driveConfig = GlobalProps.get('driveConfig');
+                            driveConfig.get('syncItems')
+                                .find({ no: syncNo })
+                                .assign({ [locType]: selectedPath })
+                                .write();
+                            this.setState({
+                                reload: true
+                            });
+                        }
+                    } else if (locType === 'cloud') {
+                        this.setState({
+                            openCloudFolderDialog: true
+                        });
+                    }
                 }
-            
-                const { GlobalProps } = this.props;
-                const driveConfig = GlobalProps.get('driveConfig');
-                driveConfig.get('syncItems')
-                    .find({ no: syncNo })
-                    .assign({ [locType]: selectedPath })
-                    .write();
-                this.setState({
-                    reload: true
-                });
-            }
-        } else if (locType === 'cloud') {
-            this.setState({
-                openCloudFolderDialog: true
-            });
-        }
-
+            },
+            confirmObject: {syncNo: syncNo, locType: locType}
+        });
     }
 
     handleCloseCloudFolderDialog = () => {
@@ -225,24 +233,28 @@ class SyncPage extends Component {
     }
 
     handleChangeSyncType = (syncNo, syncType) => {
-        const { GlobalProps, AccountProps } = this.props;
-        const driveConfig = GlobalProps.get('driveConfig');
-        const newType = driveConfig.get('syncItems')
-            .find({ no: syncNo })
-            .assign({ type: syncType })
-            .write();
+        const typeStr = (syncType === 'a') ? '자동실행' : '수동실행';
+        this.props.GlobalActions.showConfirm({
+            confirmTitle: "동기화 작동구분 수정",
+            confirmMsg: `동기화 작동을 '${typeStr}'으로 수정하시겠습니까?`,
+            handleConfirmResult: (confirmValue, paramObject) => {
+                if (confirmValue) {
+                    const { GlobalProps, AccountProps } = this.props;
+                    const driveConfig = GlobalProps.get('driveConfig');
+                    const newType = driveConfig.get('syncItems')
+                                    .find({ no: paramObject.syncNo })
+                                    .assign({ type: paramObject.syncType })
+                                    .write();
         
-        // sync timer start or stop
-        if(newType.type === 'm') {
-
-            handleSyncTimer('kill', null, null);
-        } else {
-          
-            handleSyncTimer('start', GlobalProps.get('driveConfig'), AccountProps.get('userId'));
-        }
-        
-        this.setState({
-            openCloudFolderDialog: false
+                    // sync timer start or stop
+                    if(newType.type === 'm') {
+                        handleSyncTimer('kill', null, null);
+                    } else {
+                        handleSyncTimer('start', GlobalProps.get('driveConfig'), AccountProps.get('userId'));
+                    }
+                }
+            },
+            confirmObject: {syncNo : syncNo, syncType: syncType}
         });
     }
 

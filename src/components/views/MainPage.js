@@ -25,7 +25,7 @@ import Button from '@material-ui/core/Button';
 import InfoPage from 'components/views/InfoPage';
 import SharePage from 'components/views/SharePage';
 import SyncPage from 'components/views/SyncPage';
-
+import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 
 function a11yProps(index) {
     return {
@@ -89,8 +89,17 @@ class MainPage extends Component {
     //aaa;
 
     handleLogout = () => {
-        const { AccountProps, AccountActions } = this.props;
-        AccountActions.reqLogoutProcess(AccountProps.get('userId'));
+        this.props.GlobalActions.showConfirm({
+            confirmTitle: "로그아웃",
+            confirmMsg: "로그아웃 하시겠습니까?",
+            handleConfirmResult: (confirmValue, paramObject) => {
+                if (confirmValue) {
+                    const { AccountProps, AccountActions } = this.props;
+                    AccountActions.reqLogoutProcess(AccountProps.get('userId'));
+                }
+            },
+            confirmObject: null
+        });
     }
 
     render() {
@@ -120,6 +129,7 @@ class MainPage extends Component {
                     {selectedTab === 1 && <SharePage />}
                     {selectedTab === 2 && <SyncPage />}
                 </div>
+                <RCDialogConfirm />
             </React.Fragment>
         );
     }
