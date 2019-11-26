@@ -20,18 +20,32 @@ const SECRET = 'rimdrivezzang';
 // }
 
 let syncIntervalTimer = null;
-export function handleSyncTimer(actType) {
+let driveCfg = null;
+let userId = null;
+export function setInitConfigData(cfg, uid) {
+  
+  driveCfg = cfg;
+  userId = uid;
+}
+
+export function handleSyncTimer(actType, cfg, uid) {
   if(actType === 'start') {
 
     if(syncIntervalTimer !== null) {
+      driveCfg = null;
+      userId = null;
       clearInterval(syncIntervalTimer);
     }
 
+    driveCfg = cfg;
+    userId = uid;
     syncIntervalTimer = setInterval(() => {
-      console.log('>>>>>>>>>> START SYNC DATA ......... CALL >>>>>>>>>>>>>>', new Date());
+      console.log('\n\n>>>>>>>>>> START SYNC DATA ......... CALL >>>>>>>>>>>>>>', new Date());
       startSyncData();
-    }, 15000);
+    }, 600000);
   } else {
+    driveCfg = null;
+    userId = null;
     clearInterval(syncIntervalTimer);
   }
 }
@@ -91,6 +105,7 @@ const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
     url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
     params: `method=FINDFILES&userid=${userId}&path=${targetPath}${relativePath}`
   });
+  // log.info(`selectCloudFiles --> RESULT :: ${ipcResult.data}`);
 
   if (ipcResult.data && ipcResult.data.length > 0) {
     ipcResult.data.forEach((cf, i) => {
@@ -131,8 +146,11 @@ export function getLocalFiles(syncItem) {
 };
 
 export function getCloudFiles(userId, syncItem) {
+  
+  // log.info(`getCloudFiles --> GET :: ${syncItem.cloud}`);
   const files = selectCloudFiles(userId, `/개인저장소/모든파일${syncItem.cloud}`, '', []);
   // log.info(`getCloudFiles --> files :: ${files}`);
+ 
   return files;
 };
 
@@ -291,8 +309,7 @@ export function startSyncData() {
 }
 
 const syncData = (no) => {
-  const { GlobalProps } = this.props;
-  const driveConfig = GlobalProps.get('driveConfig');
+  const driveConfig = driveCfg;
   const syncItems = driveConfig.get('syncItems').find({ no: no }).value();
 
   // ## LOCAL FILEs SAVE
@@ -307,7 +324,7 @@ const syncData = (no) => {
   // log.info('[handleStartSyncFile] =[5]=');
 
   // ## CLOUD FILEs SAVE
-  const cloudFiles = getCloudFiles(this.props.AccountProps.get('userId'), syncItems); /// ???????
+  const cloudFiles = getCloudFiles(userId, syncItems); /// ???????
   // log.info('[handleStartSyncFile] =[6]=');
   const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
   // log.info('[handleStartSyncFile] =[7]=');
@@ -321,7 +338,7 @@ const syncData = (no) => {
   });
 
   // // ## Compare Data
-  startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud);
+  startCompareData(userId, localDB, cloudDB, syncItems.local, syncItems.cloud);
 }
 
 

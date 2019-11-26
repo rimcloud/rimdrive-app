@@ -26,8 +26,6 @@ import SyncSingleItem from 'components/parts/SyncSingleItem';
 import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 import CloudFolderTreeDialog from 'components/parts/CloudFolderTreeDialog';
 
-import Box from '@material-ui/core/Box';
-
 class SyncPage extends Component {
 
     constructor(props) {
@@ -227,18 +225,22 @@ class SyncPage extends Component {
     }
 
     handleChangeSyncType = (syncNo, syncType) => {
-        const { GlobalProps } = this.props;
+        const { GlobalProps, AccountProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
         const newType = driveConfig.get('syncItems')
             .find({ no: syncNo })
             .assign({ type: syncType })
             .write();
-            
+        
+        // sync timer start or stop
         if(newType.type === 'm') {
-            handleSyncTimer('kill');
+
+            handleSyncTimer('kill', null, null);
         } else {
-            handleSyncTimer('start');
+          
+            handleSyncTimer('start', GlobalProps.get('driveConfig'), AccountProps.get('userId'));
         }
+        
         this.setState({
             openCloudFolderDialog: false
         });

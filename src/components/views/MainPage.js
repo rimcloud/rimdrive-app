@@ -5,7 +5,6 @@ import path from 'path';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-
 import * as GlobalActions from 'modules/GlobalModule';
 import * as AccountActions from 'modules/AccountModule';
 
@@ -13,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { getAppRoot } from 'components/utils/RCCommonUtil';
-import { handleSyncTimer } from 'components/utils/RCSyncUtil';
+import { handleSyncTimer, setInitConfigData } from 'components/utils/RCSyncUtil';
 
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -49,7 +48,7 @@ class MainPage extends Component {
     }
 
     componentDidMount() {
-        const { GlobalActions } = this.props;
+        const { GlobalActions, AccountProps } = this.props;
         // load and init rimdrive config
         const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
         const driveConfig = low(adapter);
@@ -76,6 +75,7 @@ class MainPage extends Component {
             }
         }
 
+        setInitConfigData(driveConfig, AccountProps.get('userId'));
         GlobalActions.setDataStorage({
             driveConfig: driveConfig
         });
