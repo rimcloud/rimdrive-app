@@ -62,13 +62,6 @@ class SyncItem extends Component {
         this.props.onShowFolderDialog(item.get('no'), locType);
     }
 
-    handleDblClick = () => {
-        // console.log('handleDblClick >>>>>>>>>>>>>>>>>>>>>> ');
-    }
-    handleSingleClick = () => {
-        // console.log('handleSingleClick >>>>>>>>>>>>>>>>>>>>>> ');
-    }
-    
     render() {
         const { classes } = this.props;
         const { item, key, index } = this.props;

@@ -35,27 +35,6 @@ class FolderTreeComp extends Component {
     };
   }
 
-  handleNodeToggle = (id, extend) => {
-    // const { folderList } = this.props;
-    // console.log('id :: ', id);
-    // console.log('extend :: ', extend);
-
-    // const folder = folderList.find(e => (e.get('folderId') === id));
-    // console.log('clicked folder  = ', folder);
-    // FileActions.showFilesInFolder({
-    //   selectedFolder: folder
-    // });
-  }
-
-  // handleSelectFolder = (folderId) => {
-  //   const { folderList, FileActions } = this.props;
-  //   // // show folder info and file list
-  //   const folder = folderList.find(n => (n.get('folderId') === folderId));
-  //   FileActions.showFilesInFolder({
-  //     selectedFolder: folder
-  //   });
-  // }
-
   getTreeItemMap = (folderList, fileId) => {
     const folder = folderList.find(e => (e.get('fileId') === fileId));
     let item = null;
@@ -90,7 +69,6 @@ class FolderTreeComp extends Component {
 
   render() {
     const { classes, folderList, hasTitle } = this.props;
-    // console.log('FolderTreeComp-render :: ', (folderList) ? folderList.toJS() : 'nn');
 
     let folderTree = null;
     if(folderList !== undefined) {

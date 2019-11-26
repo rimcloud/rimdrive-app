@@ -17,11 +17,14 @@ const STORAGEOPTION = {
     port: '48080'
 }
 
-let mainWindow;
+// setting log level.
+log.transports.console.level='debug';
+log.transports.file.level='error';
 
+
+let mainWindow;
 let syncLocalTarget = '';
 let syncCloudTarget = '';
-
 
 const isMac = process.platform === 'darwin'
 
@@ -56,25 +59,25 @@ function createWindow() {
         // item.setSavePath('/tmp/save.pdf')
         const cpath = item.getURL().split('&path=')[1];
         const lastPath = `${syncLocalTarget}${(cpath.substring(cpath.indexOf(syncCloudTarget) + syncCloudTarget.length)).replace(/\//g, path.sep)}`;
-        log.info('GET lastPath ::: ', lastPath);
+        log.debug('GET lastPath ::: ', lastPath);
         item.savePath = lastPath;
 
         item.on('updated', (event, state) => {
             if (state === 'interrupted') {
-                // console.log('Download is interrupted but can be resumed')
+                // log.debug('Download is interrupted but can be resumed')
             } else if (state === 'progressing') {
                 if (item.isPaused()) {
-                    // console.log('Download is paused')
+                    // log.debug('Download is paused')
                 } else {
-                    // console.log(`Received bytes: ${item.getReceivedBytes()}`)
+                    // log.debug(`Received bytes: ${item.getReceivedBytes()}`)
                 }
             }
         })
         item.once('done', (event, state) => {
             if (state === 'completed') {
-                // console.log('Download successfully')
+                // log.debug('Download successfully')
             } else {
-                // console.log(`Download failed: ${state}`)
+                // log.debug(`Download failed: ${state}`)
             }
         })
     });
@@ -87,7 +90,6 @@ function createWindow() {
         });
 
         if (selectedDirectory !== undefined && selectedDirectory.length > 0) {
-            console.log('selectedDirectory[0] ----->>> ', selectedDirectory[0]);
             event.returnValue = selectedDirectory[0];
         } else {
             event.returnValue = null;
@@ -109,15 +111,15 @@ function createWindow() {
     });
 
     ipcMain.on('get-data-from-server', (event, arg) => {
-        console.log('arg ::: ', arg);
+        log.debug('arg ::: ', arg);
         const { net } = require('electron');
         const request = net.request({
             method: 'GET',
             url: `http://${arg.url}?${arg.params}`
         });
         request.on('response', (response) => {
-            console.log(`STATUS: ${response.statusCode}`);
-            console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+            log.debug(`STATUS: ${response.statusCode}`);
+            log.debug(`HEADERS: ${JSON.stringify(response.headers)}`);
             let chunks = Buffer.alloc(0);
             if (response.statusCode === 200) {
                 response.on('data', (chunk) => {
@@ -131,7 +133,7 @@ function createWindow() {
                     const responseObj = JSON.parse(chunks.toString());
                     event.returnValue = responseObj;
                 } catch (e) {
-                    console.log('Exception e :: ', e);
+                    log.debug('Exception e :: ', e);
                 }
 
             })
@@ -141,9 +143,7 @@ function createWindow() {
 
     ipcMain.on('post-req-to-server', (event, arg) => {
         
-        
-        console.log('arg ::: ', arg);
-
+        log.debug('arg ::: ', arg);
 
         const { net } = require('electron');
         let params = STORAGEOPTION;
@@ -151,14 +151,12 @@ function createWindow() {
         params['path'] = `${arg.url}?${qs.stringify(arg.params)}`;
 
         try {
-            // console.log('params ::: ', params);
+            // log.debug('params ::: ', params);
             const request = net.request(params);
             request.on('response', (response) => {
 
-
-                console.log(`STATUS: ${response.statusCode}`);
-                console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-                
+                log.debug(`STATUS: ${response.statusCode}`);
+                log.debug(`HEADERS: ${JSON.stringify(response.headers)}`);
                 
                 let chunks = Buffer.alloc(0);
                 if (response.statusCode === 200) {
@@ -172,24 +170,22 @@ function createWindow() {
                     try {
                         const responseObj = JSON.parse(chunks.toString());
 
-
-                        console.log('responseObj: >>> ', responseObj);
-                        
+                        log.debug('responseObj: >>> ', responseObj);
                         
                         event.returnValue = responseObj;
                     } catch (e) {
-                        console.log('Exception e :: ', e);
+                        log.error('Exception e :: ', e);
                     }
 
                 })
             });
             request.on('error', (error) => {
-                // console.log('[ ERROR ] :: ', error);
+                // log.debug('[ ERROR ] :: ', error);
                 event.returnValue = { "status": { "result": "FAIL", "resultCode": error, "message": "server error" } };
             });
             request.end();
         } catch (ex) {
-            // console.log('Exception eeeeeeexxxxxxx :: ', ex);
+            // log.debug('Exception eeeeeeexxxxxxx :: ', ex);
             event.returnValue = { "status": { "result": "FAIL", "resultCode": ex, "message": "request exception" } };
         }
     });

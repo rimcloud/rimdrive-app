@@ -121,23 +121,23 @@ class SyncPage extends Component {
                         .find({ no: paramObject }).value();
 
                     // ## LOCAL FILEs SAVE
-                    // log.info('[handleStartSyncFile] =[1]=');
+                    // log.debug('[handleStartSyncFile] =[1]=');
                     const localFiles = getLocalFiles(syncItems);
-                    // log.info(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
+                    // log.debug(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
                     const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
-                    // log.info('[handleStartSyncFile] =[3]=');
+                    // log.debug('[handleStartSyncFile] =[3]=');
                     const localDB = low(localAdapter);
-                    // log.info('[handleStartSyncFile] =[4]=');
+                    // log.debug('[handleStartSyncFile] =[4]=');
                     localDB.assign({ files: localFiles }).write();
-                    // log.info('[handleStartSyncFile] =[5]=');
+                    // log.debug('[handleStartSyncFile] =[5]=');
 
                     // ## CLOUD FILEs SAVE
                     const cloudFiles = getCloudFiles(this.props.AccountProps.get('userId'), syncItems); /// ???????
-                    // log.info('[handleStartSyncFile] =[6]=');
+                    // log.debug('[handleStartSyncFile] =[6]=');
                     const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
-                    // log.info('[handleStartSyncFile] =[7]=');
+                    // log.debug('[handleStartSyncFile] =[7]=');
                     const cloudDB = low(cloudAdapter);
-                    // log.info('[handleStartSyncFile] =[8]=');
+                    // log.debug('[handleStartSyncFile] =[8]=');
                     cloudDB.assign({ files: cloudFiles }).write();
 
                     ipcRenderer.sendSync('set_sync_valiable', {
@@ -146,12 +146,8 @@ class SyncPage extends Component {
                     });
 
                     // // ## Compare Data
-                    // log.info('[handleStartSyncFile] =[9]=');
+                    // log.debug('[handleStartSyncFile] =[9]=');
                     startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud);
-                        //.then((resolvedData) => {
-                            // console.log('############### startCompareData.then ################');
-                            // console.log('resolvedData :::::::: ', resolvedData);
-                        //});
                 }
             },
             confirmObject: no
@@ -170,7 +166,6 @@ class SyncPage extends Component {
                         const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
                         let selectedPath = '';
 
-                        // console.log('pathItems ::: ', pathItems);
                         if (pathItems !== undefined && pathItems !== null) {
                             if(pathItems.isArray && pathItems.length > 0) {
                                 selectedPath = pathItems[0]
@@ -206,8 +201,6 @@ class SyncPage extends Component {
     }
 
     handleSelectCloudFolder = (selectedItem) => {
-        // console.log('SyncPage handleSelectCloudFolder - selectedItem :: ', selectedItem);
-
         const { GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
         driveConfig.get('syncItems')
@@ -261,8 +254,6 @@ class SyncPage extends Component {
     render() {
         const { classes, GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
-        // console.log('driveConfig ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.value() : 'null');
-        // console.log('driveConfig.syncItems ::::::::::==:::::::::: ', (driveConfig) ? driveConfig.get('syncItems').value() : 'null');
         const items = this.state.pathItems;
 
         let currSyncDatas = null;
@@ -270,10 +261,6 @@ class SyncPage extends Component {
         if (driveConfig !== undefined && driveConfig.get('syncItems') !== undefined) {
             currSyncDatas = fromJS(driveConfig.get('syncItems').value());
         }
-
-        console.log('currSyncDatas :::::::::::::::::::: ', currSyncDatas.toJS());
-        // console.log('driveConfig :: ', driveConfig);
-        // console.log('getState ::: ', (driveConfig) ? driveConfig.getState(): 'no');
 
         return (
             <div className={classes.card}>

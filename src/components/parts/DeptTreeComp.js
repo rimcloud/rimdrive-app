@@ -74,11 +74,6 @@ class DeptTreeComp extends Component {
     };
   }
 
-  handleNodeToggle = (id, extend) => {
-    // console.log('id :: ', id);
-    // console.log('extend :: ', extend);
-  }
-
   isChecked(deptCd) {
     const { shareDepts } = this.props;
     if(shareDepts !== undefined && shareDepts.size > 0) {
@@ -119,7 +114,6 @@ class DeptTreeComp extends Component {
 
     let deptTree = null;
     if (deptList !== undefined) {
-      // console.log('deptList >>>>>>>>> ', deptList.toJS());
       deptTree = this.getTreeItemMap(deptList, deptList.getIn([0, 'deptCd']), 1);
     }
 

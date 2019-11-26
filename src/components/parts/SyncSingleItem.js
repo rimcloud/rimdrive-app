@@ -39,18 +39,10 @@ class SyncSingleItem extends Component {
         this.props.onShowFolderDialog(item.get('no'), locType);
     }
 
-    handleDblClick = () => {
-        // console.log('handleDblClick >>>>>>>>>>>>>>>>>>>>>> ');
-    }
-    handleSingleClick = () => {
-        // console.log('handleSingleClick >>>>>>>>>>>>>>>>>>>>>> ');
-    }
-    
     render() {
         const { classes } = this.props;
         const { item, key } = this.props;
 
-        // console.log('item ----------- ', (item) ? item.toJS(): 'none');
         return (
             <React.Fragment>
             {item && 

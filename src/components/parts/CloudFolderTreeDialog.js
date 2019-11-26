@@ -44,18 +44,11 @@ class CloudFolderTreeDialog extends Component {
     this.props.onSelectCloudFolder(this.state.selectedItem);
   }
 
-  handleNodeToggle = (id, extend) => {
-    // console.log('id :: ', id);
-    // console.log('extend :: ', extend);
-  }
-
   handleClose = () => {
     this.props.onClose();
   }
 
   handleSelectCloudFolder = (selectedItem) => {
-
-    // console.log('CloudFolderTreeDialog handleSelectCloudFolder - selectedItem:::  ', selectedItem);
     this.setState({
       selectedItem: selectedItem
     });

@@ -40,7 +40,7 @@ export function handleSyncTimer(actType, cfg, uid) {
     driveCfg = cfg;
     userId = uid;
     syncIntervalTimer = setInterval(() => {
-      console.log('\n\n>>>>>>>>>> START SYNC DATA ......... CALL >>>>>>>>>>>>>>', new Date());
+      log.debug('\n\n>>>>>>>>>> START SYNC DATA ......... CALL >>>>>>>>>>>>>>', new Date());
       startSyncData();
     }, 6000000);
   } else {
@@ -53,14 +53,14 @@ export function handleSyncTimer(actType, cfg, uid) {
 const selectLocalFiles = (targetPath, relativePath, innerItems) => {
 
 
-  // log.info(`targetPath ---------------------> ${targetPath}`);
+  // log.debug(`targetPath ---------------------> ${targetPath}`);
 
 
   let dirents = fs.readdirSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}`, { withFileTypes: true });
 
   dirents.forEach((path, i) => {
     
-    // log.info(`dirents path  :: ${path}`);
+    // log.debug(`dirents path  :: ${path}`);
 
     if (path.isDirectory()) {
       const folderInfo = fs.statSync(`${targetPath}${(relativePath === '') ? '' : '/' + relativePath}/${path.name}`);
@@ -105,7 +105,7 @@ const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
     url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
     params: `method=FINDFILES&userid=${userId}&path=${targetPath}${relativePath}`
   });
-  // log.info(`selectCloudFiles --> RESULT :: ${ipcResult.data}`);
+  // log.debug(`selectCloudFiles --> RESULT :: ${ipcResult.data}`);
 
   if (ipcResult.data && ipcResult.data.length > 0) {
     ipcResult.data.forEach((cf, i) => {
@@ -141,26 +141,26 @@ const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
 
 export function getLocalFiles(syncItem) {
   const files = selectLocalFiles(syncItem.local, '', []);
-  // log.info(`getLocalFiles --> files :: ${files}`);
+  // log.debug(`getLocalFiles --> files :: ${files}`);
   return files;
 };
 
 export function getCloudFiles(userId, syncItem) {
   
-  // log.info(`getCloudFiles --> GET :: ${syncItem.cloud}`);
+  // log.debug(`getCloudFiles --> GET :: ${syncItem.cloud}`);
   const files = selectCloudFiles(userId, `/개인저장소/모든파일${syncItem.cloud}`, '', []);
-  // log.info(`getCloudFiles --> files :: ${files}`);
+  // log.debug(`getCloudFiles --> files :: ${files}`);
  
   return files;
 };
 
 
 const fileUpload = (userId, localFile, cloudTarget) => {
-  // // log.info('[fileUpload] ============================== localFile : ', localFile);
+  // log.debug('[fileUpload] ============================== localFile : ', localFile);
   const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
 
-  // console.log('fileupload == filePath :: ', filePath);
+  // log.debug('fileupload == filePath :: ', filePath);
 
   const bbFile = new Blob([fs.readFileSync(filePath)]);
   const form_data = new FormData();
@@ -168,7 +168,7 @@ const fileUpload = (userId, localFile, cloudTarget) => {
   form_data.append('method', 'UPLOAD');
   form_data.append('userid', userId);
   form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
-  // // log.info('[fileUpload] ============================== serverUrl : ', serverUrl);
+  // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
   return axios.post(serverUrl, form_data);
 }
 
@@ -176,8 +176,8 @@ const fileDownload = (userId, cloudFile, localTarget) => {
 
   const filePath = path.normalize(localTarget + cloudFile.relPath);
 
-  // log.info('fileDownload --> cloudFile ::', cloudFile);
-  log.info('#######[FILE DOWNLOAD]##########################################');
+  // log.debug('fileDownload --> cloudFile ::', cloudFile);
+  log.debug('#######[FILE DOWNLOAD]##########################################');
   ipcRenderer.send("download-cloud", {
     url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=${userId}&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
     properties: {
@@ -190,8 +190,8 @@ const fileDownload = (userId, cloudFile, localTarget) => {
 }
 
 ipcRenderer.on("download complete", (event, file) => {
-  // console.log("download complete =========================================", event); // Full file path
-  // console.log('file::: ', file); // Full file path
+  // log.debug("download complete =========================================", event); // Full file path
+  // log.debug('file::: ', file); // Full file path
 });
 
 const createCloudFolder = (userId, cloudTarget, localFile) => {
@@ -262,7 +262,7 @@ const createStateItem = (file, localTarget, cloudTarget) => {
 }
 
 const syncLocalToCloud = (userId, localFile, cloudTarget) => {
-  // // log.info('[syncLocalToCloud] ============================== ', localFile);
+  // // log.debug('[syncLocalToCloud] ============================== ', localFile);
   if (localFile.type === 'D') {
     // CREATE FOLDER TO CLOUD
     createCloudFolder(userId, cloudTarget, localFile);
@@ -313,23 +313,23 @@ const syncData = (no) => {
   const syncItems = driveConfig.get('syncItems').find({ no: no }).value();
 
   // ## LOCAL FILEs SAVE
-  // log.info('[handleStartSyncFile] =[1]=');
+  // log.debug('[handleStartSyncFile] =[1]=');
   const localFiles = getLocalFiles(syncItems);
-  // log.info(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
+  // log.debug(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
   const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
-  // log.info('[handleStartSyncFile] =[3]=');
+  // log.debug('[handleStartSyncFile] =[3]=');
   const localDB = low(localAdapter);
-  // log.info('[handleStartSyncFile] =[4]=');
+  // log.debug('[handleStartSyncFile] =[4]=');
   localDB.assign({ files: localFiles }).write();
-  // log.info('[handleStartSyncFile] =[5]=');
+  // log.debug('[handleStartSyncFile] =[5]=');
 
   // ## CLOUD FILEs SAVE
   const cloudFiles = getCloudFiles(userId, syncItems); /// ???????
-  // log.info('[handleStartSyncFile] =[6]=');
+  // log.debug('[handleStartSyncFile] =[6]=');
   const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
-  // log.info('[handleStartSyncFile] =[7]=');
+  // log.debug('[handleStartSyncFile] =[7]=');
   const cloudDB = low(cloudAdapter);
-  // log.info('[handleStartSyncFile] =[8]=');
+  // log.debug('[handleStartSyncFile] =[8]=');
   cloudDB.assign({ files: cloudFiles }).write();
 
   ipcRenderer.sendSync('set_sync_valiable', {
@@ -343,14 +343,14 @@ const syncData = (no) => {
 
 
 export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTarget) {
-  // log.info('[startCompareData] =================START============= ');
+  // log.debug('[startCompareData] =================START============= ');
   //return new Promise(function (resolve, reject) {
 
     const stateAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-state.json`);
     const stateDB = low(stateAdapter);
 
     // check First call : stateDB is empty
-    // log.info(`[startCompareData] ========== state files size ::: ${stateDB.get('files').size().value()} `)
+    // log.debug(`[startCompareData] ========== state files size ::: ${stateDB.get('files').size().value()} `)
     if (stateDB.get('files').size().value() < 1) {
 
       let innerItems = [];
@@ -389,7 +389,7 @@ export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTar
           if (cloudFile.type === 'F') {
             // CLOUD => LOCAL
             // sleep(3000 * (i + 1)).then(() => {
-            //   log.info('syncCloudToLocal========================================');
+            //   log.debug('syncCloudToLocal========================================');
             //   syncCloudToLocal(userId, cloudFile, localTarget);
             //   innerItems.push(createStateItem(cloudFile, localTarget, cloudTarget));
             // });
@@ -415,10 +415,10 @@ export function startCompareData(userId, localDB, cloudDB, localTarget, cloudTar
         // ##### localFile.mtime === stateFile.local_mtime
         // state file 에 local_mtime 은 로컬 시간으로 재조정 해야 한다~~~~~~!!!!!!!!!!!!!!!!
 
-        // console.log('======================================================');
-        // console.log(' :: localFile :: ', localFile);
-        // console.log(' :: localFile path :: ', path.normalize(localFile.targetPath + localFile.relPath));
-        // console.log('======================================================');
+        // log.debug('======================================================');
+        // log.debug(' :: localFile :: ', localFile);
+        // log.debug(' :: localFile path :: ', path.normalize(localFile.targetPath + localFile.relPath));
+        // log.debug('======================================================');
 
         const cloudFile = cloudDB.get('files').find({ pathHash: localFile.pathHash }).value();
         const stateFile = stateDB.get('files').find({ pathHash: localFile.pathHash }).value();

@@ -77,8 +77,6 @@ class InfoPage extends Component {
         
         const { classes } = this.props;
         const { AccountProps } = this.props;
-
-        // console.log('infoPage render AccountProps : ', (AccountProps) ? AccountProps.toJS() : 'none');
         
         let paStorageName = '';
         let paStorageQuota = '';

@@ -1,9 +1,9 @@
 import electron from 'electron';
 import path from 'path';
+import log from 'electron-log';
 
 export const getAppRoot = () => {
-  console.log('electron.remote.app.getPath(userData) --------------- >> ', electron.remote.app.getPath('userData'));
-  // console.log('process.platform ------------------------------- >> ', process.platform);
+    log.debug('electron.remote.app.getPath(userData) --------------- >> ', electron.remote.app.getPath('userData'));
 
     if ( process.platform === 'win32' ) {
       return electron.remote.app.getPath('userData');

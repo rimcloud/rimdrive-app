@@ -36,10 +36,7 @@ class ShareViewDialog extends Component {
     const { ShareProps } = this.props;
 
     const selectedItem = (ShareProps.get('shareInfoList') && ShareProps.get('shareInfoList').size > 0) ? ShareProps.getIn(['shareInfoList', 0]).toJS() : null;
-    
     let stepInfo = '공유한 폴더/파일과 대상 정보입니다.';
-
-    // console.log('[ShareViewDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
 
     return (
       <Dialog fullScreen open={dialogOpen} onClose={this.props.onDialogClose} TransitionComponent={Transition} style={{margin: 20}}>

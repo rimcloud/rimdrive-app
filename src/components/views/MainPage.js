@@ -4,6 +4,7 @@ import path from 'path';
  
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import log from 'electron-log';
 
 import * as GlobalActions from 'modules/GlobalModule';
 import * as AccountActions from 'modules/AccountModule';
@@ -38,8 +39,6 @@ class MainPage extends Component {
 
     constructor(props) {
         super(props);
-
-        console.log('props ::: ', props);
 
         this.state = {
             selectedTab: 0,

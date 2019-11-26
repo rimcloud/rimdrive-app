@@ -195,8 +195,7 @@ class SharePage extends Component {
         const { shareConfDialogOpen, shareInfoDialogOpen, shareViewDialogOpen } = this.state;
 
         const shareInfoList = ShareProps.get('shareInfoList');
-        // console.log('[SharePage] - shareInfoList >>> ', (shareInfoList) ? shareInfoList.toJS() : 'none');
-
+        
         return (
             <div>
                 <Card className={classes.card} square={true}>

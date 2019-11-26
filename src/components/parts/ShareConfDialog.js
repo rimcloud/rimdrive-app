@@ -6,6 +6,7 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import log from 'electron-log';
 
 import * as GlobalActions from 'modules/GlobalModule';
 import * as FileActions from 'modules/FileModule';
@@ -89,7 +90,7 @@ class ShareConfDialog extends Component {
         this.setState({ shareStep: 2, actType: 'CREATE' });
       }
     }).catch(err => {
-      console.log('ShareConfDialog err : ', err);
+      log.error('ShareConfDialog err : ', err);
     });
   }
 

@@ -16,10 +16,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import TreeView from '@material-ui/lab/TreeView';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-
 class FolderTreeDialog extends Component {
 
   constructor(props) {
@@ -41,11 +37,6 @@ class FolderTreeDialog extends Component {
   handleSaveData = () => {
     // send selected folder path and dialog close
     this.props.onSelectFolder(this.state.folderPath);
-  }
-
-  handleNodeToggle = (id, extend) => {
-    // console.log('id :: ', id);
-    // console.log('extend :: ', extend);
   }
 
   handleClose = () => {

@@ -3,6 +3,7 @@ import { Redirect } from 'react-router';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
+import log from 'electron-log';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -39,7 +40,7 @@ class LoginPage extends Component {
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
         AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password')).then(data => {
-            // console.log('handleLoginBtnClick resolve data :::: ', data);
+            // log.debug('handleLoginBtnClick resolve data :::: ', data);
         });
     }
 

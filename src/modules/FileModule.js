@@ -59,7 +59,6 @@ export const setFileListEmpty = () => dispatch => {
 }
 
 const makeFolderList = (data, folderList) => {
-    // console.log('folderList >>>> ', folderList.toJS());
     if(data && data.length > 0) {
         data.forEach((n, i) => {
             if(n.folderId !== '10') {
@@ -175,7 +174,6 @@ export default handleActions({
                 .set('selectedFile', action.selectedFile);
     },
     [INIT_SYNCDATA_SUCCESS]: (state, action) => {
-        // console.log('action.syncData : :: ', action.syncData);
         return state.merge({
             syncData: action.syncData
         });
