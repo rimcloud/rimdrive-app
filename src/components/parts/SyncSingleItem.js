@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import fs from 'fs';
 
 import {withStyles} from '@material-ui/core/styles';
 import {CommonStyle} from 'templates/styles/CommonStyles';
@@ -37,7 +36,17 @@ class SyncSingleItem extends Component {
 
     handleShowFolderDialog = (locType) => {
         const { item } = this.props;
-        this.props.onShowFolderDialog(item.get('no'), locType);
+
+
+
+
+        // ####################################################################### SAFE
+        // ####################################################################### SAFE
+        // ####################################################################### SAFE
+        // ####################################################################### SAFE
+        // ####################################################################### SAFE
+        // ####################################################################### SAFE
+        // this.props.onShowFolderDialog(item.get('no'), locType);
     }
 
     handleDblClick = () => {
