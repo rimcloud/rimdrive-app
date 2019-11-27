@@ -42,7 +42,7 @@ export function handleSyncTimer(actType, cfg, uid) {
     syncIntervalTimer = setInterval(() => {
       log.debug('\n\n>>>>>>>>>> START SYNC DATA ......... CALL >>>>>>>>>>>>>>', new Date());
       startSyncData();
-    }, 6000000);
+    }, 1000 * 60 * 30);
   } else {
     driveCfg = null;
     userId = null;
