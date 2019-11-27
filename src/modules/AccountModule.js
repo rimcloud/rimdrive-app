@@ -144,13 +144,18 @@ export default handleActions({
         return newState;
     },
     [SET_LOGIN_SUCCESS]: (state, action) => {
-        return state.set('userToken', action.userToken).set('message', action.message);
+        return state.set('userToken', action.userToken)
+        .set('password', '')
+        .set('message', action.message);
     },
     [SET_LOGIN_FAIL]: (state, action) => {
         return state.set('message', action.message).set('resultCode', action.resultCode).set('loginResult', 'FAIL');
     },
     [SET_LOGOUT_SUCCESS]: (state, action) => {
-        return state.set('message', action.message).set('userToken', action.userToken);
+        return state.set('message', action.message)
+        .set('userId', '')
+        .set('password', '')
+        .set('userToken', action.userToken);
     },
     [SET_LOGOUT_FAIL]: (state, action) => {
         return state.set('message', action.message).set('resultCode', action.resultCode).set('logoutResult', 'FAIL');

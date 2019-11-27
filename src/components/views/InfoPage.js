@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { ipcRenderer } from 'electron';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -48,10 +47,12 @@ class InfoPage extends Component {
         let hostname = (driveConfig) ? driveConfig.get('serverConfig.hostname').value() : '';
         let port = (driveConfig) ? driveConfig.get('serverConfig.port').value() : '';
         
+        let userId = '';
         let paStorageName = '';
         let paStorageQuota = '';
         let paStorageUsed = '';
         if(AccountProps && AccountProps.get('padata')) {
+            userId = AccountProps.get('userId');
             paStorageName = AccountProps.getIn(['padata', 'name']);
             paStorageQuota = `${AccountProps.getIn(['padata', 'quota'])} GB`;
             paStorageUsed = AccountProps.getIn(['padata', 'used']);
@@ -63,7 +64,7 @@ class InfoPage extends Component {
                     <RCContentCardHeader title="사용자 정보" subheader="" />
                     <CardContent>
                         <Typography variant="body2" component="p">
-                            아이디 : userid
+                            아이디 : {userId}
                         </Typography>
                     </CardContent>
                 </Card>
