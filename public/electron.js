@@ -2,6 +2,7 @@ const qs = require('qs');
 const { app, BrowserWindow, Menu, ipcMain, dialog, Tray } = require('electron');
 
 const fs = require('fs');
+const { FormData } = require('form-data');
 const axios = require('axios');
 
 const path = require('path');

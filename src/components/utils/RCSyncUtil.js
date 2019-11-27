@@ -1,9 +1,7 @@
 
 import { ipcRenderer } from 'electron';
 
-import FormData from 'form-data';
 import fs from 'fs';
-import axios from 'axios';
 import path from 'path';
 import crypto from 'crypto';
 import log from 'electron-log';
@@ -162,9 +160,6 @@ export function getCloudFiles(userId, syncItem) {
 
 const fileUpload = (userId, localFile, cloudTarget) => {
   // log.debug('[fileUpload] ============================== localFile : ', localFile);
-  
-  // const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
-
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
   const bbFile = new Blob([fs.readFileSync(filePath)]);
 
@@ -177,15 +172,6 @@ const fileUpload = (userId, localFile, cloudTarget) => {
     userId: userId,
     path: encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`)
   });
-
-  
-  // const form_data = new FormData();
-  // form_data.append('rimUploadFile', bbFile, path.basename(filePath));
-  // form_data.append('method', 'UPLOAD');
-  // form_data.append('userid', userId);
-  // form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
-  // // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
-  // return axios.post(serverUrl, form_data);
 }
 
 const fileDownload = (userId, cloudFile, localTarget) => {
