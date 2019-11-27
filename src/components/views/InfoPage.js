@@ -23,14 +23,6 @@ import Typography from '@material-ui/core/Typography';
 
 class InfoPage extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            serverUrl: 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-            pathItem: ''
-        };
-    }
-
     componentDidMount() {
         const { AccountProps, AccountActions } = this.props;
         // load and init rimdrive config

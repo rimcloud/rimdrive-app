@@ -102,9 +102,14 @@ const selectLocalFiles = (targetPath, relativePath, innerItems) => {
 
 const selectCloudFiles = (userId, targetPath, relativePath, innerItems) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
-    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=FINDFILES&userid=${userId}&path=${targetPath}${relativePath}`
+    url: '/vdrive/file/api/files.ros',
+    params: {
+      'method': 'FINDFILES',
+      'userid': userId, 
+      'path': `${targetPath}${relativePath}`
+    }
   });
+
   // log.debug(`selectCloudFiles --> RESULT :: ${ipcResult.data}`);
 
   if (ipcResult.data && ipcResult.data.length > 0) {
@@ -157,29 +162,38 @@ export function getCloudFiles(userId, syncItem) {
 
 const fileUpload = (userId, localFile, cloudTarget) => {
   // log.debug('[fileUpload] ============================== localFile : ', localFile);
-  const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
+  
+  // const serverUrl = 'http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros';
+
   const filePath = path.normalize(localFile.targetPath + localFile.relPath);
-
-  // log.debug('fileupload == filePath :: ', filePath);
-
   const bbFile = new Blob([fs.readFileSync(filePath)]);
-  const form_data = new FormData();
-  form_data.append('rimUploadFile', bbFile, path.basename(filePath));
-  form_data.append('method', 'UPLOAD');
-  form_data.append('userid', userId);
-  form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
-  // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
-  return axios.post(serverUrl, form_data);
+
+  log.debug('#######[FILE UPLOAD]##########################################');
+  ipcRenderer.send("upload-cloud", {
+    url: '/vdrive/file/api/files.ros',
+    filePath: filePath,
+    bbFile: bbFile,
+    method: 'UPLOAD',
+    userId: userId,
+    path: encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`)
+  });
+
+  
+  // const form_data = new FormData();
+  // form_data.append('rimUploadFile', bbFile, path.basename(filePath));
+  // form_data.append('method', 'UPLOAD');
+  // form_data.append('userid', userId);
+  // form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
+  // // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
+  // return axios.post(serverUrl, form_data);
 }
 
 const fileDownload = (userId, cloudFile, localTarget) => {
-
   const filePath = path.normalize(localTarget + cloudFile.relPath);
-
   // log.debug('fileDownload --> cloudFile ::', cloudFile);
   log.debug('#######[FILE DOWNLOAD]##########################################');
   ipcRenderer.send("download-cloud", {
-    url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros?method=DOWNLOAD&userid=${userId}&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
+    url: `/vdrive/file/api/files.ros?method=DOWNLOAD&userid=${userId}&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
     properties: {
       directory: filePath,
       filename: cloudFile.name,
@@ -196,9 +210,15 @@ ipcRenderer.on("download complete", (event, file) => {
 
 const createCloudFolder = (userId, cloudTarget, localFile) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
-    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=MKDIR&userid=${userId}&path=/개인저장소/모든파일/${cloudTarget + localFile.relPath}`
+    url: '/vdrive/file/api/files.ros',
+    params: {
+      'method': 'MKDIR',
+      'userid': userId, 
+      'path': `/개인저장소/모든파일/${cloudTarget}${localFile.relPath}`
+    }
   });
+
+
   if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
     // uploadResult = 'SUCCESS';
   } else {
@@ -208,9 +228,14 @@ const createCloudFolder = (userId, cloudTarget, localFile) => {
 
 const deleteCloudFolder = (userId, cloudTarget, cloudFile) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
-    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=DELDIR&userid=${userId}&path=/개인저장소/모든파일/${cloudTarget + cloudFile.relPath}`
+    url: '/vdrive/file/api/files.ros',
+    params: {
+      'method': 'DELDIR',
+      'userid': userId, 
+      'path': `/개인저장소/모든파일/${cloudTarget}${cloudFile.relPath}`
+    }
   });
+
   if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
     // uploadResult = 'SUCCESS';
   } else {
@@ -220,8 +245,12 @@ const deleteCloudFolder = (userId, cloudTarget, cloudFile) => {
 
 const deleteCloudFile = (userId, cloudTarget, cloudFile) => {
   const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
-    url: 'demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros',
-    params: `method=DELFILE&userid=${userId}&path=/개인저장소/모든파일/${cloudTarget + cloudFile.relPath}`
+    url: '/vdrive/file/api/files.ros',
+    params: {
+      'method': 'DELFILE',
+      'userid': userId, 
+      'path': `/개인저장소/모든파일/${cloudTarget}${cloudFile.relPath}`
+    }
   });
   if (ipcResult && ipcResult.status && ipcResult.status.result === 'SUCCESS') {
     // uploadResult = 'SUCCESS';
@@ -289,7 +318,7 @@ const syncCloudToLocal = (userId, cloudFile, localTarget) => {
       fs.mkdirSync(`${localTarget}${cloudFile.relPath}${path.sep}${cloudFile.name}`);
     }
   } else {
-    // DOWNLOAD FILE TO CLOUD
+    // DOWNLOAD FILE FROM CLOUD
     fileDownload(userId, cloudFile, localTarget);
   }
 }

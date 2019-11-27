@@ -1,6 +1,9 @@
 const qs = require('qs');
 const { app, BrowserWindow, Menu, ipcMain, dialog, Tray } = require('electron');
 
+const fs = require('fs');
+const axios = require('axios');
+
 const path = require('path');
 const { Buffer } = require('buffer');
 
@@ -155,38 +158,43 @@ function createWindow() {
     ipcMain.on('get-data-from-server', (event, arg) => {
         log.debug('arg ::: ', arg);
         const { net } = require('electron');
-        const request = net.request({
-            method: 'GET',
-            url: `http://${arg.url}?${arg.params}`
-        });
-        request.on('response', (response) => {
-            log.debug(`STATUS: ${response.statusCode}`);
-            log.debug(`HEADERS: ${JSON.stringify(response.headers)}`);
-            let chunks = Buffer.alloc(0);
-            if (response.statusCode === 200) {
-                response.on('data', (chunk) => {
-                    chunks = Buffer.concat([chunks, chunk]);
-                });
-            } else {
-                event.returnValue = { 'result': 'FAIL', 'message': 'server error', 'code': response.statusCode };
-            }
-            response.on('end', () => {
-                try {
-                    const responseObj = JSON.parse(chunks.toString());
-                    event.returnValue = responseObj;
-                } catch (e) {
-                    log.debug('Exception e :: ', e);
-                }
+        let params = STORAGEOPTION;
+        params['method'] = 'GET';
+        params['path'] = `${arg.url}?${qs.stringify(arg.params)}`;
 
-            })
-        });
-        request.end();
+        try {
+            log.debug('params ::: ', params);
+            const request = net.request(params);
+            request.on('response', (response) => {
+                log.debug(`STATUS: ${response.statusCode}`);
+                log.debug(`HEADERS: ${JSON.stringify(response.headers)}`);
+                let chunks = Buffer.alloc(0);
+                if (response.statusCode === 200) {
+                    response.on('data', (chunk) => {
+                        chunks = Buffer.concat([chunks, chunk]);
+                    });
+                } else {
+                    event.returnValue = { 'result': 'FAIL', 'message': 'server error', 'code': response.statusCode };
+                }
+                response.on('end', () => {
+                    try {
+                        const responseObj = JSON.parse(chunks.toString());
+                        event.returnValue = responseObj;
+                    } catch (e) {
+                        log.debug('Exception e :: ', e);
+                    }
+
+                })
+            });
+            request.end();
+        } catch (ex) {
+            // log.debug('Exception eeeeeeexxxxxxx :: ', ex);
+            event.returnValue = { "status": { "result": "FAIL", "resultCode": ex, "message": "request exception" } };
+        }
     });
 
     ipcMain.on('post-req-to-server', (event, arg) => {
-        
         log.debug('arg ::: ', arg);
-
         const { net } = require('electron');
         let params = STORAGEOPTION;
         params['method'] = 'POST';
@@ -233,7 +241,23 @@ function createWindow() {
     });
 
     ipcMain.on('download-cloud', (event, arg) => {
-        mainWindow.webContents.downloadURL(arg.url);
+        let params = STORAGEOPTION;
+        mainWindow.webContents.downloadURL(`${params.protocol}//${params.hostname}:${params.port}${arg.url}`);
+    });
+
+    ipcMain.on('upload-cloud', (event, arg) => {
+        
+        let params = STORAGEOPTION;
+
+        const serverUrl = `${params.protocol}//${params.hostname}:${params.port}${arg.url}`;
+        const form_data = new FormData();
+        form_data.append('rimUploadFile', arg.bbFile, path.basename(arg.filePath));
+        form_data.append('method', arg.method);
+        form_data.append('userid', arg.userId);
+        form_data.append('path', arg.path);
+        // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
+        axios.post(serverUrl, form_data);
+
     });
 
     ipcMain.on('set_sync_valiable', (event, arg) => {
