@@ -56,9 +56,7 @@ export const setServerConfig = (param) => dispatch => {
                 });
             } else {
                 dispatch({
-                    type: SET_SERVERCONFIG_FAIL,
-                    message: ipcResult.status.message,
-                    resultCode: ipcResult.status.resultCode
+                    type: SET_SERVERCONFIG_FAIL
                 });
             }
             resolve(ipcResult.status);

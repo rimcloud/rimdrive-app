@@ -128,7 +128,7 @@ export const CommonStyle = theme => ({
 
     RCSmallButton: {
         padding: "0px 2px 0px 2px",
-        minWidth: "26px",
+        minWidth: "46px",
         minHeight: "24px"
     },
 

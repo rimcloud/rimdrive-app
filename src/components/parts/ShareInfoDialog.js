@@ -166,7 +166,7 @@ class ShareInfoDialog extends Component {
       <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition} style={{margin: 20}}>
         <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
-            <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 정보</Typography>
+            <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 정보 수정</Typography>
             <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
               <CloseIcon />
             </IconButton>

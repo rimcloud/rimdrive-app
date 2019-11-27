@@ -24,7 +24,9 @@ import Typography from '@material-ui/core/Typography';
 class HomePage extends Component {
 
     componentDidMount() {
+    }
 
+    handleStartBtnClick = (e) => {
         // load and init rimdrive config
         const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
         const driveConfig = low(adapter);
@@ -53,15 +55,18 @@ class HomePage extends Component {
                         "port": ""
                     }
                 }).write();
+            } else {
+                this.props.GlobalActions.setServerConfig({
+                    protocol: driveConfig.get('serverConfig.protocol').value(),
+                    hostname: driveConfig.get('serverConfig.hostname').value(),
+                    port: driveConfig.get('serverConfig.port').value()
+                });
             }
         }
 
         this.props.GlobalActions.setDataStorage({
             driveConfig: driveConfig
         });
-    }
-
-    handleStartBtnClick = (e) => {
     }
 
     render() {

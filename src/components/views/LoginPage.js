@@ -17,7 +17,7 @@ import * as AccountActions from 'modules/AccountModule';
 
 import { getAppRoot } from 'components/utils/RCCommonUtil';
 
-import SettingDialog from 'components/parts/SettingDialog';
+import ServerSettingDialog from 'components/parts/ServerSettingDialog';
 
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -124,14 +124,6 @@ class LoginPage extends Component {
         });
     }
 
-    handleSaveServerConfig = (param) => {
-        const { GlobalProps, GlobalActions } = this.props;
-        const driveConfig = GlobalProps.get('driveConfig');
-        driveConfig.get('serverConfig')
-        .assign(param).write();
-        GlobalActions.setServerConfig(param);
-    }
-
     focusTextInput() {
         this.passwordInput.current.focus();
     }
@@ -206,9 +198,8 @@ class LoginPage extends Component {
                 <div className={classes.footer}>
                     <Typography variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
                 </div>
-                <SettingDialog open={this.state.openSettingDialog}
+                <ServerSettingDialog open={this.state.openSettingDialog}
                     onClose={this.handleCloseSetting}
-                    onSaveServerConfig={this.handleSaveServerConfig}
                 />
             </div>
         );

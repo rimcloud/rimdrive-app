@@ -7,10 +7,6 @@ const { Buffer } = require('buffer');
 const isDev = require('electron-is-dev');
 const log = require('electron-log');
 
-// const STORAGEPROTOCOL = 'http:';
-// const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
-// const STORAGEPORT = '48080';
-
 let STORAGEOPTION = {
     protocol: 'http:',
     hostname: 'demo-ni.cloudrim.co.kr',
@@ -174,7 +170,7 @@ function createWindow() {
         params['path'] = `${arg.url}?${qs.stringify(arg.params)}`;
 
         try {
-            // log.debug('params ::: ', params);
+            log.debug('params ::: ', params);
             const request = net.request(params);
             request.on('response', (response) => {
 
