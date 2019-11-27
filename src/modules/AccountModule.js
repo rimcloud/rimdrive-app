@@ -16,8 +16,8 @@ const REQ_LOGINUSER_INFO = 'account/REQ_LOGINUSER_INFO';
 
 // ...
 const initialState = Map({
-    userId: 'test01',
-    password: 'test01',
+    userId: '',
+    password: '',
     storageId: '',
     userToken: '',
     loginStatus: ''

@@ -97,11 +97,12 @@ class SyncSingleItem extends Component {
                                     color="primary" />}
                                 label={(item.get('type') === 'a') ? '자동실행' : '수동실행'}
                             />
+                            <Typography variant="caption" component="div">{(item.get('type') === 'a') ? `'자동실행'은 30분 마다 동기화를 실행합니다.` : ``}</Typography>
                         </Grid>
                         <Grid item xs style={{textAlign: 'center'}}><Button className={classes.RCSmallButton}
                             variant="contained" color="primary"
                             disabled={(item.get('type') === 'a')}
-                            onClick={() => this.props.onStartSyncFile(item.get('no'))} >바로실행
+                            onClick={() => this.props.onStartSyncFile(item.get('no'))} >실행
                         </Button></Grid>
                     </Grid>
 

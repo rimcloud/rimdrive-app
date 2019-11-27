@@ -121,23 +121,15 @@ class SyncPage extends Component {
                         .find({ no: paramObject }).value();
 
                     // ## LOCAL FILEs SAVE
-                    // log.debug('[handleStartSyncFile] =[1]=');
                     const localFiles = getLocalFiles(syncItems);
-                    // log.debug(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
                     const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
-                    // log.debug('[handleStartSyncFile] =[3]=');
                     const localDB = low(localAdapter);
-                    // log.debug('[handleStartSyncFile] =[4]=');
                     localDB.assign({ files: localFiles }).write();
-                    // log.debug('[handleStartSyncFile] =[5]=');
 
                     // ## CLOUD FILEs SAVE
                     const cloudFiles = getCloudFiles(this.props.AccountProps.get('userId'), syncItems); /// ???????
-                    // log.debug('[handleStartSyncFile] =[6]=');
                     const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
-                    // log.debug('[handleStartSyncFile] =[7]=');
                     const cloudDB = low(cloudAdapter);
-                    // log.debug('[handleStartSyncFile] =[8]=');
                     cloudDB.assign({ files: cloudFiles }).write();
 
                     ipcRenderer.sendSync('set_sync_valiable', {

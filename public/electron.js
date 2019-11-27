@@ -81,7 +81,6 @@ function createWindow() {
 
     mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
         // Set the save path, making Electron not to prompt a save dialog.
-        // item.setSavePath('/tmp/save.pdf')
         const cpath = item.getURL().split('&path=')[1];
         const lastPath = `${syncLocalTarget}${(cpath.substring(cpath.indexOf(syncCloudTarget) + syncCloudTarget.length)).replace(/\//g, path.sep)}`;
         log.debug('GET lastPath ::: ', lastPath);

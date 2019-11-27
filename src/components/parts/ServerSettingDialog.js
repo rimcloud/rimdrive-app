@@ -64,10 +64,6 @@ class ServerSettingDialog extends Component {
 
   handleSaveData = () => {
     // send selected folder path and dialog close
-    // log.debug('protocol -> ', this.state.protocol);
-    // log.debug('hostname -> ', this.state.hostname);
-    // log.debug('port -> ', this.state.port);
-
     const param = {
       protocol: this.state.protocol,
       hostname: this.state.hostname,
