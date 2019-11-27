@@ -1,21 +1,15 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
-import path from 'path';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
-import log from 'electron-log';
+// import log from 'electron-log';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
-
 import * as GlobalActions from 'modules/GlobalModule';
 import * as AccountActions from 'modules/AccountModule';
-
-import { getAppRoot } from 'components/utils/RCCommonUtil';
 
 import ServerSettingDialog from 'components/parts/ServerSettingDialog';
 

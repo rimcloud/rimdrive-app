@@ -8,7 +8,7 @@ let tray = null;
 
 function createWindow() {
 
-    tray = new Tray(path.join(__dirname, '../build/assets/icons/win/rimdrive.ico'));
+    tray = new Tray(path.join(__dirname, '../build/assets/icons/win/icon.ico'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open Rimdrive',

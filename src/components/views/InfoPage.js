@@ -6,6 +6,8 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
+import * as GlobalActions from 'modules/GlobalModule';
 import * as AccountActions from 'modules/AccountModule';
 
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
@@ -36,44 +38,15 @@ class InfoPage extends Component {
         AccountActions.reqLoginUserInfo(AccountProps.get('userId'));
     }
 
-    handleLoginBtnClick = (e) => {
-        const { AccountActions, AccountProps } = this.props;
-        AccountActions.reqLoginProcess(AccountProps.get('id'), AccountProps.get('password'));
-    }
-
-    handleChangeValue = name => event => {
-        this
-            .props
-            .AccountActions
-            .changeAccountParamData({ name: name, value: event.target.value });
-    }
-
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     const { AccountProps: NextAccountProps } = nextProps;
-    //     const { AccountProps } = this.props;
-    //     return NextAccountProps.get('userToken') !== AccountProps.get('userToken');
-    // }
-
-    handleShowFolderDialog = () => {
-        const pathItems = ipcRenderer.sendSync('sync-msg-select-file');
-        if (pathItems && pathItems.length > 0) {
-            this.setState({
-                pathItem: pathItems[0]
-            });
-        }
-    }
-
-    handleValueChange = name => event => {
-        const value = (event.target.type === 'checkbox') ? event.target.checked : event.target.value;
-        this.setState({
-            [name]: value
-        });
-    }    
-
     render() {
         
         const { classes } = this.props;
-        const { AccountProps } = this.props;
+        const { GlobalProps, AccountProps } = this.props;
+
+        const driveConfig = GlobalProps.get('driveConfig');
+        let protocol = (driveConfig) ? driveConfig.get('serverConfig.protocol').value() : '';
+        let hostname = (driveConfig) ? driveConfig.get('serverConfig.hostname').value() : '';
+        let port = (driveConfig) ? driveConfig.get('serverConfig.port').value() : '';
         
         let paStorageName = '';
         let paStorageQuota = '';
@@ -90,13 +63,7 @@ class InfoPage extends Component {
                     <RCContentCardHeader title="사용자 정보" subheader="" />
                     <CardContent>
                         <Typography variant="body2" component="p">
-                            이름 : 홍길동
-                        </Typography>
-                        <Typography variant="body2" component="p">
                             아이디 : userid
-                        </Typography>
-                        <Typography variant="body2" component="p">
-                            조직정보 : 차세대개발팀
                         </Typography>
                     </CardContent>
                 </Card>
@@ -123,16 +90,26 @@ class InfoPage extends Component {
                         </Table>
                     </CardContent>
                 </Card>
+                <Card className={classes.card} square={true}>
+                    <RCContentCardHeader title="서버 연결 정보" subheader="" />
+                    <CardContent>
+                        <Typography variant="body2" component="p">프로토콜 : {(protocol) ? protocol.slice(0, -1) : ''}</Typography>
+                        <Typography variant="body2" component="p">주소 : {hostname}</Typography>
+                        <Typography variant="body2" component="p">포트 : {port}</Typography>
+                    </CardContent>
+                </Card>
             </React.Fragment>
         );
     }
 }
 
-const mapStateToProps = (state) => ({ 
+const mapStateToProps = (state) => ({
+    GlobalProps: state.GlobalModule, 
     AccountProps: state.AccountModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
+    GlobalActions: bindActionCreators(GlobalActions, dispatch),
     AccountActions: bindActionCreators(AccountActions, dispatch)
 });
 

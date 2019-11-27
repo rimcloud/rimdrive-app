@@ -5,14 +5,12 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import log from 'electron-log';
+// import log from 'electron-log';
 
 import * as GlobalActions from 'modules/GlobalModule';
-import * as FileActions from 'modules/FileModule';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
 import FormControl from '@material-ui/core/FormControl';

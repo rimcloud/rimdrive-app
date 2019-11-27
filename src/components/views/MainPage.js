@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
-import path from 'path';
  
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -12,11 +11,7 @@ import * as AccountActions from 'modules/AccountModule';
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import { getAppRoot } from 'components/utils/RCCommonUtil';
 import { handleSyncTimer, setInitConfigData } from 'components/utils/RCSyncUtil';
-
-import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -95,7 +90,6 @@ class MainPage extends Component {
         return (
             <React.Fragment>
                 <div className={classes.mainPage} >
-                    {/*<div>VAR => {getAppRoot()} ::: {process.platform}</div>*/}
                     <AppBar position="relative" className={classes.mainTab}>
                         <Tabs value={selectedTab} onChange={this.handleChange} aria-label="simple tabs example">
                             <Tab label="정보" {...a11yProps(0)} />

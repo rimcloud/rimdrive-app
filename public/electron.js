@@ -1,5 +1,5 @@
 const qs = require('qs');
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, Tray } = require('electron');
 
 const path = require('path');
 const { Buffer } = require('buffer');
@@ -19,10 +19,10 @@ log.transports.file.level='error';
 
 
 let mainWindow;
+let tray = null;
+
 let syncLocalTarget = '';
 let syncCloudTarget = '';
-
-const isMac = process.platform === 'darwin'
 
 const template = [];
 const menu = Menu.buildFromTemplate(template)
@@ -30,6 +30,25 @@ Menu.setApplicationMenu(menu);
 
 
 function createWindow() {
+    tray = new Tray(path.join(__dirname, '../build/assets/icons/win/icon.ico'));
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Open Rimdrive',
+            type: 'normal',
+            click() {
+                showRimdriveApp();
+            },
+        }, {
+            label: 'Quit',
+            type: 'normal',
+            click() {
+                quitRimdriveApp();
+            },
+        }
+    ]);
+    tray.setToolTip('Rimdrive 1.0');
+    tray.setContextMenu(contextMenu);
+
     mainWindow = new BrowserWindow({
         width: 680,
         height: 600,
@@ -51,6 +70,13 @@ function createWindow() {
         mainWindow.webContents.openDevTools();
     }
 
+    mainWindow.on('close', function (event) {
+        if(!app.isQuiting){
+            event.preventDefault();
+            mainWindow.hide();
+        }
+        return false;
+    });
     mainWindow.on('closed', () => mainWindow = null);
 
     mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
@@ -85,9 +111,7 @@ function createWindow() {
         log.debug('set-env-config - arg ::: ', arg);
 
         if(arg.protocol) {
-            if(arg.protocol.slice(-1) === ':') {
-                STORAGEOPTION.protocol = arg.protocol;
-            }
+            STORAGEOPTION.protocol = arg.protocol;
         }
 
         if(arg.hostname) {
@@ -224,9 +248,9 @@ function createWindow() {
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-    if (isMac) {
-        app.quit();
-    }
+    // if (process.platform === 'darwin') {
+    //     app.quit();
+    // }
 });
 
 app.on('activate', () => {
@@ -234,3 +258,19 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+
+const showRimdriveApp = () => {
+    mainWindow.show();
+};
+
+const quitRimdriveApp = () => {
+    if (process.platform !== 'darwin') {
+        app.exit(0);
+        // mainWindow.close();
+    } else {
+        app.quit();
+    }
+};
+
+

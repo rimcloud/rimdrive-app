@@ -158,8 +158,7 @@ class SyncPage extends Component {
         const locStr = (locType === 'local') ? '컴퓨터 파일 경로' : '클라우드 저장소 폴더';
         this.props.GlobalActions.showConfirm({
             confirmTitle: "동기화 위치 수정",
-            confirmMsg: `동기화를 위한 ${locStr}를 변경하시겠습니까?
-            qqqqq`,
+            confirmMsg: `동기화를 위한 ${locStr}를 변경하시겠습니까?`,
             handleConfirmResult: (confirmValue, paramObject) => {
                 if (confirmValue) {
                     if (locType === 'local') {
