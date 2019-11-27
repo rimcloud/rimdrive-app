@@ -74,7 +74,7 @@ class HomePage extends Component {
         return (
             <Paper className={classes.homePage} color="primary">
                 <div className={classes.rcMainTitle}>
-                    RIMDRIVE Ver 0.1
+                    RIMDRIVE v1.0
                 </div>
                 <div style={{textAlign:"center"}}>
                     <Button className={classes.RCSmallButton} 
