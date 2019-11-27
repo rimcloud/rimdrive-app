@@ -7,6 +7,8 @@ const COMMON_PENDING = 'account/COMMON_PENDING';
 const COMMON_FAILURE = 'account/COMMON_FAILURE';
 const CHG_ACCOUNTPARAM_DATA = 'account/CHG_ACCOUNTPARAM_DATA';
 
+const SET_MSGINFO_SUCCESS = 'account/SET_MSGINFO_SUCCESS';
+
 const SET_LOGIN_SUCCESS = 'account/SET_LOGIN_SUCCESS';
 const SET_LOGIN_FAIL = 'account/SET_LOGIN_FAIL';
 const SET_LOGOUT_SUCCESS = 'account/SET_LOGOUT_SUCCESS';
@@ -22,6 +24,13 @@ const initialState = Map({
     userToken: '',
     loginStatus: ''
 });
+
+export const setInfoMessageData = (param) => dispatch => {
+    return dispatch({
+        type: SET_MSGINFO_SUCCESS,
+        msg: param.msg
+    });
+};
 
 export const changeAccountParamData = (param) => dispatch => {
     return dispatch({
@@ -121,6 +130,10 @@ export default handleActions({
             resultMsg: (action.error.data && action.error.data.status) ? action.error.data.status.message : '',
             errorObj: (action.error) ? action.error : ''
         });
+    },
+    [SET_MSGINFO_SUCCESS]: (state, action) => {
+        const newState = state.set('message', action.msg);
+        return newState;
     },
     [CHG_ACCOUNTPARAM_DATA]: (state, action) => {
         const newState = state.set(action.name, action.value);

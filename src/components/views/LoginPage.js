@@ -50,53 +50,18 @@ class LoginPage extends Component {
         };
     }
 
-
-    // componentDidMount() {
-
-    //     // load and init rimdrive config
-    //     const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
-    //     const driveConfig = low(adapter);
-
-    //     if (driveConfig !== undefined) {
-    //         if (driveConfig.get('syncItems').value() === undefined || driveConfig.get('syncItems').value().length < 1) {
-    //             // init sync item
-    //             driveConfig.assign({
-    //                 syncItems: [{
-    //                     "no": 1,
-    //                     "local": "",
-    //                     "cloud": "",
-    //                     "type": "m",
-    //                     "status": "on",
-    //                     "files": []
-    //                 }]
-    //             }).write();
-    //         }
-
-    //         if (driveConfig.get('serverConfig').value() === undefined) {
-    //             // init sync item
-    //             driveConfig.assign({
-    //                 serverConfig: {
-    //                     "protocol": "11",
-    //                     "hostname": "22",
-    //                     "port": "33"
-    //                 }
-    //             }).write();
-    //         }
-    //     }
-
-    //     this.props.GlobalActions.setDataStorage({
-    //         driveConfig: driveConfig
-    //     });
-    // }
-
-
-
-
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
-        AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password')).then(data => {
-            // log.debug('handleLoginBtnClick resolve data :::: ', data);
-        });
+
+        if(AccountProps.get('userId') === '' || AccountProps.get('password') === '') {
+            AccountActions.setInfoMessageData({
+                msg: '아이디 또는 패스워드가 입력되지 않았습니다.'
+            })
+        } else {
+            AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password')).then(data => {
+                // log.debug('handleLoginBtnClick resolve data :::: ', data);
+            });
+        }
     }
 
     handleChangeValue = name => event => {
@@ -138,6 +103,9 @@ class LoginPage extends Component {
         if (AccountProps) {
             if (AccountProps.get('message') !== undefined && AccountProps.get('message') !== '') {
                 msg = AccountProps.get('message');
+                if(msg.indexOf('<BR>') > -1) {
+                    msg = msg.split('<BR>').join();
+                }
             }
         }
 
@@ -170,8 +138,6 @@ class LoginPage extends Component {
                             value={AccountProps.get('password')}
                             onChange={this.handleChangeValue('password')}
                             type="password"
-                            autoComplete="current-password"
-                            inputRef={this.passwordInput}
                             onKeyPress={(ev) => {
                                 if (ev.key === 'Enter') {
                                     this.handleLoginBtnClick();
@@ -189,9 +155,7 @@ class LoginPage extends Component {
                     </div>
                     <Typography>{msg}</Typography>
                 </div>
-                <div className={classes.footer}>
-                    <Typography variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
-                </div>
+                <Typography className={classes.footer} variant='caption' gutterBottom={true} align='center'>c l o u d r i m, co.</Typography>
                 <ServerSettingDialog open={this.state.openSettingDialog}
                     onClose={this.handleCloseSetting}
                 />
