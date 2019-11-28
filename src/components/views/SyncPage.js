@@ -175,8 +175,13 @@ class SyncPage extends Component {
                             });
                         }
                     } else if (locType === 'cloud') {
-                        this.setState({
-                            openCloudFolderDialog: true
+                        // get cloud folders
+                        this.props.FileActions.getDriveFolderList({
+                            userId: this.props.AccountProps.get('userId')
+                        }).then(() => {
+                            this.setState({
+                                openCloudFolderDialog: true
+                            });
                         });
                     }
                 }

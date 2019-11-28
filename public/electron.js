@@ -1,10 +1,6 @@
 const qs = require('qs');
 const { app, BrowserWindow, Menu, ipcMain, dialog, Tray } = require('electron');
 
-const fs = require('fs');
-const { FormData } = require('form-data');
-const axios = require('axios');
-
 const path = require('path');
 const { Buffer } = require('buffer');
 
@@ -88,7 +84,7 @@ function createWindow() {
         const cpath = item.getURL().split('&path=')[1];
         const lastPath = `${syncLocalTarget}${(cpath.substring(cpath.indexOf(syncCloudTarget) + syncCloudTarget.length)).replace(/\//g, path.sep)}`;
         log.debug('GET lastPath ::: ', lastPath);
-        item.savePath = lastPath;
+        item.savePath = decodeURI(lastPath);
 
         item.on('updated', (event, state) => {
             if (state === 'interrupted') {
@@ -244,21 +240,6 @@ function createWindow() {
     ipcMain.on('download-cloud', (event, arg) => {
         let params = STORAGEOPTION;
         mainWindow.webContents.downloadURL(`${params.protocol}//${params.hostname}:${params.port}${arg.url}`);
-    });
-
-    ipcMain.on('upload-cloud', (event, arg) => {
-        
-        let params = STORAGEOPTION;
-
-        const serverUrl = `${params.protocol}//${params.hostname}:${params.port}${arg.url}`;
-        const form_data = new FormData();
-        form_data.append('rimUploadFile', arg.bbFile, path.basename(arg.filePath));
-        form_data.append('method', arg.method);
-        form_data.append('userid', arg.userId);
-        form_data.append('path', arg.path);
-        // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
-        axios.post(serverUrl, form_data);
-
     });
 
     ipcMain.on('set_sync_valiable', (event, arg) => {

@@ -11,7 +11,7 @@ import * as AccountActions from 'modules/AccountModule';
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
 
-import { handleSyncTimer, setInitConfigData } from 'components/utils/RCSyncUtil';
+import { handleSyncTimer, setInitConfigForUtil } from 'components/utils/RCSyncUtil';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -54,7 +54,7 @@ class MainPage extends Component {
             }
         }
 
-        setInitConfigData(driveConfig, AccountProps.get('userId'));
+        setInitConfigForUtil(driveConfig, AccountProps.get('userId'));
     }
 
     handleChange = (event, newValue) => {

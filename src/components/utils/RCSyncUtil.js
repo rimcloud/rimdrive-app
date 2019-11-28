@@ -1,7 +1,9 @@
 
 import { ipcRenderer } from 'electron';
 
+import FormData from 'form-data';
 import fs from 'fs';
+import axios from 'axios';
 import path from 'path';
 import crypto from 'crypto';
 import log from 'electron-log';
@@ -20,7 +22,7 @@ const SECRET = 'rimdrivezzang';
 let syncIntervalTimer = null;
 let driveCfg = null;
 let userId = null;
-export function setInitConfigData(cfg, uid) {
+export function setInitConfigForUtil(cfg, uid) {
   
   driveCfg = cfg;
   userId = uid;
@@ -157,21 +159,21 @@ export function getCloudFiles(userId, syncItem) {
   return files;
 };
 
-
 const fileUpload = (userId, localFile, cloudTarget) => {
   // log.debug('[fileUpload] ============================== localFile : ', localFile);
-  const filePath = path.normalize(localFile.targetPath + localFile.relPath);
-  const bbFile = new Blob([fs.readFileSync(filePath)]);
-
-  log.debug('#######[FILE UPLOAD]##########################################');
-  ipcRenderer.send("upload-cloud", {
-    url: '/vdrive/file/api/files.ros',
-    filePath: filePath,
-    bbFile: bbFile,
-    method: 'UPLOAD',
-    userId: userId,
-    path: encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`)
-  });
+  if(driveCfg) {
+    const serverUrl = `${driveCfg.get('serverConfig.protocol')}//${driveCfg.get('serverConfig.hostname')}:${driveCfg.get('serverConfig.port')}/vdrive/file/api/files.ros`;
+    const filePath = path.normalize(localFile.targetPath + localFile.relPath);
+    const bbFile = new Blob([fs.readFileSync(filePath)]);
+  
+    const form_data = new FormData();
+    form_data.append('rimUploadFile', bbFile, path.basename(filePath));
+    form_data.append('method', 'UPLOAD');
+    form_data.append('userid', userId);
+    form_data.append('path', encodeURI(`/개인저장소/모든파일${cloudTarget}${localFile.relPath}`));
+    // log.debug('[fileUpload] ============================== serverUrl : ', serverUrl);
+    return axios.post(serverUrl, form_data);
+  }
 }
 
 const fileDownload = (userId, cloudFile, localTarget) => {

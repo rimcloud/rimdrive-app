@@ -40,13 +40,9 @@ class SharePage extends Component {
     }
 
     componentDidMount() {
-        const { ShareActions, FileActions, DeptUserActions } = this.props;
+        const { ShareActions, DeptUserActions } = this.props;
         // get share info
         ShareActions.getShareInfoList({
-            userId: this.props.AccountProps.get('userId')
-        });
-        // get cloud folders
-        FileActions.getDriveFolderList({
             userId: this.props.AccountProps.get('userId')
         });
         // get cloud depts
@@ -71,8 +67,13 @@ class SharePage extends Component {
     }
 
     handleClickShareInfoCreate = () => {
-        this.props.ShareActions.setShareItemRemove();
-        this.setState({ shareConfDialogOpen: true });
+        // get cloud folders
+        this.props.FileActions.getDriveFolderList({
+            userId: this.props.AccountProps.get('userId')
+        }).then(() => {
+            this.props.ShareActions.setShareItemRemove();
+            this.setState({ shareConfDialogOpen: true });
+        });
     }
 
     handleClickShareInfoEdit = (event, fileId, shareId) => {
