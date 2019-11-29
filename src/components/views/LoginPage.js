@@ -138,6 +138,8 @@ class LoginPage extends Component {
                             value={AccountProps.get('password')}
                             onChange={this.handleChangeValue('password')}
                             type="password"
+                            autoComplete="current-password"
+                            inputRef={this.passwordInput}
                             onKeyPress={(ev) => {
                                 if (ev.key === 'Enter') {
                                     this.handleLoginBtnClick();

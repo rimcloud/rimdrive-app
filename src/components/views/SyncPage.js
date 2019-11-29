@@ -4,7 +4,7 @@ import path from 'path';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
-// import log from 'electron-log';
+import log from 'electron-log';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -25,6 +25,7 @@ import * as GlobalActions from 'modules/GlobalModule';
 import SyncSingleItem from 'components/parts/SyncSingleItem';
 import RCDialogConfirm from 'components/utils/RCDialogConfirm';
 import CloudFolderTreeDialog from 'components/parts/CloudFolderTreeDialog';
+import { Typography } from "@material-ui/core";
 
 class SyncPage extends Component {
 
@@ -35,7 +36,9 @@ class SyncPage extends Component {
             selectedTab: 0,
             pathItems: '',
             
-            openCloudFolderDialog: false
+            openCloudFolderDialog: false,
+            locType: '',
+            syncNo: ''
         };
     }
 
@@ -150,7 +153,7 @@ class SyncPage extends Component {
         const locStr = (locType === 'local') ? '컴퓨터 파일 경로' : '클라우드 저장소 폴더';
         this.props.GlobalActions.showConfirm({
             confirmTitle: "동기화 위치 수정",
-            confirmMsg: `동기화를 위한 ${locStr}를 변경하시겠습니까?`,
+            confirmMsg: <div><Typography>동기화를 위한 {locStr}를 변경하시겠습니까?</Typography><Typography>(변경을 하게되면 이전에 동기화된 정보는 초기화 됩니다.)</Typography></div>,
             handleConfirmResult: (confirmValue, paramObject) => {
                 if (confirmValue) {
                     if (locType === 'local') {
@@ -166,10 +169,18 @@ class SyncPage extends Component {
                         
                             const { GlobalProps } = this.props;
                             const driveConfig = GlobalProps.get('driveConfig');
+
+                            // if different for before folder, delete STATE file.
+                            const oldPath = driveConfig.get('syncItems').find({ no: syncNo }).get([locType]).value();
+                            if(oldPath !== selectedPath) {
+                                fs.unlinkSync(`${getAppRoot()}${path.sep}rimdrive-state.json`); 
+                            }
+
                             driveConfig.get('syncItems')
                                 .find({ no: syncNo })
                                 .assign({ [locType]: selectedPath })
                                 .write();
+
                             this.setState({
                                 reload: true
                             });
@@ -180,7 +191,9 @@ class SyncPage extends Component {
                             userId: this.props.AccountProps.get('userId')
                         }).then(() => {
                             this.setState({
-                                openCloudFolderDialog: true
+                                openCloudFolderDialog: true,
+                                locType: locType,
+                                syncNo: syncNo
                             });
                         });
                     }
@@ -199,6 +212,13 @@ class SyncPage extends Component {
     handleSelectCloudFolder = (selectedItem) => {
         const { GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');
+
+        // if different for before folder, delete STATE file.
+        const oldPath = driveConfig.get('syncItems').find({ no: this.state.syncNo }).get([this.state.locType]).value();
+        if(oldPath !== selectedItem.path) {
+            fs.unlinkSync(`${getAppRoot()}${path.sep}rimdrive-state.json`); 
+        }
+
         driveConfig.get('syncItems')
             .find({ no: 1 })
             .assign({ 'cloud': selectedItem.path })
@@ -210,15 +230,6 @@ class SyncPage extends Component {
         this.setState({
             openCloudFolderDialog: false
         });
-        // const targetSyncNo = this.state.targetSyncNo;
-        // const targetSyncLoc = this.state.targetSyncLoc;
-
-        // const { GlobalProps } = this.props;
-        // const driveConfig = GlobalProps.get('driveConfig');
-        // driveConfig.get('syncItems')
-        // .find({ no: targetSyncNo })
-        // .assign({ [targetSyncLoc]: selectedFolderPath})
-        // .write();
     }
 
     handleChangeSyncType = (syncNo, syncType) => {

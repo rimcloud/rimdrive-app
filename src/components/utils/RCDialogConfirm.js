@@ -67,9 +67,7 @@ class RCDialogConfirm extends Component {
         >
           <DialogTitle id="alert-dialog-title">{GlobalProps.get('confirmTitle')}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
               {GlobalProps.get('confirmMsg')}
-            </DialogContentText>
           </DialogContent>
           <DialogActions>
             {showOk && <Button onClick={this.handleOk} color="primary" className={classes.RCSmallButton} variant="contained" style={{marginRight: 20}}>예</Button>}
