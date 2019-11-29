@@ -180,7 +180,7 @@ const fileDownload = (userId, cloudFile, localTarget) => {
   const filePath = path.normalize(localTarget + cloudFile.relPath);
   // log.debug('fileDownload --> cloudFile ::', cloudFile);
   log.debug('#######[FILE DOWNLOAD]##########################################');
-  ipcRenderer.send("download-cloud", {
+  ipcRenderer.send("download-from-cloudstorage", {
     url: `/vdrive/file/api/files.ros?method=DOWNLOAD&userid=${userId}&path=${cloudFile.targetPath}${cloudFile.relPath}/${cloudFile.name}`,
     properties: {
       directory: filePath,

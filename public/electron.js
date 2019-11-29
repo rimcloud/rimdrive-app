@@ -237,7 +237,7 @@ function createWindow() {
         }
     });
 
-    ipcMain.on('download-cloud', (event, arg) => {
+    ipcMain.on('download-from-cloudstorage', (event, arg) => {
         let params = STORAGEOPTION;
         mainWindow.webContents.downloadURL(`${params.protocol}//${params.hostname}:${params.port}${arg.url}`);
     });
