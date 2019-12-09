@@ -35,7 +35,7 @@ export const setDataStorage = (param) => dispatch => {
     
     return new Promise(function (resolve, reject) {
         resolve('result test');
-      });
+    });
 
 };
 

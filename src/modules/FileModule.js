@@ -1,12 +1,13 @@
 import { handleActions } from 'redux-actions';
 import { Map, List, fromJS } from 'immutable';
 
-import { requestPostAPI } from 'components/utils/RCRequester';
+import { ipcRenderer } from 'electron';
 
 const GET_FOLDERLIST_SUCCESS = 'file/GET_FOLDERLIST_SUCCESS';
 const SET_SELECTEDITEM_SUCCESS = 'file/SET_SELECTEDITEM_SUCCESS';
 
 const GET_FILELIST_SUCCESS = 'file/GET_FILELIST_SUCCESS';
+const SET_FILELISTEMPTY_SUCCESS = 'file/SET_FILELISTEMPTY_SUCCESS';
 const SET_SELECTEDFILE_SUCCESS = 'file/SET_SELECTEDFILE_SUCCESS';
 
 const INIT_SYNCDATA_SUCCESS = 'global/INIT_SYNCDATA_SUCCESS';
@@ -20,15 +21,18 @@ const initialState = Map({
 });
 
 export const showFilesInFolder = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
-        method: 'FINDFILES',
-        userid: 'test01',
-        path: '/개인저장소/모든파일' + param.path
-    }).then(
-        (response) => {
-            let fileList = List([]);
-            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                const files = response.data.data.filter(n => (n.fileType !== 'D')).map((n) => {
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/file/api/files.ros',
+            params: {
+                'userid': encodeURI(param.userId), 
+                'method': 'FINDFILES',
+                'path': `/개인저장소/모든파일${param.path}`
+            }
+        });
+        if(ipcResult) {
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                const files = ipcResult.data.filter(n => (n.fileType !== 'D')).map((n) => {
                     return Map({
                         fileId: n.fileId,
                         fileName: n.name,
@@ -36,58 +40,23 @@ export const showFilesInFolder = (param) => dispatch => {
                         fileSize: n.size
                     });
                 });
-                fileList = List(files);
+                dispatch({
+                    type: GET_FILELIST_SUCCESS,
+                    listData : (files && files.length > 0) ? List(files) : List([])
+                });
             }
-            dispatch({
-                type: GET_FILELIST_SUCCESS,
-                listData : fileList
-            });
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
     });
 };
 
-// const makeFolderListOLD = (data, folderList) => {
-//     if(data && data.length > 0) {
-//         // add root node for tree
-//         if(folderList.size < 1) {
-//             folderList = folderList.push(Map({
-//                 folderId: data[0].parentId,
-//                 folderName: '__ROOTFOLDER__',
-//                 folderPath: '/',
-//                 children: List([])
-//             }));
-//         }
-//         data.forEach((n, i) => {
-//             // console.log(n.fileType, n.name, n.fileId, n.parentId, n.path, n.orgPath);
-//             const parentIndex = folderList.findIndex(e => (e.get('folderId') === n.parentId));
-//             if(parentIndex > -1) {
-//                 // 부모가 이미 들어있음, 칠드런에 추가
-//                 let parent = folderList.get(parentIndex);
-//                 let children = parent.get('children');
-//                 if(!children.includes(n.fileId)) {
-//                     children = children.push(n.fileId);
-//                     parent = parent.set('children', children);
-//                     folderList = folderList.set(parentIndex, parent);
-//                 }
-//             }
-
-//             // folderList 에 자신 추가 - 없으면 추가
-//             const selfIndex = folderList.findIndex(e => (e.get('folderId') === n.fileId));
-//             if(selfIndex < 0) {
-//                 // add this node for tree
-//                 folderList = folderList.push(Map({
-//                     folderId: n.fileId,
-//                     folderName: n.name,
-//                     folderPath: n.path,
-//                     children: List([])
-//                 }));
-//             }
-//         });
-//     }
-//     return folderList;
-// }
+export const setFileListEmpty = () => dispatch => {
+    return dispatch({
+        type: SET_FILELISTEMPTY_SUCCESS
+    });
+}
 
 const makeFolderList = (data, folderList) => {
     // console.log('folderList >>>> ', folderList.toJS());
@@ -111,33 +80,37 @@ const makeFolderList = (data, folderList) => {
     return folderList;
 }
 
-
 export const getDriveFolderList = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/file/api/files.ros', {
-        method: 'FOLDERLISTALL',
-        userid: 'test01',
-        path: '/개인저장소/모든파일'
-    }).then(
-        (response) => {
-            let folderList = List([]);
-            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                folderList = (fromJS(response.data.data.map(n => {n['children'] = []; return n;})).unshift(fromJS({
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/file/api/files.ros',
+            params: {
+                'userid': encodeURI(param.userId), 
+                'method': 'FOLDERLISTALL',
+                'path': `/개인저장소/모든파일`
+            }
+        });
+        if(ipcResult) {
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                let folderList = (fromJS(ipcResult.data.map(n => {n['children'] = []; return n;})).unshift(fromJS({
                     fileId: 10,
                     name: '개인저장소',
                     path: '/',
                     children: []
                 })));
-                folderList = makeFolderList(response.data.data, folderList);
+                folderList = makeFolderList(ipcResult.data, folderList);
+    
+                dispatch({
+                    type: GET_FOLDERLIST_SUCCESS,
+                    folderList: folderList
+                });
             }
-            dispatch({
-                type: GET_FOLDERLIST_SUCCESS,
-                folderList: folderList
-            });
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
     });
-}
+};
 
 export const setSelectedItem = (param) => dispatch => {
     return dispatch({
@@ -145,11 +118,6 @@ export const setSelectedItem = (param) => dispatch => {
         selectedItem: param.selectedItem
     });
 };
-
-
-
-
-
 
 export const showFileDetail = (param) => dispatch => {
     return dispatch({
@@ -194,6 +162,9 @@ export default handleActions({
     },
     [GET_FILELIST_SUCCESS]: (state, action) => {
         return state.set('listData', action.listData);
+    },
+    [SET_FILELISTEMPTY_SUCCESS]: (state, action) => {
+        return state.set('listData', []);
     },
     [SET_SELECTEDITEM_SUCCESS]: (state, action) => {
         return state.set('selectedItem', action.selectedItem);

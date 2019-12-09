@@ -2,8 +2,8 @@
   "syncItems": [
     {
       "no": 1,
-      "local": "D:\\test3",
-      "cloud": "/sync3",
+      "local": "/home/syhan/dtest1",
+      "cloud": "/sync1",
       "type": "m",
       "status": "on",
       "files": []

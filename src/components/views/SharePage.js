@@ -42,9 +42,13 @@ class SharePage extends Component {
     componentDidMount() {
         const { ShareActions, FileActions, DeptUserActions } = this.props;
         // get share info
-        ShareActions.getShareInfoList();
+        ShareActions.getShareInfoList({
+            userId: this.props.AccountProps.get('userId')
+        });
         // get cloud folders
-        FileActions.getDriveFolderList();
+        FileActions.getDriveFolderList({
+            userId: this.props.AccountProps.get('userId')
+        });
         // get cloud depts
         DeptUserActions.getDeptList();
     }
@@ -71,13 +75,13 @@ class SharePage extends Component {
         this.setState({ shareConfDialogOpen: true });
     }
 
-    handleClickShareInfoEdit = (event, fid, sid) => {
+    handleClickShareInfoEdit = (event, fileId, shareId) => {
         event.stopPropagation();
         const { ShareActions } = this.props;
         //
         ShareActions.getShareInfo({
-            sid: sid,
-            fid: fid
+            shareId: shareId,
+            fileId: fileId
         }).then((res) => {
             if (res.status && res.status.result === 'SUCCESS') {
                 this.setState({ shareInfoDialogOpen: true });
@@ -85,12 +89,12 @@ class SharePage extends Component {
         });
     }
 
-    handleClickShareInfoView = (event, fid, sid) => {
+    handleClickShareInfoView = (event, fileId, shareId) => {
         event.stopPropagation();
         const { ShareActions } = this.props;
         ShareActions.getShareInfo({
-            sid: sid,
-            fid: fid
+            shareId: shareId,
+            fileId: fileId
         }).then((res) => {
             if (res.status && res.status.result === 'SUCCESS') {
                 this.setState({ shareViewDialogOpen: true });
@@ -109,11 +113,15 @@ class SharePage extends Component {
                     // delete share data
                     ShareActions.setShareInfoDelete(paramObject).then((res) => {
                         // get share info
-                        if (res.status) {
-                            if (res.status.result === 'SUCCESS') {
+                        if (res) {
+                            if (res.result === 'SUCCESS') {
+                                ShareActions.getShareInfoList({
+                                    userId: this.props.AccountProps.get('userId')
+                                });
                                 alert('공유정보가 삭제되었습니다.');
-                            } else if (res.status.result === 'FAIL') {
-                                alert(res.status.message);
+                                this.handleShareInfoDialogClose();
+                            } else if (res.result === 'FAIL') {
+                                alert(res.message);
                             }
                         } else {
                             alert('공유정보 삭제중 오류가 발생하였습니다.');
@@ -122,8 +130,8 @@ class SharePage extends Component {
                 }
             },
             confirmObject: {
-                uid: 'test01',
-                shid: ShareProps.getIn(['shareInfo', 'shareId'])
+                userId: this.props.AccountProps.get('userId'),
+                shareId: ShareProps.getIn(['shareInfo', 'shareId'])
             }
         });
 
@@ -136,17 +144,20 @@ class SharePage extends Component {
         if (actType === 'CREATE') {
             // create share data
             ShareActions.setShareInfoCreate({
-                uid: 'test01',
-                fid: FileProps.getIn(['selectedItem', 'id']),
+                userId: this.props.AccountProps.get('userId'),
+                fileId: FileProps.getIn(['selectedItem', 'id']),
                 shareDepts: ShareProps.get('shareDepts'),
                 shareUsers: ShareProps.get('shareUsers')
             }).then((res) => {
                 // get share info
-                if (res.status) {
-                    if (res.status.result === 'SUCCESS') {
+                if (res) {
+                    if (res.result === 'SUCCESS') {
+                        ShareActions.getShareInfoList({
+                            userId: this.props.AccountProps.get('userId')
+                        });
                         alert('공유정보가 생성되었습니다.');
-                    } else if (res.status.result === 'FAIL') {
-                        alert(res.status.message);
+                    } else if (res.result === 'FAIL') {
+                        alert(res.message);
                     }
                 } else {
                     alert('공유정보 생성중 오류가 발생하였습니다.');
@@ -155,19 +166,22 @@ class SharePage extends Component {
         } else if (actType === 'UPDATE') {
             // update share data
             ShareActions.setShareInfoUpdate({
-                uid: 'test01',
-                shid: ShareProps.getIn(['shareInfo', 'shareId']),
+                userId: this.props.AccountProps.get('userId'),
+                shareId: ShareProps.getIn(['shareInfo', 'shareId']),
                 shareDepts: ShareProps.get('shareDepts'),
                 shareUsers: ShareProps.get('shareUsers'),
                 formerShareDepts: ShareProps.get('formerShareDepts'),
                 formerShareUsers: ShareProps.get('formerShareUsers'),
             }).then((res) => {
                 // get share info
-                if (res.status) {
-                    if (res.status.result === 'SUCCESS') {
+                if (res) {
+                    if (res.result === 'SUCCESS') {
+                        ShareActions.getShareInfoList({
+                            userId: this.props.AccountProps.get('userId')
+                        });
                         alert('공유정보가 수정되었습니다.');
-                    } else if (res.status.result === 'FAIL') {
-                        alert(res.status.message);
+                    } else if (res.result === 'FAIL') {
+                        alert(res.message);
                     }
                 } else {
                     alert('공유정보 수정중 오류가 발생하였습니다.');
@@ -204,7 +218,7 @@ class SharePage extends Component {
                                         <TableCell className={classes.fileTableHeadCell} >수정</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
+                                <TableBody style={{ backgroundColor: '#ffffff' }}>
                                     {shareInfoList.map(sn => {
                                         return (
                                             <TableRow hover className={classes.fileTableRow} key={sn.get('fileId')}
@@ -235,6 +249,7 @@ class SharePage extends Component {
 }
 
 const mapStateToProps = (state) => ({
+    AccountProps: state.AccountModule,
     ShareProps: state.ShareModule,
     FileProps: state.FileModule
 });

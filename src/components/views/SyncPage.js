@@ -4,7 +4,7 @@ import path from 'path';
 
 import { fromJS } from 'immutable';
 import fs from 'fs';
-//import log from 'electron-log';
+// import log from 'electron-log';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -57,7 +57,9 @@ class SyncPage extends Component {
         // }
 
         // get cloud folders
-        FileActions.getDriveFolderList();
+        FileActions.getDriveFolderList({
+            userId: this.props.AccountProps.get('userId')
+        });
     }
 
     handleChangeValue = name => event => {
@@ -137,7 +139,7 @@ class SyncPage extends Component {
                     // ## LOCAL FILEs SAVE
                     // log.info('[handleStartSyncFile] =[1]=');
                     const localFiles = getLocalFiles(syncItems);
-                    // log.info('[handleStartSyncFile] =[2]=');
+                    // log.info(`[handleStartSyncFile] =[2]=   ${getAppRoot()}${path.sep}`);
                     const localAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-local.json`);
                     // log.info('[handleStartSyncFile] =[3]=');
                     const localDB = low(localAdapter);
@@ -146,7 +148,7 @@ class SyncPage extends Component {
                     // log.info('[handleStartSyncFile] =[5]=');
 
                     // ## CLOUD FILEs SAVE
-                    const cloudFiles = getCloudFiles(syncItems); /// ???????
+                    const cloudFiles = getCloudFiles(this.props.AccountProps.get('userId'), syncItems); /// ???????
                     // log.info('[handleStartSyncFile] =[6]=');
                     const cloudAdapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive-cloud.json`);
                     // log.info('[handleStartSyncFile] =[7]=');
@@ -154,13 +156,18 @@ class SyncPage extends Component {
                     // log.info('[handleStartSyncFile] =[8]=');
                     cloudDB.assign({ files: cloudFiles }).write();
 
+                    ipcRenderer.sendSync('set_sync_valiable', {
+                        localTarget: syncItems.local,
+                        cloudTarget: syncItems.cloud
+                    });
+
                     // // ## Compare Data
                     // log.info('[handleStartSyncFile] =[9]=');
-                    startCompareData(localDB, cloudDB, syncItems.local, syncItems.cloud)
-                        .then((resolvedData) => {
+                    startCompareData(this.props.AccountProps.get('userId'), localDB, cloudDB, syncItems.local, syncItems.cloud);
+                        //.then((resolvedData) => {
                             // console.log('############### startCompareData.then ################');
                             // console.log('resolvedData :::::::: ', resolvedData);
-                        });
+                        //});
                 }
             },
             confirmObject: no
@@ -171,20 +178,25 @@ class SyncPage extends Component {
 
         if (locType === 'local') {
             const pathItems = ipcRenderer.sendSync('sync-msg-select-folder');
+            let selectedPath = '';
 
             // console.log('pathItems ::: ', pathItems);
-
-            if (pathItems && pathItems.length > 0) {
-                const { GlobalProps } = this.props;
-                const driveConfig = GlobalProps.get('driveConfig');
-                driveConfig.get('syncItems')
-                    .find({ no: syncNo })
-                    .assign({ [locType]: pathItems[0] })
-                    .write();
-                this.setState({
-                    reload: true
-                });
+            if (pathItems !== undefined) {
+                if(pathItems.isArray && pathItems.length > 0) {
+                    selectedPath = pathItems[0]
+                } else {
+                    selectedPath = pathItems;
+                }
             }
+            const { GlobalProps } = this.props;
+            const driveConfig = GlobalProps.get('driveConfig');
+            driveConfig.get('syncItems')
+                .find({ no: syncNo })
+                .assign({ [locType]: selectedPath })
+                .write();
+            this.setState({
+                reload: true
+            });
         } else if (locType === 'cloud') {
             this.setState({
                 openCloudFolderDialog: true

@@ -8,11 +8,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
 
-import FormData from 'form-data';
-import fs from 'fs';
-import axios from 'axios';
-import path from 'path';
-
 import RCContentCardHeader from 'components/parts/RCContentCardHeader';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -41,15 +36,11 @@ class InfoPage extends Component {
     componentDidMount() {
         const { AccountProps, AccountActions } = this.props;
         // load and init rimdrive config
-
         AccountActions.reqLoginUserInfo(AccountProps.get('userId'));
     }
 
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
-        console.log('AccountProps ::: ', (AccountProps)
-            ? AccountProps.toJS()
-            : '--');
         AccountActions.reqLoginProcess(AccountProps.get('id'), AccountProps.get('password'));
     }
 
@@ -73,23 +64,6 @@ class InfoPage extends Component {
                 pathItem: pathItems[0]
             });
         }
-    }
-
-    handleUploadTest = () => {
-        const serverUrl = this.state.serverUrl;
-        const filePath = this.state.pathItem;
-
-        if (fs.existsSync(filePath)) {
-            console.log('The file exists.');
-        }
-
-        const bbFile = new Blob([fs.readFileSync(filePath)]);
-        const form_data = new FormData();
-        form_data.append('rimUploadFile', bbFile, path.basename(filePath));
-        form_data.append('method', 'UPLOAD');     
-        form_data.append('userid', 'test01');   
-        form_data.append('path', encodeURI('/개인저장소/모든파일/abab'));
-        return axios.post(serverUrl, form_data);
     }
 
     handleValueChange = name => event => {
@@ -155,71 +129,10 @@ class InfoPage extends Component {
                                     <TableCell align="right">{paStorageQuota}</TableCell>
                                     <TableCell align="right">{paStorageUsed}</TableCell>
                                 </TableRow>
-                                {/*
-                                <TableRow key={2}>
-                                    <TableCell component="th" scope="row">nec</TableCell>
-                                    <TableCell align="right">10 GB</TableCell>
-                                    <TableCell align="right">340 B</TableCell>
-                                </TableRow>
-                                <TableRow key={3}>
-                                    <TableCell component="th" scope="row">2</TableCell>
-                                    <TableCell align="right">10 GB</TableCell>
-                                    <TableCell align="right">0 B</TableCell>
-                                </TableRow>
-                                */}
                             </TableBody>
                         </Table>
                     </CardContent>
                 </Card>
-                {/**
-                <Card>
-                    <RCContentCardHeader title='업로드 테스트' subheader="" />
-                    <CardContent>
-                    <Grid container spacing={3}>
-                    <Grid item xs={2}><Typography variant="body2" component="p">서버주소</Typography></Grid>
-                    <Grid item xs={8}><TextField
-                        value={this.state.serverUrl}
-                        fullWidth={true}
-                        margin="none"
-                        variant="outlined"
-                        inputProps={{ style: { padding: 4 } }}
-                        onChange={this.handleValueChange('serverUrl')}
-                    />
-                    </Grid>
-                    </Grid>
-
-                        <Grid container spacing={3}>
-                            <Grid item xs={2}><Typography variant="body2" component="p">파일 선택</Typography></Grid>
-                            <Grid item xs={8}><TextField
-                                value={this.state.pathItem}
-                                fullWidth={true}
-                                margin="none"
-                                variant="outlined"
-                                inputProps={{ style: { padding: 4 } }}
-                            />
-                            </Grid>
-                            <Grid item xs style={{ textAlign: 'center' }}><Button className={classes.RCSmallButton}
-                                variant="contained" color="primary"
-                                onClick={this.handleShowFolderDialog} >
-                                선택
-                            </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={3}>
-                            <Grid item xs={6}></Grid>
-                            <Grid item xs={6} style={{ textAlign: 'right' }}>
-                                <Button className={classes.RCSmallButton}
-                                    variant="contained" color="primary"
-                                    onClick={this.handleUploadTest} >
-                                    업로드
-                            </Button>
-                            </Grid>
-                        </Grid>
-
-                    </CardContent>
-                </Card>
-                */}
-
             </React.Fragment>
         );
     }

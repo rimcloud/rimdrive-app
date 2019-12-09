@@ -51,12 +51,22 @@ class ShareConfDialog extends Component {
   }
 
   handleClose = () => {
+    this.setState({
+      shareStep: 1
+    });
+    this.props.FileActions.setSelectedItem({
+      selectedItem: null
+    });
+    this.props.FileActions.setFileListEmpty();
+    this.props.DeptUserActions.setUserListEmpty();
+    
     this.props.onDialogClose();
   }
 
   handleSelectFolderFile = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
+        userId: this.props.AccountProps.get('userId'),
         path: selectedItem.path
       });
     }
@@ -69,18 +79,16 @@ class ShareConfDialog extends Component {
     // get before share info by selected folder or file
     const { ShareActions, FileProps } = this.props;
     ShareActions.getShareInfo({
-      sid: 'test01',
-      fid: FileProps.getIn(['selectedItem', 'id'])
+      shareId: this.props.AccountProps.get('userId'),
+      fileId: FileProps.getIn(['selectedItem', 'id'])
     }).then((res) => {
-
-      // console.log('handleShareStepNext res ::: ', res);
-      if (res.status && res.status.result === 'SUCCESS') {
-        if (res.data) {
-          this.setState({ shareStep: 2, actType: 'UPDATE' });
-        } else {
-          this.setState({ shareStep: 2, actType: 'CREATE' });
-        }
+      if (res.data !== undefined) {
+        this.setState({ shareStep: 2, actType: 'UPDATE' });
+      } else {
+        this.setState({ shareStep: 2, actType: 'CREATE' });
       }
+    }).catch(err => {
+      console.log('ShareConfDialog err : ', err);
     });
   }
 
@@ -156,53 +164,6 @@ class ShareConfDialog extends Component {
     });
   }
 
-  handleShareInfoSave = () => {
-    const { FileProps } = this.props;
-    const { ShareProps, ShareActions } = this.props;
-
-    if (this.state.actType === 'CREATE') {
-      // create share data
-      ShareActions.setShareInfoCreate({
-        uid: 'test01',
-        fid: FileProps.getIn(['selectedItem', 'id']),
-        shareDepts: ShareProps.get('shareDepts'),
-        shareUsers: ShareProps.get('shareUsers')
-      }).then((res) => {
-        // get share info
-        if (res.status) {
-          if (res.status.result === 'SUCCESS') {
-            alert('공유정보가 생성되었습니다.');
-          } else if (res.status.result === 'FAIL') {
-            alert(res.status.message);
-          }
-        } else {
-          alert('공유정보 생성중 오류가 발생하였습니다.');
-        }
-      });
-    } else if (this.state.actType === 'UPDATE') {
-      // update share data
-      ShareActions.setShareInfoUpdate({
-        uid: 'test01',
-        shid: ShareProps.getIn(['shareInfo', 'shareId']),
-        shareDepts: ShareProps.get('shareDepts'),
-        shareUsers: ShareProps.get('shareUsers'),
-        formerShareDepts: ShareProps.get('formerShareDepts'),
-        formerShareUsers: ShareProps.get('formerShareUsers'),
-      }).then((res) => {
-        // get share info
-        if (res.status) {
-          if (res.status.result === 'SUCCESS') {
-            alert('공유정보가 수정되었습니다.');
-          } else if (res.status.result === 'FAIL') {
-            alert(res.status.message);
-          }
-        } else {
-          alert('공유정보 수정중 오류가 발생하였습니다.');
-        }
-      });
-    }
-  }
-
   render() {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps, FileProps, ShareProps } = this.props;
@@ -218,7 +179,7 @@ class ShareConfDialog extends Component {
       <Dialog fullScreen open={dialogOpen} onClose={this.handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.shareAppBar}>
           <Toolbar className={classes.shareToolbar}>
-            <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 설정</Typography>
+            <Typography edge="start" variant="h6" className={classes.shareTitle}>공유 추가</Typography>
             {/* <Button color="primary" variant="contained" className={classes.RCSmallButton} onClick={this.handleClose}>저장</Button> */}
             <IconButton color="inherit" onClick={this.handleClose} aria-label="close">
               <CloseIcon />
@@ -227,7 +188,7 @@ class ShareConfDialog extends Component {
         </AppBar>
         <Divider />
 
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
           <Grid item xs={10} style={{ paddingTop: 20 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
@@ -242,14 +203,15 @@ class ShareConfDialog extends Component {
         {(this.state.shareStep === 1) &&
           <Grid container style={{ margin: 0 }}>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FolderTreeComp folderList={FileProps.get('folderList')} 
-                  onSelectFolder={this.handleSelectFolderFile} 
+                  onSelectFolder={this.handleSelectFolderFile}
+                  hasTitle={true}
                 />
               </Box>
             </Grid>
             <Grid item xs={6}>
-              <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+              <Box style={{ height: 300, margin: '10px 10px 10px 5px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
                 <FileListComp onSelectFile={this.handleSelectFolderFile} />
               </Box>
             </Grid>
@@ -263,37 +225,37 @@ class ShareConfDialog extends Component {
           </Grid>
         }
         {(this.state.shareStep === 2) &&
-          <div>
-            <Grid container style={{ margin: 0 }}>
-              <Grid item xs={12} style={{ padding: 10 }}>
-                <Grid container style={{ margin: 0 }}>
-                  <Grid item xs={12}>
-                    <FileOrFolderView selectedItem={FileProps.get('selectedItem')} onShareStepBack={this.handleShareStepBack} />
-                  </Grid>
+          <Grid container style={{ margin: 0 }}>
+            <Grid item xs={12} style={{ padding: 10 }}>
+              <Grid container style={{ margin: 0 }}>
+                <Grid item xs={12}>
+                  <FileOrFolderView selectedItem={FileProps.get('selectedItem')} onShareStepBack={this.handleShareStepBack} />
                 </Grid>
               </Grid>
-              <Grid item xs={6} >
-                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
-                  <DeptTreeComp deptList={DeptUserProps.get('deptList')}
-                    shareDepts={ShareProps.get('shareDepts')}
-                    onSelectDept={this.handleSelectDept}
-                    onChangeDeptCheck={this.handleChangeDeptCheck}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={6} >
-                <Box style={{ height: 200, margin: 4, padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
-                  <UserListComp
-                    userListData={DeptUserProps.get('userListData')}
-                    shareUsers={ShareProps.get('shareUsers')}
-                    onSelectUser={this.handleSelectUser}
-                    onChangeUserCheck={this.handleChangeUserCheck}
-                  />
-                </Box>
-              </Grid>
             </Grid>
-            <ShareListComp isEdit={true} />
-          </div>
+            <Grid item xs={6} >
+              <Box style={{ height: 300, margin: '10px 5px 10px 10px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <DeptTreeComp deptList={DeptUserProps.get('deptList')}
+                  shareDepts={ShareProps.get('shareDepts')}
+                  onSelectDept={this.handleSelectDept}
+                  onChangeDeptCheck={this.handleChangeDeptCheck}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={6} >
+              <Box style={{ height: 300, margin: '10px 10px 10px 5px', padding: 0, backgroundColor: '#efefef', overflow: 'auto' }}>
+                <UserListComp
+                  userListData={DeptUserProps.get('userListData')}
+                  shareUsers={ShareProps.get('shareUsers')}
+                  onSelectUser={this.handleSelectUser}
+                  onChangeUserCheck={this.handleChangeUserCheck}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} >
+              <ShareListComp isEdit={true} />
+            </Grid>
+          </Grid>
         }
       </Dialog>
     );
@@ -302,6 +264,7 @@ class ShareConfDialog extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
+  AccountProps: state.AccountModule,
   DeptUserProps: state.DeptUserModule,
   ShareProps: state.ShareModule,
   FileProps: state.FileModule

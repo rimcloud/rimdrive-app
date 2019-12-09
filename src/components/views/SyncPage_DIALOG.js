@@ -27,7 +27,6 @@ class SyncPage_DIALOG extends Component {
     
     componentDidMount() {
         const { GlobalProps } = this.props;
-        console.log('SyncPage_DIALOG : componentDidMount');
     }
 
     handleChangeValue = name => event => {

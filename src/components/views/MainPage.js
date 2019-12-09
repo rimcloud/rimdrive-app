@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router';
 import path from 'path';
  
 import { bindActionCreators } from 'redux';
@@ -6,6 +7,7 @@ import { connect } from 'react-redux';
 
 
 import * as GlobalActions from 'modules/GlobalModule';
+import * as AccountActions from 'modules/AccountModule';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CommonStyle } from 'templates/styles/CommonStyles';
@@ -18,11 +20,11 @@ import FileSync from 'lowdb/adapters/FileSync';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Button from '@material-ui/core/Button';
 
 import InfoPage from 'components/views/InfoPage';
 import SharePage from 'components/views/SharePage';
 import SyncPage from 'components/views/SyncPage';
-import SetupPage from 'components/views/SetupPage';
 
 
 function a11yProps(index) {
@@ -42,9 +44,7 @@ class MainPage extends Component {
     }
 
     componentDidMount() {
-        // console.log('getAppRoot() ----------------------------------- >> ', getAppRoot());
         const { GlobalActions } = this.props;
-
         // load and init rimdrive config
         const adapter = new FileSync(`${getAppRoot()}${path.sep}rimdrive.json`);
         const driveConfig = low(adapter);
@@ -74,10 +74,19 @@ class MainPage extends Component {
         });
     };
 
+    handleLogout = () => {
+        const { AccountProps, AccountActions } = this.props;
+        AccountActions.reqLogoutProcess(AccountProps.get('userId'));
+    }
 
     render() {
         const { classes } = this.props;
+        const { AccountProps } = this.props;
         const selectedTab = this.state.selectedTab;
+
+        if (AccountProps && AccountProps.get('userToken') === '') {
+            return <Redirect push to ='/Login' />;
+        }
 
         return (
             <React.Fragment>
@@ -88,13 +97,14 @@ class MainPage extends Component {
                             <Tab label="정보" {...a11yProps(0)} />
                             <Tab label="공유" {...a11yProps(1)} />
                             <Tab label="동기화" {...a11yProps(2)} />
-                            <Tab label="환경설정" {...a11yProps(3)} />
                         </Tabs>
+                        <Button style={{position:'absolute',right:'0',marginTop:'6px',color:'lightgray'}} 
+                            onClick={this.handleLogout}
+                        >로그아웃</Button>
                     </AppBar>
                     {selectedTab === 0 && <InfoPage />}
                     {selectedTab === 1 && <SharePage />}
                     {selectedTab === 2 && <SyncPage />}
-                    {selectedTab === 3 && <SetupPage />}
                 </div>
             </React.Fragment>
         );
@@ -102,11 +112,13 @@ class MainPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    GlobalProps: state.GlobalModule
+    GlobalProps: state.GlobalModule,
+    AccountProps: state.AccountModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    GlobalActions: bindActionCreators(GlobalActions, dispatch)
+    GlobalActions: bindActionCreators(GlobalActions, dispatch),
+    AccountActions: bindActionCreators(AccountActions, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(CommonStyle)(MainPage));

@@ -1,24 +1,38 @@
-
+const qs = require('qs');
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 
 const path = require('path');
 const { Buffer } = require('buffer');
-const { download } = require('electron-dl');
 
 const isDev = require('electron-is-dev');
+const log = require('electron-log');
+
+const STORAGEPROTOCOL = 'http:';
+const STORAGEHOST = 'demo-ni.cloudrim.co.kr';
+const STORAGEPORT = '48080';
+
+const STORAGEOPTION = {
+    protocol: 'http:',
+    hostname: 'demo-ni.cloudrim.co.kr',
+    port: '48080'
+}
 
 let mainWindow;
 
+let syncLocalTarget = '';
+let syncCloudTarget = '';
+
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 600,
-        height: 480,
+        width: 680,
+        height: 600,
         webPreferences: {
             nodeIntegration: true,
             webSecurity: false
         }
     });
     mainWindow.setMenu(null);
+    mainWindow.setMenuBarVisibility(false);
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
 
     if (isDev) {
@@ -29,6 +43,34 @@ function createWindow() {
 
     mainWindow.on('closed', () => mainWindow = null);
 
+    mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
+        // Set the save path, making Electron not to prompt a save dialog.
+        // item.setSavePath('/tmp/save.pdf')
+        const cpath = item.getURL().split('&path=')[1];
+        const lastPath = `${syncLocalTarget}${(cpath.substring(cpath.indexOf(syncCloudTarget) + syncCloudTarget.length)).replace(/\//g, path.sep)}`;
+        log.info('GET lastPath ::: ', lastPath);
+        item.savePath = lastPath;
+
+        item.on('updated', (event, state) => {
+            if (state === 'interrupted') {
+                // console.log('Download is interrupted but can be resumed')
+            } else if (state === 'progressing') {
+                if (item.isPaused()) {
+                    // console.log('Download is paused')
+                } else {
+                    // console.log(`Received bytes: ${item.getReceivedBytes()}`)
+                }
+            }
+        })
+        item.once('done', (event, state) => {
+            if (state === 'completed') {
+                // console.log('Download successfully')
+            } else {
+                // console.log(`Download failed: ${state}`)
+            }
+        })
+    });
+
     // TEST electron.dialog.showOpenDialog({ properties: ['openFile', 'openDirectory', 'multiSelections'] });
 
     // ipcMain.on('asynchronous-message', (event, arg) => {
@@ -37,17 +79,18 @@ function createWindow() {
     // });
 
     ipcMain.on('sync-msg-select-folder', (event, arg) => {
-        dialog.showOpenDialog({
+        const selectedDirectory = dialog.showOpenDialogSync(mainWindow, {
             title: '폴더 선택',
             properties: ['openDirectory'],
             message: '폴더를 선택하세요'
-        }).then(result => {
-            if (result.canceled) {
-                event.returnValue = null;
-            } else {
-                event.returnValue = result.filePaths;
-            }
         });
+
+        if (selectedDirectory != undefined && selectedDirectory.length > 0) {
+            console.log('selectedDirectory[0] ----->>> ', selectedDirectory[0]);
+            event.returnValue = selectedDirectory[0];
+        } else {
+            event.returnValue = null;
+        }
     });
 
     ipcMain.on('sync-msg-select-file', (event, arg) => {
@@ -74,13 +117,13 @@ function createWindow() {
         request.on('response', (response) => {
             // console.log(`STATUS: ${response.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-            let chunks = new Buffer([]);
-            if(response.statusCode === 200) {
+            let chunks = Buffer.alloc(0);
+            if (response.statusCode === 200) {
                 response.on('data', (chunk) => {
                     chunks = Buffer.concat([chunks, chunk]);
                 });
             } else {
-                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
+                event.returnValue = { 'result': 'FAIL', 'message': 'server error', 'code': response.statusCode };
             }
             response.on('end', () => {
                 try {
@@ -95,50 +138,58 @@ function createWindow() {
         request.end();
     });
 
-    ipcMain.on('login-to-server', (event, arg) => {
+    ipcMain.on('post-req-to-server', (event, arg) => {
         // console.log('arg ::: ', arg);
         const { net } = require('electron');
-        // const qs = require('qs');
-        const request = net.request({
-            method: 'GET',
-            url: `http://demo-ni.cloudrim.co.kr:48080/vdrive/api/login.ros?userid=${arg.userId}&passwd=${arg.password}`
-        });
-        request.on('response', (response) => {
-            // console.log(`STATUS: ${response.statusCode}`);
-            // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-            if(response.statusCode === 200) {
-                response.on('data', (chunk) => {
-                    const responseObj = JSON.parse(chunk.toString());
-                    // console.log('responseObj (BODY) : ', responseObj);
-                    if(responseObj && responseObj.status && responseObj.status.result === 'SUCCESS') {
-                        event.returnValue = {'result': 'SUCCESS', 'message': responseObj.status.message};
-                    } else {
-                        event.returnValue = {'result': 'FAIL', 'message': responseObj.status.message};
+        let params = STORAGEOPTION;
+        params['method'] = 'POST';
+        params['path'] = `${arg.url}?${qs.stringify(arg.params)}`;
+
+        try {
+            // console.log('params ::: ', params);
+            const request = net.request(params);
+            request.on('response', (response) => {
+                // console.log(`STATUS: ${response.statusCode}`);
+                // console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+                let chunks = Buffer.alloc(0);
+                if (response.statusCode === 200) {
+                    response.on('data', (chunk) => {
+                        chunks = Buffer.concat([chunks, chunk]);
+                    });
+                } else {
+                    event.returnValue = { "status": { "result": "FAIL", "resultCode": response.statusCode, "message": "server return fail" } };
+                }
+                response.on('end', () => {
+                    try {
+                        const responseObj = JSON.parse(chunks.toString());
+                        // console.log('responseObj: >>> ', responseObj);
+                        event.returnValue = responseObj;
+                    } catch (e) {
+                        console.log('Exception e :: ', e);
                     }
+
                 })
-            } else {
-                event.returnValue = {'result': 'FAIL', 'message': 'server error', 'code': response.statusCode};
-            }
-            response.on('end', () => {
-                console.log('No more data in response.')
-            })
-        });
-        // request.write(qs.stringify({
-        //     'userid': arg.userId,
-        //     'passwd': arg.password
-        // }));
-        request.end();
+            });
+            request.on('error', (error) => {
+                // console.log('[ ERROR ] :: ', error);
+                event.returnValue = { "status": { "result": "FAIL", "resultCode": error, "message": "server error" } };
+            });
+            request.end();
+        } catch (ex) {
+            // console.log('Exception eeeeeeexxxxxxx :: ', ex);
+            event.returnValue = { "status": { "result": "FAIL", "resultCode": ex, "message": "request exception" } };
+        }
     });
 
-    ipcMain.on('download-cloud', async (event, arg) => {
-        await download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
-            .then(dl => {
-                mainWindow.webContents.send('download complete', dl.getSavePath())
-            })
-            .catch(e => {
-                console.log('[[download]]  catch e =>>>> ', e);
-            });
+    ipcMain.on('download-cloud', (event, arg) => {
+        mainWindow.webContents.downloadURL(arg.url);
+    });
 
+    ipcMain.on('set_sync_valiable', (event, arg) => {
+        syncLocalTarget = arg.localTarget;
+        syncCloudTarget = arg.cloudTarget;
+
+        event.returnValue = '1';
     });
 }
 
@@ -155,5 +206,3 @@ app.on('activate', () => {
         createWindow();
     }
 });
-
-

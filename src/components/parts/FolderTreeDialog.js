@@ -53,8 +53,7 @@ class FolderTreeDialog extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { open = false, pathItems } = this.props;
+    const { open = false } = this.props;
 
     return (
       <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
@@ -65,7 +64,7 @@ class FolderTreeDialog extends Component {
         TreeView
         </DialogContent>
         <DialogActions>
-          <Grid container spacing={3}>
+          <Grid container spacing={0}>
             <Grid item xs={6} style={{ paddingTop: '25px' }}>
               <Typography variant="caption" component="p">폴더를 선택후 '선택' 버튼을 누르세요.</Typography>
             </Grid>

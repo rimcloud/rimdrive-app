@@ -9,15 +9,22 @@ import { connect } from 'react-redux';
 import * as AccountActions from 'modules/AccountModule';
 
 import Button from '@material-ui/core/Button';
-
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
 class LoginPage extends Component {
 
+    constructor(props) {
+        super(props);
+        this.passwordInput = React.createRef();
+        this.focusTextInput = this.focusTextInput.bind(this);
+      }
+
     handleLoginBtnClick = (e) => {
         const { AccountActions, AccountProps } = this.props;
-        console.log('AccountProps ::: ', (AccountProps) ? AccountProps.toJS() : '--');
-        AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password'));
+        AccountActions.reqLoginProcess(AccountProps.get('userId'), AccountProps.get('password')).then(data => {
+            // console.log('handleLoginBtnClick resolve data :::: ', data);
+        });
     }
 
     handleChangeValue = name => event => {
@@ -27,49 +34,56 @@ class LoginPage extends Component {
         });
     }
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     const { AccountProps : NextAccountProps} = nextProps;
-    //     const { AccountProps } = this.props;
-    //     return NextAccountProps.get('userToken') !== AccountProps.get('userToken');
-    // }
+    focusTextInput() {
+        this.passwordInput.current.focus();
+    }
+
+    focusUsernameInputField = input => {
+        input && input.focus();
+    };
 
     render() {
         const { classes } = this.props;
         const { AccountProps } = this.props;
 
-        // console.log('render1 AccountProps :: ', AccountProps);
-        // console.log('render2 AccountProps :: ', AccountProps.toJS());
-        // console.log('render3 AccountProps :: ', AccountProps.toJS().userId);
-        // console.log('render4 AccountProps :: ', AccountProps.getIn(["userId"]));
-
-        if (AccountProps.get('userToken') !== '') {
+        if (AccountProps && AccountProps.get('userToken') !== '') {
             return <Redirect push to ='/Main' />;
         }
 
-        // const userId = AccountProps.get('userId');
-        // console.log('render userId :: ', userId);
+        let msg = 'ID, Password를 입력하세요.';
+        if(AccountProps) {
+            if(AccountProps.get('message') !== undefined && AccountProps.get('message') !== '') {
+                msg = AccountProps.get('message');
+            }
+        }
 
         return (
-            <React.Fragment>
-                <div className={classes.homePage}>
+            <div className={classes.homePage}>
                 <div>
-                    <TextField
-                        label="ID"
+                    <TextField label="ID" margin="normal" className={classes.textField} autoFocus 
                         value={AccountProps.get('userId')}
-                        className={classes.textField}
                         onChange={this.handleChangeValue('userId')}
-                        margin="normal"
+                        onKeyPress={(ev) => {
+                            if (ev.key === 'Enter') {
+                              this.focusTextInput();
+                              ev.preventDefault();
+                            }
+                        }}
                     />
                 </div>
                 <div>
-                    <TextField
-                        label="Password"
+                    <TextField label="Password" margin="normal" className={classes.textField}
                         value={AccountProps.get('password')}
-                        className={classes.textField}
                         onChange={this.handleChangeValue('password')}
                         type="password"
                         autoComplete="current-password"
-                        margin="normal"
+                        inputRef={this.passwordInput}
+                        onKeyPress={(ev) => {
+                            if (ev.key === 'Enter') {
+                              this.handleLoginBtnClick();
+                              ev.preventDefault();
+                            }
+                        }}
                     />
                 </div>
                 <div className={classes.rcMainTitle}>
@@ -79,8 +93,8 @@ class LoginPage extends Component {
                         login
                     </Button>
                 </div>
-                </div>
-            </React.Fragment>
+                <Typography>{msg}</Typography>
+            </div>
         );
     }
 }

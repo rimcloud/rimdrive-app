@@ -6,7 +6,11 @@ import { ipcRenderer } from 'electron';
 const COMMON_PENDING = 'account/COMMON_PENDING';
 const COMMON_FAILURE = 'account/COMMON_FAILURE';
 const CHG_ACCOUNTPARAM_DATA = 'account/CHG_ACCOUNTPARAM_DATA';
-const REQ_LOGIN_PROCESS = 'account/REQ_LOGIN_PROCESS';
+
+const SET_LOGIN_SUCCESS = 'account/SET_LOGIN_SUCCESS';
+const SET_LOGIN_FAIL = 'account/SET_LOGIN_FAIL';
+const SET_LOGOUT_SUCCESS = 'account/SET_LOGOUT_SUCCESS';
+const SET_LOGOUT_FAIL = 'account/SET_LOGOUT_FAIL';
 
 const REQ_LOGINUSER_INFO = 'account/REQ_LOGINUSER_INFO';
 
@@ -14,8 +18,9 @@ const REQ_LOGINUSER_INFO = 'account/REQ_LOGINUSER_INFO';
 const initialState = Map({
     userId: 'test01',
     password: 'test01',
+    storageId: '',
     userToken: '',
-    loginStatus: 'u3'
+    loginStatus: ''
 });
 
 export const changeAccountParamData = (param) => dispatch => {
@@ -27,85 +32,83 @@ export const changeAccountParamData = (param) => dispatch => {
 };
 
 export const reqLoginProcess = (userId, password) => dispatch => {
-    dispatch({type: COMMON_PENDING});
-    const ipcResult = ipcRenderer.sendSync('login-to-server', {'userId': userId, 'password': password});
-    // console.log('reqLoginProcess result ::-> ', ipcResult);
-    if(ipcResult && ipcResult.result === 'SUCCESS') {
-        return dispatch({
-            type: REQ_LOGIN_PROCESS,
-            name: 'userToken',
-            value: 'userToken'
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/api/login.ros',
+            params: {'userid': encodeURI(userId), 'passwd': encodeURI(password)}
         });
-    } else {
-        return dispatch({
-            type: REQ_LOGIN_PROCESS,
-            name: 'userToken',
-            value: ''
+        if(ipcResult) {
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                dispatch({
+                    type: SET_LOGIN_SUCCESS,
+                    userToken: '__rimdrive__token__'
+                });
+            } else {
+                dispatch({
+                    type: SET_LOGIN_FAIL,
+                    message: ipcResult.status.message,
+                    resultCode: ipcResult.status.resultCode
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
+        }
+    });
+};
+
+export const reqLogoutProcess = (userId) => dispatch => {
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/api/logout.ros',
+            params: {'userid': encodeURI(userId)}
         });
-    }
-
-    // return requestPostAPI('vdrive/api/login.rim', {
-    //     userid: userId,
-    //     passwd: password
-    // }).then(
-    //     (response) => {
-    //         dispatch({
-    //             type: REQ_LOGIN_PROCESS,
-    //             response: response
-    //         });
-    //     }
-    // ).catch(error => {
-    //     console.log('error :::: ', error);
-    //     // 404
-    //     // Test CODE
-    //     dispatch({
-    //         type: REQ_LOGIN_PROCESS,
-    //         name: 'userToken',
-    //         value: 'ttt'
-    //     });
-
-    //     // dispatch({ type: COMMON_FAILURE, error: error });
-    // });
+        if(ipcResult) {
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                dispatch({
+                    type: SET_LOGOUT_SUCCESS,
+                    message: '로그아웃 되었습니다.',
+                    userToken: ''
+                });
+            } else {
+                dispatch({
+                    type: SET_LOGOUT_FAIL,
+                    message: ipcResult.status.message,
+                    resultCode: ipcResult.status.resultCode
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
+        }
+    });
 };
 
 export const reqLoginUserInfo = (userId) => dispatch => {
-    //console.log('reqLoginUserInfo - userId :: ', userId);
-    dispatch({type: COMMON_PENDING});
-    const ipcResult = ipcRenderer.sendSync('get-data-from-server', {
-        url: 'demo-ni.cloudrim.co.kr:48080/vdrive/api/storageusage.ros',
-        params: 'userid=test01'
-    });
-    // console.log('reqLoginUserInfo result ::-> ', ipcResult);
-    if(ipcResult && ipcResult.status && ipcResult.status.result) {
-        if(ipcResult.status.result === 'SUCCESS') {
-            return dispatch({
-                type: REQ_LOGINUSER_INFO,
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/api/storageusage.ros',
+            params: {'userid': encodeURI(userId)}
+        });
+        if(ipcResult) {
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                dispatch({
+                    type: REQ_LOGINUSER_INFO,
                 gadata: ipcResult.gadata,
                 padata: ipcResult.padata
-            });
-        }
-    } else {
-        return dispatch({
-            type: REQ_LOGINUSER_INFO,
+                });
+            } else {
+                dispatch({
+                    type: REQ_LOGINUSER_INFO,
             gadata: null,
             padata: null
-        });
-    }
-
-    // if(ipcResult && ipcResult.result === 'SUCCESS') {
-    //     return dispatch({
-    //         type: REQ_LOGIN_PROCESS,
-    //         name: 'userToken',
-    //         value: 'userToken'
-    //     });
-    // } else {
-    //     return dispatch({
-    //         type: REQ_LOGIN_PROCESS,
-    //         name: 'userToken',
-    //         value: ''
-    //     });
-    // }
-
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
+        }
+    });
 };
 
 export default handleActions({
@@ -127,8 +130,17 @@ export default handleActions({
         const newState = state.set('gadata', action.gadata).set('padata', action.padata);
         return newState;
     },
-    [REQ_LOGIN_PROCESS]: (state, action) => {
-        return state.merge({[action.name]: action.value});
+    [SET_LOGIN_SUCCESS]: (state, action) => {
+        return state.set('userToken', action.userToken).set('message', action.message);
+    },
+    [SET_LOGIN_FAIL]: (state, action) => {
+        return state.set('message', action.message).set('resultCode', action.resultCode).set('loginResult', 'FAIL');
+    },
+    [SET_LOGOUT_SUCCESS]: (state, action) => {
+        return state.set('message', action.message).set('userToken', action.userToken);
+    },
+    [SET_LOGOUT_FAIL]: (state, action) => {
+        return state.set('message', action.message).set('resultCode', action.resultCode).set('logoutResult', 'FAIL');
     }
 
 }, initialState);

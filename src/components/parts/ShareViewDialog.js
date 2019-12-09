@@ -9,8 +9,9 @@ import { connect } from 'react-redux';
 import * as GlobalActions from 'modules/GlobalModule';
 
 import ShareListComp from 'components/parts/ShareListComp';
-import Typography from '@material-ui/core/Typography';
+import FileOrFolderView from 'components/parts/FileOrFolderView';
 
+import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 
 import Grid from '@material-ui/core/Grid';
@@ -31,7 +32,11 @@ class ShareViewDialog extends Component {
 
   render() {
     const { classes, dialogOpen } = this.props;
-    let stepInfo = '공유한 대상 정보입니다.';
+    const { ShareProps } = this.props;
+
+    const selectedItem = (ShareProps.get('shareInfoList') && ShareProps.get('shareInfoList').size > 0) ? ShareProps.getIn(['shareInfoList', 0]).toJS() : null;
+    
+    let stepInfo = '공유한 폴더/파일과 대상 정보입니다.';
 
     // console.log('[ShareViewDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
 
@@ -47,7 +52,7 @@ class ShareViewDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
           <Grid item xs={10} style={{ paddingTop: 20 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
@@ -56,7 +61,14 @@ class ShareViewDialog extends Component {
           </Grid>
         </Grid>
         <Divider />
-        <ShareListComp isEdit={false} />
+        <Grid container style={{ margin: 0 }}>
+          <Grid item xs={12} style={{ margin: 4, padding: 4 }}>
+            <FileOrFolderView selectedItem={selectedItem} />
+          </Grid>
+          <Grid item xs={12} >
+            <ShareListComp isEdit={false} />
+          </Grid>
+        </Grid>
       </Dialog>
     );
   }

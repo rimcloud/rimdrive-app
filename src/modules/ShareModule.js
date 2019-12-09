@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { Map, List, fromJS } from 'immutable';
 
-import { requestPostAPI } from 'components/utils/RCRequester';
+import { ipcRenderer } from 'electron';
 
 const COMMON_FAILURE = 'share/COMMON_FAILURE';
 
@@ -31,73 +31,76 @@ export const setShareItemRemove = () => dispatch => {
 }
 
 export const getShareInfoList = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/list.ros', {
-        uid: 'test01'
-    }).then(
-        (response) => {
-            let shareInfoList = List([]);
-            if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                if(response.data.data.files && response.data.data.files.length > 0) {
-                    shareInfoList = response.data.data.files.map((n) => ({
-                        fileId : n.fileId,
-                        storageId: n.storageId,
-                        name: n.name,
-                        path: n.path,
-                        shareWithCnt: n.shareWithCnt,
-                        shareWithAll: n.shareWithAll
-                    }));
-                }
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/so/api/list.ros',
+            params: {
+                uid: param.userId
             }
-            dispatch({
-                type: GET_SHARELIST_SUCCESS,
-                shareInfoList: fromJS(shareInfoList)
-            });
+        });
+        if (ipcResult) {
+            if (ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                let shareInfoList = ipcResult.data.files.map((n) => ({
+                    fileId : n.fileId,
+                    type: n.fileType,
+                    size: n.size,
+                    storageId: n.storageId,
+                    name: n.name,
+                    path: n.path,
+                    shareWithCnt: n.shareWithCnt,
+                    shareWithAll: n.shareWithAll,
+                    createDate: n.createDate
+                }));
+    
+                dispatch({
+                    type: GET_SHARELIST_SUCCESS,
+                    shareInfoList: fromJS(shareInfoList)
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
     });
-}
+};
 
 export const getShareInfo = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/shareinfo.ros', {
-        uid: param.sid,
-        fid: param.fid
-    }).then(
-        (response) => {
-            try {
-                let shareDepts = List([]);
-                let shareUsers = List([]);
-                // let shareInfo = null;
-                if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-                    const share = response.data.data;
-                    if(share && share.listShareTargetVO && share.shareVO) {
-                        const list = share.listShareTargetVO;
-                        if(list) {
-                            list.forEach(n => {
-                                if(n.targetTp === 'D') {
-                                    shareDepts = shareDepts.push(fromJS(n));
-                                } else if(n.targetTp === 'U') {
-                                    shareUsers = shareUsers.push(fromJS(n));
-                                }
-                            });
-                        }
-                        dispatch({
-                            type: GET_SHAREINFO_SUCCESS,
-                            shareDepts: shareDepts,
-                            shareUsers: shareUsers,
-                            shareInfo: share.shareVO
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/so/api/shareinfo.ros',
+            params: {'uid': param.shareId, 'fid': param.fileId}
+        });
+        if(ipcResult) {
+            let shareDepts = List([]);
+            let shareUsers = List([]);
+            const shareData = ipcResult.data;
+
+            if(ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                let shareInfo = null;
+                if(shareData !== undefined && shareData.listShareTargetVO && shareData.shareVO) {
+                    const list = shareData.listShareTargetVO;
+                    if(list) {
+                        list.forEach(n => {
+                            if(n.targetTp === 'D') {
+                                shareDepts = shareDepts.push(fromJS(n));
+                            } else if(n.targetTp === 'U') {
+                                shareUsers = shareUsers.push(fromJS(n));
+                            }
                         });
                     }
+                    shareInfo = shareData.shareVO;
                 }
-
-                return response.data;
-            } catch(error) {
-                dispatch({ type: COMMON_FAILURE, error: error });
-                return error;
+                dispatch({
+                    type: GET_SHAREINFO_SUCCESS,
+                    shareDepts: shareDepts,
+                    shareUsers: shareUsers,
+                    shareInfo: shareInfo
+                });
             }
+            resolve(ipcResult);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
     });
 }
 
@@ -110,53 +113,48 @@ export const setShareInfoCreate = (param) => dispatch => {
         modifyShareList = modifyShareList.concat(param.shareUsers.toJS());
     }
 
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/add.ros', {
-        uid: param.uid,
-        fid: param.fid,
-        it: JSON.stringify(modifyShareList)
-    }).then(
-        (response) => {
-            try {
-                if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-
-                } else {
-
-                }
-                return response.data;
-            } catch(error) {
-                dispatch({ type: COMMON_FAILURE, error: error });
-                return error;
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/so/api/add.ros',
+            params: {
+                uid: param.userId,
+                fid: param.fileId,
+                it: JSON.stringify(modifyShareList)
             }
+        });
+        if (ipcResult) {
+            if (ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                dispatch({
+                    type: SET_SHAREINFO_SUCCESS, 
+                    shareDepts: param.shareDepts, 
+                    shareUsers: param.shareUsers
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
-        return error;
     });
-}
+};
 
 export const setShareInfoDelete = (param) => dispatch => {
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/delete.ros', {
-        uid: param.uid,
-        shid: param.shid
-    }).then(
-        (response) => {
-            try {
-                if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-
-                } else {
-
-                }
-                return response.data;
-            } catch(error) {
-                dispatch({ type: COMMON_FAILURE, error: error });
-                return error;
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/so/api/delete.ros',
+            params: {
+                uid: param.userId,
+                shid: param.shareId
             }
+        });
+        if (ipcResult) {
+            if (ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
-        return error;
     });
-}
+};
 
 export const setShareInfoUpdate = (param) => dispatch => {
     let modifyShareList = [];
@@ -167,36 +165,35 @@ export const setShareInfoUpdate = (param) => dispatch => {
         modifyShareList = modifyShareList.concat(param.shareUsers.toJS());
     }
 
-    let deleteShareList = [];
-    if(param.formerShareDepts !== undefined && param.formerShareDepts.size > 0) {
-        deleteShareList = deleteShareList.concat(param.formerShareDepts.toJS());
-    }
-    if(param.formerShareUsers !== undefined && param.formerShareUsers.size > 0) {
-        deleteShareList = deleteShareList.concat(param.formerShareUsers.toJS());
-    }
+    // let deleteShareList = [];
+    // if(param.formerShareDepts !== undefined && param.formerShareDepts.size > 0) {
+    //     deleteShareList = deleteShareList.concat(param.formerShareDepts.toJS());
+    // }
+    // if(param.formerShareUsers !== undefined && param.formerShareUsers.size > 0) {
+    //     deleteShareList = deleteShareList.concat(param.formerShareUsers.toJS());
+    // }
 
-    return requestPostAPI('http://demo-ni.cloudrim.co.kr:48080/vdrive/so/api/update.ros', {
-        uid: param.uid,
-        shid: param.shid,
-        it: JSON.stringify(modifyShareList),
-        dt: JSON.stringify(deleteShareList)
-    }).then(
-        (response) => {
-            try {
-                if(response.data && response.data.status && response.data.status.result === 'SUCCESS') {
-
-                } else {
-
-                }
-                return response.data;
-            } catch(error) {
-                dispatch({ type: COMMON_FAILURE, error: error });
-                return error;
+    return new Promise(function (resolve, reject) {
+        const ipcResult = ipcRenderer.sendSync('post-req-to-server', {
+            url: '/vdrive/so/api/update.ros',
+            params: {
+                uid: param.userId,
+                shid: param.shareId,
+                it: JSON.stringify(modifyShareList)
             }
+        });
+        if (ipcResult) {
+            if (ipcResult.status && ipcResult.status.result === 'SUCCESS') {
+                dispatch({
+                    type: SET_SHAREINFO_SUCCESS, 
+                    shareDepts: param.shareDepts, 
+                    shareUsers: param.shareUsers
+                });
+            }
+            resolve(ipcResult.status);
+        } else {
+            reject('error');
         }
-    ).catch(error => {
-        console.log('error : ', error);
-        return error;
     });
 }
 
@@ -329,7 +326,6 @@ export default handleActions({
             if(action.isChecked) {
                 shareUsers = shareUsers.push(action.selectedUser);
             } else {
-                console.log('>>>>>>>>>>> shareUsers : ', shareUsers.toJS());
                 const i = shareUsers.findIndex((n) => (n.get('shareWithUid') === action.selectedUser.get('shareWithUid')));
                 shareUsers = shareUsers.delete(i);
             }
@@ -349,7 +345,11 @@ export default handleActions({
         return state.set('shareUsers', shareUsers);
     },
     [SET_SHAREINFO_SUCCESS]: (state, action) => {
-        return state;
+        return state.set('shareDepts', action.shareDepts)
+                .set('formerShareDepts', action.shareDepts)
+                .set('shareUsers', action.shareUsers)
+                .set('formerShareUsers', action.shareUsers);
+                //.set('shareInfo', action.shareInfo);
     }
 
 }, initialState);

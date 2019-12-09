@@ -5,15 +5,13 @@ export const getAppRoot = () => {
   // console.log('electron.remote.app.getAppPath() --------------- >> ', electron.remote.app.getAppPath());
   // console.log('process.platform ------------------------------- >> ', process.platform);
 
-  if(electron.remote.app.getAppPath() === 'D:\\electron\\rimdrive-app') {
-    return electron.remote.app.getAppPath();
-  } else {
     if ( process.platform === 'win32' ) {
-      return path.join( electron.remote.app.getAppPath(), '/../../' );
-    }  else {
+      return electron.remote.app.getPath('userData');
+    } else if ( process.platform === 'linux' ) {
+      return electron.remote.app.getPath('userData');
+    } else {
       return path.join( electron.remote.app.getAppPath(), '/../../../../' );
     }
-  }
 }
 
 export const formatDate = (date) => {

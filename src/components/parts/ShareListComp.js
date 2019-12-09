@@ -6,6 +6,8 @@ import { CommonStyle } from 'templates/styles/CommonStyles';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import RCContentCardHeader from 'components/parts/RCContentCardHeader';
+
 import * as GlobalActions from 'modules/GlobalModule';
 import * as FileActions from 'modules/FileModule';
 import * as ShareActions from 'modules/ShareModule';
@@ -28,6 +30,7 @@ class ShareListComp extends Component {
   handleSelectItem = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
+        userId: this.props.AccountProps.get('userId'),
         path: selectedItem.path
       });
     }
@@ -62,6 +65,7 @@ class ShareListComp extends Component {
 
     return (
         <Card className={classes.card}>
+          <RCContentCardHeader title="공유대상" subheader=""/>
           <CardContent>
             <Table className={classes.table} size="small" stickyHeader>
               <TableHead>
@@ -75,7 +79,7 @@ class ShareListComp extends Component {
                   }
                 </TableRow>
               </TableHead>
-              <TableBody style={{ backgroundColor: '#ffffff', opacity: '0.5' }}>
+              <TableBody style={{ backgroundColor: '#ffffff' }}>
                 {shareDepts.map(dept => {
                   return (
                     <TableRow hover className={classes.fileTableRow} key={dept.get('shareWithUid')}>
@@ -144,6 +148,7 @@ class ShareListComp extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
+  AccountProps: state.AccountModule,
   ShareProps: state.ShareModule,
   FileProps: state.FileModule
 });

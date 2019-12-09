@@ -13,6 +13,7 @@ import * as ShareActions from 'modules/ShareModule';
 
 import DeptTreeComp from 'components/parts/DeptTreeComp';
 import UserListComp from 'components/parts/UserListComp';
+import FileOrFolderView from 'components/parts/FileOrFolderView';
 
 import { compareShareInfo } from 'components/utils/RCCommonUtil';
 
@@ -51,7 +52,6 @@ class ShareInfoDialog extends Component {
 
     let isChanged = false;
     if (compareShareInfo(ShareProps.get('formerShareDepts'), ShareProps.get('shareDepts'))) {
-      isChanged = false;
       if (compareShareInfo(ShareProps.get('formerShareUsers'), ShareProps.get('shareUsers'))) {
         isChanged = false;
       } else {
@@ -61,18 +61,15 @@ class ShareInfoDialog extends Component {
       isChanged = true;
     }
 
+    this.props.DeptUserActions.setUserListEmpty();
+
     if (isChanged) {
       this.props.GlobalActions.showConfirm({
         confirmTitle: "공유정보 수정",
         confirmMsg: "공유 정보가 변경되었습니다. 저장하겠습니까?",
         handleConfirmResult: (confirmValue, paramObject) => {
           if (confirmValue) {
-            // SAVE
-            // const { GlobalProps } = this.props;
-            // const driveConfig = GlobalProps.get('driveConfig');
-            // driveConfig.get('syncItems')
-            // .remove({ no: paramObject })
-            // .write();
+            this.props.onShareInfoSave('UPDATE');
           } else {
             this.props.onDialogClose();
           }
@@ -87,6 +84,7 @@ class ShareInfoDialog extends Component {
   handleSelectItem = (selectedItem) => {
     if (selectedItem.type === 'D') {
       this.props.FileActions.showFilesInFolder({
+        userId: this.props.AccountProps.get('userId'),
         path: selectedItem.path
       });
     }
@@ -100,8 +98,8 @@ class ShareInfoDialog extends Component {
     const { ShareProps, ShareActions } = this.props;
     // create share data
     ShareActions.setShareInfoCreate({
-      uid: 'test01',
-      fid: FileProps.getIn(['selectedItem', 'id']),
+      userId: this.props.AccountProps.get('userId'),
+      fileId: FileProps.getIn(['selectedItem', 'id']),
       shareDepts: ShareProps.get('shareDepts'),
       shareUsers: ShareProps.get('shareUsers')
     });
@@ -160,6 +158,8 @@ class ShareInfoDialog extends Component {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps, ShareProps } = this.props;
 
+    const selectedItem = (ShareProps.get('shareInfoList') && ShareProps.get('shareInfoList').size > 0) ? ShareProps.getIn(['shareInfoList', 0]).toJS() : null;
+    
     let stepInfo = '수정작업후 저장버튼을 클릭하세요.';
 
     // console.log('[ShareInfoDialog] ShareProps =>> ', (this.props.ShareProps) ? this.props.ShareProps.toJS() : 'none');
@@ -175,8 +175,7 @@ class ShareInfoDialog extends Component {
           </Toolbar>
         </AppBar>
         <Divider />
-
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
           <Grid item xs={6} style={{ paddingTop: 20 }}>
             <Typography edge="start" variant="caption" style={{ color: 'red', padding: '4px 0px 4px 12px', fontWeight: 'bold', textAlign: 'left' }}>{stepInfo}</Typography>
           </Grid>
@@ -185,9 +184,11 @@ class ShareInfoDialog extends Component {
           <Button className={classes.RCSmallButton} variant="contained" color="primary" style={{ margin: '10px' }} onClick={() => this.props.onShareInfoDelete()}>삭제</Button>
           </Grid>
         </Grid>
-        
         <Divider />
         <Grid container style={{ margin: 0 }}>
+          <Grid item xs={12} style={{ margin: 4, padding: 4 }}>
+            <FileOrFolderView selectedItem={selectedItem} />
+          </Grid>
           <Grid item xs={6} >
             <Box style={{ height: 200, margin: 4, padding: 4, backgroundColor: '#efefef' }}>
               <DeptTreeComp deptList={DeptUserProps.get('deptList')}
@@ -207,9 +208,10 @@ class ShareInfoDialog extends Component {
               />
             </Box>
           </Grid>
+          <Grid item xs={12}>
+            <ShareListComp isEdit={true} />
+          </Grid>
         </Grid>
-
-        <ShareListComp isEdit={true} />
       </Dialog>
     );
   }
@@ -217,8 +219,10 @@ class ShareInfoDialog extends Component {
 
 const mapStateToProps = (state) => ({
   GlobalProps: state.GlobalModule,
+  AccountProps: state.AccountModule,
   ShareProps: state.ShareModule,
-  DeptUserProps: state.DeptUserModule
+  DeptUserProps: state.DeptUserModule,
+  FileProps: state.FileModule
 });
 
 const mapDispatchToProps = (dispatch) => ({
