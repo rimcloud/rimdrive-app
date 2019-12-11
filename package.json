@@ -24,7 +24,9 @@
       "icon": "./public/assets/icons/win/icon.ico"
     },
     "linux": {
-      "target": ["deb"],
+      "target": [
+        "deb"
+      ],
       "category": "Utility"
     },
     "files": [
@@ -35,7 +37,15 @@
       "buildResources": "assets"
     },
     "deb": {
-      "depends": ["gconf2", "gconf-service", "libnotify4", "libappindicator1", "libxtst6", "libnss3", "davfs2"]
+      "depends": [
+        "gconf2",
+        "gconf-service",
+        "libnotify4",
+        "libappindicator1",
+        "libxtst6",
+        "libnss3",
+        "davfs2"
+      ]
     }
   },
   "scripts": {
@@ -83,7 +93,8 @@
     "react-scripts": "3.2.0",
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "regedit": "^3.0.3"
   },
   "devDependencies": {
     "@rescripts/cli": "0.0.13",
