@@ -24,21 +24,6 @@ import Typography from '@material-ui/core/Typography';
 
 class SyncItem extends Component {
 
-    handleChangeValue = name => event => {
-        this
-            .props
-            .AccountActions
-            .changeAccountParamData({name: name, value: event.target.value});
-    }
-
-    handleSaveClick = (e) => {
-        try {
-            fs.writeFileSync('rimdrive-app.cfg', 'content', 'utf-8');
-        } catch (e) {
-            alert(e);
-        }
-    }
-
     checkType = value => {
         return (value !== 'm');
     }

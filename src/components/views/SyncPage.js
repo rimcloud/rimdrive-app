@@ -50,21 +50,6 @@ class SyncPage extends Component {
         });
     }
 
-    handleChangeValue = name => event => {
-        this
-            .props
-            .AccountActions
-            .changeAccountParamData({ name: name, value: event.target.value });
-    }
-
-    handleSaveClick = (e) => {
-        try {
-            fs.writeFileSync('rimdrive-app.cfg', 'content', 'utf-8');
-        } catch (e) {
-            alert(e);
-        }
-    }
-
     handleAddSyncClick = () => {
         const { GlobalProps } = this.props;
         const driveConfig = GlobalProps.get('driveConfig');

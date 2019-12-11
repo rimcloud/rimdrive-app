@@ -82,30 +82,6 @@ class ShareInfoDialog extends Component {
     }
   }
 
-  handleSelectItem = (selectedItem) => {
-    if (selectedItem.type === 'D') {
-      this.props.FileActions.showFilesInFolder({
-        userId: this.props.AccountProps.get('userId'),
-        path: selectedItem.path
-      });
-    }
-    this.props.FileActions.setSelectedItem({
-      selectedItem: selectedItem
-    });
-  }
-
-  handleSaveShareInfo = () => {
-    const { FileProps } = this.props;
-    const { ShareProps, ShareActions } = this.props;
-    // create share data
-    ShareActions.setShareInfoCreate({
-      userId: this.props.AccountProps.get('userId'),
-      fileId: FileProps.getIn(['selectedItem', 'id']),
-      shareDepts: ShareProps.get('shareDepts'),
-      shareUsers: ShareProps.get('shareUsers')
-    });
-  }
-
   handleSelectDept = (dept) => {
     const { DeptUserActions } = this.props;
     // show dept info and user list

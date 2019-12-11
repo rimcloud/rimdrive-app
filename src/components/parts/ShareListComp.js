@@ -27,18 +27,6 @@ import Typography from "@material-ui/core/Typography";
 
 class ShareListComp extends Component {
 
-  handleSelectItem = (selectedItem) => {
-    if (selectedItem.type === 'D') {
-      this.props.FileActions.showFilesInFolder({
-        userId: this.props.AccountProps.get('userId'),
-        path: selectedItem.path
-      });
-    }
-    this.props.FileActions.setSelectedItem({
-      selectedItem: selectedItem
-    });
-  }
-
   handleDeleteFromShare = (group, id) => {
     const { ShareActions } = this.props;
     ShareActions.deleteItemForShare({

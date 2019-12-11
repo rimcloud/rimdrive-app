@@ -149,23 +149,6 @@ class ShareConfDialog extends Component {
     });
   }
 
-  handleDeleteFromShare = (group, id) => {
-    const { ShareActions } = this.props;
-    ShareActions.deleteItemForShare({
-      group: group,
-      id: id
-    });
-  }
-
-  handleChangePermission = (group, id, value) => {
-    const { ShareActions } = this.props;
-    ShareActions.changePermission({
-      group: group,
-      id: id,
-      value: value
-    });
-  }
-
   render() {
     const { classes, dialogOpen } = this.props;
     const { DeptUserProps, FileProps, ShareProps } = this.props;
