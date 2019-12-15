@@ -157,8 +157,11 @@ class SyncPage extends Component {
 
                             // if different for before folder, delete STATE file.
                             const oldPath = driveConfig.get('syncItems').find({ no: syncNo }).get([locType]).value();
-                            if(oldPath !== selectedPath) {
-                                fs.unlinkSync(`${getAppRoot()}${path.sep}rimdrive-state.json`); 
+                            log.debug('oldPath :::: ', oldPath);
+                            if(oldPath !== undefined && oldPath !== '' && oldPath !== selectedPath) {
+                                if(fs.existsSync(`${getAppRoot()}${path.sep}rimdrive-state.json`)) {
+                                    fs.unlinkSync(`${getAppRoot()}${path.sep}rimdrive-state.json`); 
+                                }
                             }
 
                             driveConfig.get('syncItems')
@@ -200,8 +203,10 @@ class SyncPage extends Component {
 
         // if different for before folder, delete STATE file.
         const oldPath = driveConfig.get('syncItems').find({ no: this.state.syncNo }).get([this.state.locType]).value();
-        if(oldPath !== selectedItem.path) {
-            fs.unlinkSync(`${getAppRoot()}${path.sep}rimdrive-state.json`); 
+        if(oldPath !== undefined && oldPath !== '' && oldPath !== selectedItem.path) {
+            if(fs.existsSync(`${getAppRoot()}${path.sep}rimdrive-state.json`)) {
+                fs.unlinkSync(`${getAppRoot()}${path.sep}rimdrive-state.json`); 
+            }
         }
 
         driveConfig.get('syncItems')
